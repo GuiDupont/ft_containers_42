@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/07 16:13:42 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/07 16:50:14 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,7 @@ namespace ft {
 
 		// iterator insert(const_iterator, const T&); //single element
 		// iterator insert(const_iterator, size_type, T&); //fill
+
 		// template<class iter>
 		// iterator insert(const_iterator, iter, iter); //range
 		// iterator erase(const_iterator); //single elem
@@ -242,7 +243,8 @@ namespace ft {
 			_size = 0;
 		}
 		// template<class iter>
-		// void assign(iter, iter); //range 
+		// void assign(iter, iter); //range
+		
 		void assign(size_type n, const T& value) {
 			T* substitute;
 			
@@ -294,6 +296,7 @@ namespace ft {
 			_size = temp_size;
 			_capacity = temp_capacity;
 		}
+		
 		size_type size() const { return (_size); }
 		
 		void resize (size_type n, value_type val = value_type()) {
@@ -310,12 +313,10 @@ namespace ft {
 			_size = n;	
 		}
 		
-		size_type max_size() const {
-   			
-    		return (_alloc.max_size());
-		}
+		size_type max_size() const { return (_alloc.max_size()); }
 
 		bool empty() const { return (!_size); }
+		
 		size_type capacity() const { return (_capacity); }
 		
 		void reserve (size_type n) {
@@ -324,6 +325,42 @@ namespace ft {
 		}
 		
 		A get_allocator() const { return (_alloc); }
+		
+		friend bool operator==(vector<T, A> const & lhs, vector<T, A> const & rhs) {
+			if (lhs._size != rhs._size)
+				return (0);
+			for (typename A::size_type i = 0; i < lhs._size; i++)
+				if (lhs._buffer[i] != rhs._buffer[i])
+					return (0);
+			return (1);
+		}
+
+		friend bool operator!=(const vector<T, A>& lhs, const vector<T, A>& rhs)  {
+			if (lhs._size != rhs._size)
+				return (1);
+			for (typename A::size_type i = 0; i < lhs._size; i++)
+				if (lhs._buffer[i] != rhs._buffer[i])
+					return (1);
+			return (0);
+		}
+		
+		friend bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+			
+			for (size_type i = 0; i < lhs._capacity && i < rhs._capacity; i++)
+			{
+				if (lhs._buffer[i] < rhs._buffer[i])
+					return (1);
+				if (lhs._buffer[i] > rhs._buffer[i])
+					return (0);
+				if (i == lhs._size && i == rhs._size)
+					return (0);
+			}
+		}
+	//friend bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	//friend bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	//friend bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	
+
 		private:
 			T *			_buffer;
 			A			_alloc;
@@ -361,13 +398,16 @@ namespace ft {
 		a.swap(b);
 	}
 	
-	// template <class T, class Alloc>
-	bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	// template <class T, class A>
+	// bool operator==(ft::vector<T, A> const & lhs, ft::vector<T, A> const & rhs) {
+	// 	if (lhs._size != rhs._size)
+	// 		return (0);
+	// 	for (typename std::allocator<T>::size_type i = 0; i < lhs.size; i++)
+	// 		if (lhs._buffer[i] != rhs._buffer[i])
+	// 			return (0);
+	// 	return (1);
+	// }
+
 	
 	
 }
@@ -375,3 +415,5 @@ namespace ft {
 
 
 // https://stackoverflow.com/questions/7758580/writing-your-own-stl-container
+
+
