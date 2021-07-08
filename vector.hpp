@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/07 16:50:14 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/08 16:29:18 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,14 +177,14 @@ namespace ft {
 /////to delete---------------------------------------------------------------------------------------------
 		size_type getNbElem(void) const { return (this->_size); } 
 		T const * getBuff(void) const{ return (this->_size); } 
-		void printSelf(void) {
+		void printSelf(void) const {
 			for (typename A::size_type i = 0; i < this->_size; i++)
 				std::cout << this->_buffer[i] << " ";
-			std::cout << "size = " << _size << " - ";
-			std::cout << " capapcity = " << _capacity << "\n"; 
+			// std::cout << "size = " << _size << " - ";
+			// std::cout << " capapcity = " << _capacity << "\n"; 
 			std::cout << "\n"; 
 			
-				}
+			}
 /////to delete-------------------------------------------------------------------------------------
 					
 						
@@ -344,8 +344,7 @@ namespace ft {
 			return (0);
 		}
 		
-		friend bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-			
+		friend bool operator<(const vector<T,A>& lhs, const vector<T,A>& rhs) {
 			for (size_type i = 0; i < lhs._capacity && i < rhs._capacity; i++)
 			{
 				if (lhs._buffer[i] < rhs._buffer[i])
@@ -355,12 +354,22 @@ namespace ft {
 				if (i == lhs._size && i == rhs._size)
 					return (0);
 			}
+			return (0);
+		} /// a refaire
+		
+		friend bool operator>(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+			return (!(lhs < rhs));
 		}
-	//friend bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	//friend bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	//friend bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+		
+		friend bool operator<=(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+			return (lhs == rhs || lhs < rhs);
+		}
+		
+		friend bool operator>=(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+			return (lhs == rhs || lhs > rhs);
+			
+		}
 	
-
 		private:
 			T *			_buffer;
 			A			_alloc;
@@ -397,18 +406,6 @@ namespace ft {
 	void swap(vector<T>& a, vector<T>& b) {
 		a.swap(b);
 	}
-	
-	// template <class T, class A>
-	// bool operator==(ft::vector<T, A> const & lhs, ft::vector<T, A> const & rhs) {
-	// 	if (lhs._size != rhs._size)
-	// 		return (0);
-	// 	for (typename std::allocator<T>::size_type i = 0; i < lhs.size; i++)
-	// 		if (lhs._buffer[i] != rhs._buffer[i])
-	// 			return (0);
-	// 	return (1);
-	// }
-
-	
 	
 }
 
