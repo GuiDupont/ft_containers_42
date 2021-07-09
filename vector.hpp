@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/08 16:29:18 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/09 13:05:12 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,19 @@
 
 #define REALLOC_MULT 2
 
-namespace ft {
 
+
+
+namespace ft {
+	
+	template <typename myvec>
+	class vectorIterator { 
+		public:
+			typedef typename myvec::valueType valueType;
+			
+			vectorIterator();	
+	};
+	
 	template <typename T, class A = std::allocator<T> >
 	class vector {
 	public:
@@ -29,18 +40,27 @@ namespace ft {
 		typedef typename A::difference_type difference_type;
 		typedef typename A::size_type size_type;
 		
+	// 	struct iterator_traits {
+    //     typedef typename T::value_type            value_type;
+    //     typedef typename T::difference_type       difference_type;
+    //     typedef typename T::iterator_category     iterator_category;
+    //     typedef typename T::pointer               pointer;
+    //     typedef typename T::reference             reference;
+    // };
 
-		// class iterator { 
-		// public:
-		// 	typedef typename A::difference_type difference_type;
-		// 	typedef typename A::value_type value_type;
-		// 	typedef typename A::reference reference;
-		// 	typedef typename A::pointer pointer;
-		// 	typedef std::random_access_iterator_tag iterator_category;
+		class iterator { 
+			public:
+			
+			
+			typedef typename A::difference_type difference_type;
+			typedef typename A::value_type value_type;
+			typedef typename A::reference reference;
+			typedef typename A::pointer pointer;
+			typedef std::random_access_iterator_tag iterator_category;
 
-		// 	iterator();
-		// 	iterator(const iterator&);
-		// 	~iterator();
+			// iterator();
+			// iterator(const iterator&);
+			// ~iterator();
 
 		// 	iterator& operator=(const iterator&);
 		// 	bool operator==(const iterator&) const;
@@ -100,7 +120,7 @@ namespace ft {
 		// 	reference operator*() const;
 		// 	// pointer operator->() const;
 		// 	reference operator[](size_type) const;
-		// };
+		};
 
 		// typedef std::reverse_iterator<iterator> reverse_iterator; //optional
 		// typedef std::reverse_iterator<const_iterator> const_reverse_iterator; //optional
@@ -189,7 +209,9 @@ namespace ft {
 					
 						
 
-		// iterator begin();
+		iterator begin() { return (iterator(_buffer)); }
+		iterator end() { return (iterator(_buffer) ); }
+		
 		// const_iterator begin() const;
 		// iterator end();
 		// const_iterator end() const;
@@ -277,7 +299,6 @@ namespace ft {
 				for (size_type i = 0; i < n; i++)
 					_buffer[i] = value;
 			}
-				
 		}
 
 		void swap(vector &x) {
@@ -409,7 +430,7 @@ namespace ft {
 	
 }
 
-
+// https://www.youtube.com/watch?v=F9eDv-YIOQ0
 
 // https://stackoverflow.com/questions/7758580/writing-your-own-stl-container
 
