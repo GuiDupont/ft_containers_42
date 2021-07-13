@@ -6,11 +6,11 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/09 18:08:22 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/13 07:59:36 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vector.hpp"
+#include "vector2.hpp"
 #include <vector>
 
 #define NBVECTOR 5
@@ -183,7 +183,7 @@ int main(void)
 			std::cout << "inequality : mineAll[i] < mineAll[i + 1] " << (mineAll[i] < mineAll[i + 1]) << "\n";
 
 		mineAll[i].assign(i*3,i);
-		for (ft::vectorIterator<ft::vector<int> > it = mineAll[i].begin(); it != mineAll[i].end(); it++)
+		for (ft::vector<int, std::allocator<int> >::iterator it = mineAll[i].begin(); it != mineAll[i].end(); it++)
 			std::cout << *it << " ";
 		std::cout << "\n###########################\n";
 		
@@ -204,9 +204,9 @@ int main(void)
 	all[3].push_back(5);
 
 
-	// for (ft::vectorIterator<ft::vector<int> > it = mineAll[3].begin(); it != mineAll[3].end(); it++)
-	// 		std::cout << *it << " ";
-	ft::vectorIterator<ft::vector<int> > it = mineAll[3].begin();
+	for (ft::vector<int, std::allocator<int> >::iterator  it = mineAll[3].begin(); it != mineAll[3].end(); it++)
+			std::cout << *it << " ";
+	ft::vector<int, std::allocator<int> >::iterator it = mineAll[3].begin();
 	std::cout << (*it);
 
 	it = it + 2;
@@ -221,9 +221,9 @@ int main(void)
 	it = it - 2;
 	std::cout << (*it);
 
-	// it = it - (-1);
-	// std::cout << (*it);
-	// ft::vector<int> test(all[3].begin(), all[3].end());
+	it = it - (-1);
+	std::cout << (*it);
+	ft::vector<int> test(all[3].begin(), all[3].end());
 	// test.printSelf();
 	delete [] all;
 	delete [] mineAll;	
