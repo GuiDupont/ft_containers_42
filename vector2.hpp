@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/13 08:11:48 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/13 14:36:48 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,28 @@
 
 namespace ft {
 	
-	template <typename T, class A = std::allocator<T> >
+	template <typename T>
 		class vector {
 			public:
+				typedef std::allocator<T> A;
 				typedef T valueType;
-				//typedef vector::iterator iterator;
 				typedef T* pointer;
 				typedef const T* const_pointer;
 				typedef T& reference;
 				typedef const T& const_reference;
-				
+				typedef ptrdiff_t difference_type;
 				typedef A allocator_type;
-				typedef typename A::difference_type difference_type;
-				typedef typename A::size_type size_type;
+				typedef typename A::size_type size_type;				
 				
-			
-				class iterator  : public std::iterator<T, std::random_access_iterator_tag> { 
+				//typedef typename A::difference_type difference_type;
+				class iterator { 
 					public:
 						
 						typedef std::random_access_iterator_tag iterator_category;
 						
-						iterator(T* ptr) : _ptr(ptr) {;}
-						iterator(vector const & lhs) : _ptr(lhs._ptr) {;}
+						
+						iterator(T* ptr) : _ptr(ptr) {}
+						iterator(vector const & lhs) : _ptr(lhs._ptr) {}
 						
 						iterator(void) : _ptr(NULL) {}
 						iterator& operator++() 
@@ -115,6 +115,10 @@ namespace ft {
 
 						reference operator*() { return (*_ptr); }
 
+						//template <class Distance>
+						//void advance (iterator& it, Distance n) { it += n; }
+
+						
 						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
 						
 						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
@@ -124,35 +128,14 @@ namespace ft {
 			
 				};
 
-				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
-				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
-				
-				explicit vector (size_type n, const valueType& val = valueType(), 
-									const allocator_type& alloc = allocator_type()) 
-									: _alloc(alloc), _size(n), _capacity(n) {
-					try
-					{
-						this->_buffer = this->_alloc.allocate(_capacity);
-						for (size_type i = 0; i < n; i++) {
-							this->_alloc.construct(this->_buffer + i, val);
-						}
-					}
-					catch (std::exception & e)
-					{
-						std::cout << e.what() << std::endl;
-					}
-				}
-	
-				template <class inputIterator>
-				vector (inputIterator fist, inputIterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
+				vector (typename vector<T>::iterator first, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
 				{
-					
-					//std::cout << "J'alloue un vector de " << (last - first) <<" elem a base d'un range\n";
-					// try
-					// {
-					// 	this->_buffer = this->_alloc.allocate(distance(last, first));
-					// 	for (inputIterator it = first; it != last; it++) {
-					// 		this->_alloc.construct(this->_buffer + (it - first), *inputIterator );
+					std::cout << "gdgdfsgdsgsd\n";
+					std::cout << *first << " " << *last << "\n";
+					//distance(first, last);
+					// this->_buffer = this->_alloc.allocate(distance(last, first));
+					// 	for (inputiterator it = first; it != last; it++) {
+					// 		this->_alloc.construct(this->_buffer + (it - first), *inputiterator );
 					// 		_size++;
 					// 	}
 					// }
@@ -161,17 +144,29 @@ namespace ft {
 					// 	std::cout << e.what() << std::endl;
 					// }
 				} //range (3)
+				
+				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
+				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
+				
+				explicit vector (size_type n, const valueType& val = valueType(), 
+									const allocator_type& alloc = allocator_type()) 
+									: _alloc(alloc), _size(n), _capacity(n) {
+					this->_buffer = this->_alloc.allocate(_capacity);
+					for (size_type i = 0; i < n; i++) {
+						this->_alloc.construct(this->_buffer + i, val);
+					}
+				}
+	
+				
 					
 				vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity) {
-					// std::cout << "J'alloue un vector de " << _size <<" elem par copy\n";
 					this->_buffer = this->_alloc.allocate(_capacity);
 					for (size_type i = 0; i < _size; i++) {
 							_alloc.construct(this->_buffer + i, x._buffer[i]);
 						}
-				}//copy (4)
+				}
 					
 				~vector() {
-					// std::cout << "je vais delete un vector de " << _size << " elem et de capacity " << _capacity << "\n";
 					for (size_type i = 0; i < _size; i++) {
 							this->_alloc.destroy(this->_buffer + i);
 						}
@@ -195,15 +190,15 @@ namespace ft {
 						std::cout << this->_buffer[i] << " ";
 					// std::cout << "size = " << _size << " - ";
 					// std::cout << " capapcity = " << _capacity << "\n"; 
-					std::cout << "\n"; 
+					std::cout << " -\n"; 
 					
 					}
 		/////to delete-------------------------------------------------------------------------------------
 							
 								
 
-				vector<T,A>::iterator begin() { return (iterator(_buffer)); }
-				vector<T,A>::iterator end() { return (iterator(_buffer + _size)); }
+				vector<T>::iterator begin() { return (iterator(_buffer)); }
+				vector<T>::iterator end() { return (iterator(&_buffer[_size - 1])); }
 				
 				// const_iterator begin() const;
 				// const_iterator end() const;
@@ -339,7 +334,7 @@ namespace ft {
 				
 				A get_allocator() const { return (_alloc); }
 				
-				friend bool operator==(vector<T, A> const & lhs, vector<T, A> const & rhs) {
+				friend bool operator==(vector<T> const & lhs, vector<T> const & rhs) {
 					if (lhs._size != rhs._size)
 						return (0);
 					for (typename A::size_type i = 0; i < lhs._size; i++)
@@ -348,7 +343,7 @@ namespace ft {
 					return (1);
 				}
 
-				friend bool operator!=(const vector<T, A>& lhs, const vector<T, A>& rhs)  {
+				friend bool operator!=(const vector<T>& lhs, const vector<T>& rhs)  {
 					if (lhs._size != rhs._size)
 						return (1);
 					for (typename A::size_type i = 0; i < lhs._size; i++)
@@ -357,7 +352,7 @@ namespace ft {
 					return (0);
 				}
 				
-				friend bool operator<(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+				friend bool operator<(const vector<T>& lhs, const vector<T>& rhs) {
 					for (size_type i = 0; i < lhs._capacity && i < rhs._capacity; i++)
 					{
 						if (lhs._buffer[i] < rhs._buffer[i])
@@ -370,15 +365,15 @@ namespace ft {
 					return (0);
 				} /// a refaire
 				
-				friend bool operator>(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+				friend bool operator>(const vector<T>& lhs, const vector<T>& rhs) {
 					return (!(lhs < rhs));
 				}
 				
-				friend bool operator<=(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+				friend bool operator<=(const vector<T>& lhs, const vector<T>& rhs) {
 					return (lhs == rhs || lhs < rhs);
 				}
 				
-				friend bool operator>=(const vector<T,A>& lhs, const vector<T,A>& rhs) {
+				friend bool operator>=(const vector<T>& lhs, const vector<T>& rhs) {
 					return (lhs == rhs || lhs > rhs);
 					
 				}
@@ -418,6 +413,15 @@ namespace ft {
 	template <class T>
 	void swap(vector<T>& a, vector<T>& b) {
 		a.swap(b);
+	}
+
+	template <class T>
+	std::ptrdiff_t distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
+	{ 
+		typename ft::vector<T>::difference_type n = 0;
+		while (last-- != first)
+			n++;
+		return (n);
 	}
 	
 }

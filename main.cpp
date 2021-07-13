@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/13 07:59:36 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/13 14:44:09 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,16 @@ void	printVec(ft::vector<T> const & v, std::string s)
 
 int main(void)
 {
-	std::vector<int, std::allocator<int> > themEmpty;
+	std::cout << "coucou\n";
+	std::vector<int> themEmpty;
 	std::vector<int> themEmpty2;
 	std::vector<int> them(5);
 	std::vector<int> them2(5, 5);
 	std::vector<int> them3;
 	std::vector<int> themSwap(6, 5);
 	
+	std::cout << "coucou\n";
+
 	std::vector<int> *all = new std::vector<int>[NBVECTOR];
 	all[0] = themEmpty;
 	all[1] = themEmpty2;
@@ -49,13 +52,17 @@ int main(void)
 	all[3] = them2;
 	all[4] = them3;
 
+	std::cout << "coucou\n";
+
 	ft::vector<int> mineEmpty;
 	ft::vector<int> mineEmpty2;
 	ft::vector<int> mine(5);
 	ft::vector<int> mine2(5, 5);
+	std::cout << "coucou\n";
 	ft::vector<int> mine3;
+	std::cout << "coucou1\n";
 	ft::vector<int> mineSwap(6, 5);
-
+std::cout << "coucou2\n";
 
 	ft::vector<int> *mineAll = new ft::vector<int>[NBVECTOR];
 	mineAll[0] = mineEmpty;
@@ -183,7 +190,7 @@ int main(void)
 			std::cout << "inequality : mineAll[i] < mineAll[i + 1] " << (mineAll[i] < mineAll[i + 1]) << "\n";
 
 		mineAll[i].assign(i*3,i);
-		for (ft::vector<int, std::allocator<int> >::iterator it = mineAll[i].begin(); it != mineAll[i].end(); it++)
+		for (ft::vector<int>::iterator it = mineAll[i].begin(); it != mineAll[i].end(); it++)
 			std::cout << *it << " ";
 		std::cout << "\n###########################\n";
 		
@@ -204,27 +211,31 @@ int main(void)
 	all[3].push_back(5);
 
 
-	for (ft::vector<int, std::allocator<int> >::iterator  it = mineAll[3].begin(); it != mineAll[3].end(); it++)
+	for (ft::vector<int>::iterator  it = mineAll[3].begin(); it != mineAll[3].end(); it++)
 			std::cout << *it << " ";
-	ft::vector<int, std::allocator<int> >::iterator it = mineAll[3].begin();
-	std::cout << (*it);
+	// ft::vector<int>::iterator it = mineAll[3].begin();
+	// std::cout << (*it);
 
-	it = it + 2;
-	std::cout << (*it);
+	// it = it + 2;
+	// std::cout << (*it);
 
-	it = it + (-1);
-	std::cout << (*it);
+	// it = it + (-1);
+	// std::cout << (*it);
 
-	it = it + 3;
-	std::cout << (*it);
+	// it = it + 3;
+	// std::cout << (*it);
 	
-	it = it - 2;
-	std::cout << (*it);
+	// it = it - 2;
+	// std::cout << (*it);
 
-	it = it - (-1);
-	std::cout << (*it);
-	ft::vector<int> test(all[3].begin(), all[3].end());
-	// test.printSelf();
+	// it = it - (-1);
+	// std::cout << (*it);
+	distance(mineAll[3].begin(), mineAll[3].end());
+	mineAll[3].printSelf();
+
+//	ft::vector<int> test(mineAll[3].begin(), mineAll[3].end());
+	std::cout << *(mineAll[3].end()) << mineAll[3].size();
+	//test.printSelf();
 	delete [] all;
 	delete [] mineAll;	
 }
