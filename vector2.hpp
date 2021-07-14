@@ -6,13 +6,14 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/14 09:05:42 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/14 17:02:53 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <cstddef>
 #include <iterator>
+#include <exception>
 
 #include <unistd.h>
 
@@ -31,10 +32,12 @@ namespace ft {
 				typedef T& reference;
 				typedef const T& const_reference;
 				typedef ptrdiff_t difference_type;
-				typedef A allocator_type;
-				typedef typename A::size_type size_type;				
-				
 				//typedef typename A::difference_type difference_type;
+				typedef A allocator_type;
+				typedef typename A::size_type size_type;
+				// typedef vector<T>::iterator iterator;
+				// typedef const vector<T>::iterator const_iterator;				
+				
 				class iterator { 
 					public:
 						
@@ -50,8 +53,10 @@ namespace ft {
 							return (*this);
 						}
 
-						iterator& operator=(reference lhs) 
-						{ this->_ptr = lhs->_ptrl; return (*this); }
+						iterator& operator=(const_reference & lhs) { this->_ptr = lhs; return (*this); }
+
+						iterator& operator=(iterator const & lhs) 
+						{ this->_ptr = lhs._ptr; return (*this); }
 						
 						iterator& operator+=(int n)
 						{
@@ -111,17 +116,113 @@ namespace ft {
 
 						reference operator[](int index) { return (*(_ptr + index)); }
 						
-						pointer operator->() { return (_ptr); }
+						pointer operator->() { return (this); }
+						pointer operator->() const { return (this); }
 
 						reference operator*() { return (*_ptr); }
+						reference operator*() const { return (*_ptr); }
+
 
 						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
 						
 						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
 				
-					private:
+					protected:
 						pointer _ptr;
 			
+				};
+
+				class reverse_iterator {
+					public:
+
+					//typedef const reverse_iterator const_reverse_iterator;
+					
+						reverse_iterator(T* ptr) : _ptr(ptr) {}
+						reverse_iterator(vector const & lhs) : _ptr(lhs._buffer) {}
+						reverse_iterator(void) : _ptr(NULL) {}
+						reverse_iterator& operator++() 
+						{
+							_ptr--;
+							return (*this);
+						}
+
+						reverse_iterator& operator=(reference lhs) 
+						{ this->_ptr = lhs->_ptrl; return (*this); }
+
+						reverse_iterator& operator=(iterator const & lhs) 
+						{ this->_ptr = lhs._ptr; return (*this); }
+						
+						reverse_iterator& operator+=(int n)
+						{
+							this->_ptr -= n;
+							return (*this);
+						}
+
+						reverse_iterator& operator-=(int n)
+						{
+							this->_ptr += n;
+							return (*this);
+						}
+
+						reverse_iterator operator++(int) 
+						{
+							reverse_iterator it = *this;
+							--(*this);
+							return (it);
+						}
+
+						reverse_iterator operator+(int n) 
+						{
+							pointer it = _ptr;
+							if (n < 0)
+								for (int i = 0; i > n; i--)
+									it++;
+							else
+								for (int i = 0; i < n; i++)
+									it--;
+							return (reverse_iterator(it));	
+						}
+
+						reverse_iterator operator-(int n) 
+						{
+							pointer it = _ptr;
+							if (n < 0)
+								for (int i = 0; i > n; i--)
+									it--;
+							else
+								for (int i = 0; i < n; i++)
+									it++;
+							return (reverse_iterator(it));
+						}
+
+						reverse_iterator& operator--() 
+						{
+							_ptr++;
+							return (*this);
+						}
+						
+						reverse_iterator operator--(int) 
+						{
+							reverse_iterator it = *this;
+							++(*this);
+							return (it);
+						}
+
+						reference operator[](int index) { return (*(_ptr - index)); }
+						
+						pointer operator->() { return (this); }
+						pointer operator->() const { return (this); }
+
+						reference operator*() { return (*_ptr); }
+						reference operator*() const { return (*_ptr); }
+
+
+						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
+						
+						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
+				
+					protected:
+						pointer _ptr;
 				};
 
 				
@@ -194,20 +295,20 @@ namespace ft {
 							
 								
 
-				vector<T>::iterator begin() { return (iterator(_buffer)); }
-				vector<T>::iterator end() { return (iterator(&_buffer[_size])); }
+				iterator begin() { return (iterator(_buffer)); }
+				iterator end() { return (iterator(&_buffer[_size])); }
 				
-				// const_iterator begin() const;
-				// const_iterator end() const;
-				// reverse_iterator rbegin();
-				// const_reverse_iterator rbegin() const; 
-				// reverse_iterator rend();
-				// const_reverse_iterator rend() const;
+				const iterator begin() const {  return (iterator(_buffer)); }
+				const iterator end() const { return (iterator(&_buffer[_size])); }
+				reverse_iterator rbegin() { return (reverse_iterator(&_buffer[_size - 1]));}
+				const reverse_iterator rbegin() const { return (reverse_iterator(&_buffer[_size - 1])); }; 
+				reverse_iterator rend() { return (reverse_iterator(_buffer - 1)); }
+				const reverse_iterator rend() const { return (reverse_iterator(_buffer - 1)); }
 
 				reference front() { return (*_buffer); }
-				// const_reference front() const;
+				const_reference front() const { return (*_buffer); }
 				reference back() { return ( *(_buffer + _size - 1)) ; } 
-				// const_reference back() const;
+				const_reference back() const { return ( *(_buffer + _size - 1)) ; }
 				void push_back(const T& value) {
 					
 					if (!_capacity)
@@ -230,12 +331,62 @@ namespace ft {
 					_alloc.destroy(_buffer + _size);
 				}
 				
-				// reference operator[](size_type);
-				// const_reference operator[](size_type) const;
-				// reference at(size_type); 
-				// const_reference at(size_type) const;
+				reference operator[](size_type n) { return (*(this->_buffer + n)) ;}
+				const_reference operator[](size_type n) const { return (*(this->_buffer + n)) ;}
+				reference at(size_type n) { 
+					if (n >= _size)
+						throw std::out_of_range("Out of range exeption");
+					else
+						return (*(this->_buffer + n)) ;
+					
+					};
+				const_reference at(size_type n) const { return (at(n)); }
 
-				// iterator insert(const_iterator, const T&); //single element
+				iterator insert(const iterator place, const T& val) {
+					if (_size == _capacity)
+					{
+						T* substitute;
+					
+						substitute = _alloc.allocate(_capacity * REALLOC_MULT);
+						int i = 0;
+						int index;
+						for (iterator it = this->begin(); it != this->end(); it++)
+						{
+							_alloc.construct(substitute + i, 0);
+							if (it != place)
+								substitute[i] = *it;
+							_alloc.destroy(&(this->_buffer[i]));
+							if (it == place)
+							{
+								index = i;
+								substitute[index] = val;
+								substitute[++i] = *it;
+							}
+							i++;
+						}
+						_size++;
+						_alloc.deallocate(_buffer, _capacity);
+						_capacity *= REALLOC_MULT;
+						_buffer = substitute;
+						return (iterator(&substitute[index]));	
+					}
+					else
+					{
+						_alloc.construct(this->_buffer + _size, 0);
+						_size++;
+						T next = *place;
+						*place = val;
+						iterator placePlus1 = place;
+						for (iterator it = ++placePlus1; it != this->end(); it++)
+						{
+							T temp = *it;
+							*it = next;
+							next = temp;
+						}
+						return (place);
+					}
+					return (iterator(this->_buffer));
+				}
 				// iterator insert(const_iterator, size_type, T&); //fill
 
 				// template<class iter>
@@ -425,8 +576,8 @@ namespace ft {
 	}
 
 	template <class T, class distance>
-	void advance(typename ft::vector<T>::iterator it, distance n) { it += n; }
-	
+	void advance(typename ft::vector<T>::iterator &it, distance n) 
+	{ it += n; }
 }
 
 // https://www.youtube.com/watch?v=F9eDv-YIOQ0
