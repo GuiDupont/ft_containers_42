@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/13 14:44:09 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/14 09:09:44 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,28 +213,39 @@ std::cout << "coucou2\n";
 
 	for (ft::vector<int>::iterator  it = mineAll[3].begin(); it != mineAll[3].end(); it++)
 			std::cout << *it << " ";
-	// ft::vector<int>::iterator it = mineAll[3].begin();
-	// std::cout << (*it);
+	ft::vector<int>::iterator it = mineAll[3].begin();
+	std::cout << (*it);
 
-	// it = it + 2;
-	// std::cout << (*it);
+	it = it + 2;
+	std::cout << (*it);
 
-	// it = it + (-1);
-	// std::cout << (*it);
+	it = it + (-1);
+	std::cout << (*it);
 
-	// it = it + 3;
-	// std::cout << (*it);
+	it = it + 3;
+	std::cout << (*it);
 	
-	// it = it - 2;
-	// std::cout << (*it);
+	it = it - 2;
+	std::cout << (*it);
 
-	// it = it - (-1);
-	// std::cout << (*it);
-	distance(mineAll[3].begin(), mineAll[3].end());
-	mineAll[3].printSelf();
+	it = it - (-1);
+	std::cout << (*it);
+	std::cout << "\ndistance :" << ft::distance<int>(mineAll[3].begin(), mineAll[3].begin());
+	std::cout << "\nsize :" << mineAll[3].size();
+	std::cout << "\nend: " << *mineAll[3].end();
+	std::cout << "\ndistance :" << distance(all[3].begin(), all[3].begin());
+	std::cout << "\nsize :" << all[3].size();
+	std::cout << "\nend: " << *all[3].end();
+	ft::vector<int>::iterator test2 = mineAll[3].begin();
+	ft::advance<int, >(test2, ft::distance<int>(test2, mineAll[3].begin()));
+	std::cout << "\n begin + disctance -1 : " << *test2;  
+	// std::cout << "mineall 3: ";
+	// mineAll[3].printSelf();
+	// std::cout << "distance :" << distance(all[3].begin(), all[3].end());
+
 
 //	ft::vector<int> test(mineAll[3].begin(), mineAll[3].end());
-	std::cout << *(mineAll[3].end()) << mineAll[3].size();
+	//std::cout << *(mineAll[3].end()) << mineAll[3].size();
 	//test.printSelf();
 	delete [] all;
 	delete [] mineAll;	

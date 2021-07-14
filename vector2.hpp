@@ -6,11 +6,12 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/13 14:36:48 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/14 09:05:42 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include <cstddef>
 #include <iterator>
 
 #include <unistd.h>
@@ -41,8 +42,7 @@ namespace ft {
 						
 						
 						iterator(T* ptr) : _ptr(ptr) {}
-						iterator(vector const & lhs) : _ptr(lhs._ptr) {}
-						
+						iterator(vector const & lhs) : _ptr(lhs._buffer) {}
 						iterator(void) : _ptr(NULL) {}
 						iterator& operator++() 
 						{
@@ -115,10 +115,6 @@ namespace ft {
 
 						reference operator*() { return (*_ptr); }
 
-						//template <class Distance>
-						//void advance (iterator& it, Distance n) { it += n; }
-
-						
 						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
 						
 						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
@@ -128,22 +124,23 @@ namespace ft {
 			
 				};
 
-				vector (typename vector<T>::iterator first, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
-				{
-					std::cout << "gdgdfsgdsgsd\n";
-					std::cout << *first << " " << *last << "\n";
-					//distance(first, last);
-					// this->_buffer = this->_alloc.allocate(distance(last, first));
-					// 	for (inputiterator it = first; it != last; it++) {
-					// 		this->_alloc.construct(this->_buffer + (it - first), *inputiterator );
-					// 		_size++;
-					// 	}
-					// }
-					// catch (std::exception & e)
-					// {
-					// 	std::cout << e.what() << std::endl;
-					// }
-				} //range (3)
+				
+				// vector (class it, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
+				// {
+				// 	std::cout << "gdgdfsgdsgsd\n";
+				// 	std::cout << *first << " " << *last << "\n";
+				// 	//distance(first, last);
+				// 	// this->_buffer = this->_alloc.allocate(distance(last, first));
+				// 	// 	for (inputiterator it = first; it != last; it++) {
+				// 	// 		this->_alloc.construct(this->_buffer + (it - first), *inputiterator );
+				// 	// 		_size++;
+				// 	// 	}
+				// 	// }
+				// 	// catch (std::exception & e)
+				// 	// {
+				// 	// 	std::cout << e.what() << std::endl;
+				// 	// }
+				// } //range (3)
 				
 				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
 				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
@@ -190,7 +187,7 @@ namespace ft {
 						std::cout << this->_buffer[i] << " ";
 					// std::cout << "size = " << _size << " - ";
 					// std::cout << " capapcity = " << _capacity << "\n"; 
-					std::cout << " -\n"; 
+					std::cout << "-\n"; 
 					
 					}
 		/////to delete-------------------------------------------------------------------------------------
@@ -198,7 +195,7 @@ namespace ft {
 								
 
 				vector<T>::iterator begin() { return (iterator(_buffer)); }
-				vector<T>::iterator end() { return (iterator(&_buffer[_size - 1])); }
+				vector<T>::iterator end() { return (iterator(&_buffer[_size])); }
 				
 				// const_iterator begin() const;
 				// const_iterator end() const;
@@ -416,13 +413,19 @@ namespace ft {
 	}
 
 	template <class T>
-	std::ptrdiff_t distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
+	typename ft::vector<T>::difference_type distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
 	{ 
 		typename ft::vector<T>::difference_type n = 0;
-		while (last-- != first)
+		while (first != last)
+		{
 			n++;
+			first++;
+		}
 		return (n);
 	}
+
+	template <class T, class distance>
+	void advance(typename ft::vector<T>::iterator it, distance n) { it += n; }
 	
 }
 
