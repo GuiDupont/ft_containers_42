@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/14 21:17:16 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/15 11:58:42 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,6 @@
 #include <unistd.h>
 
 #define REALLOC_MULT 2
-
-template <class T>
-void copyArray(T* src, T* dest, size_t n) {
-	for (size_t i = 0; i < n; i++)
-		dest[i] = src[i];
-}
-
 
 namespace ft {
 	
@@ -347,28 +340,17 @@ namespace ft {
 					if (_size == _capacity)
 					{
 						T* substitute;
-					
+						
 						substitute = _alloc.allocate(_capacity * REALLOC_MULT);
-						int index, i = 0;
-						for (iterator it = this->begin(); it != this->end(); it++)
-						{
-							_alloc.construct(substitute + i, 0);
-							if (it != place)
-								substitute[i] = *it;
-							_alloc.destroy(&(this->_buffer[i]));
-							if (it == place)
-							{
-								index = i;
-								substitute[index] = val;
-								substitute[++i] = *it;
-							}
-							i++;
-						}
+						int n = _distance(this->begin(), place);
+						_copyArrayConstructNDestroy(this->_buffer, substitute, n);
+						substitute[n] = val;
+						_copyArrayConstructNDestroy(this->_buffer + n, &substitute[n + 1], _size - n);
 						_size++;
 						_alloc.deallocate(_buffer, _capacity);
 						_capacity *= REALLOC_MULT;
 						_buffer = substitute;
-						return (iterator(&substitute[index]));	
+						return (iterator(&substitute[n]));
 					}
 					else
 					{
@@ -384,16 +366,99 @@ namespace ft {
 							next = temp;
 						}
 						return (place);
-					}
-					return (iterator(this->_buffer));
+					}	
 				}
 				
-				iterator insert(const iterator target, size_type n, T& value); //fill
+				iterator insert(iterator target, size_type n, const T& value)
+				{
+					if (n + _size > _capacity)
+					{
+						size_type newCapacity = _newCapacity(n + _size, _capacity);
+						T* substitute = _alloc.allocate(newCapacity);
+						int targetIndex = _distance(this->begin(), target);
+						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+						for (size_t i = 0; i < n; i++)
+							_alloc.construct(substitute + i + targetIndex, value);
+						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+						_size += n;
+						_alloc.deallocate(_buffer, _capacity);
+						_capacity = newCapacity;
+						_buffer = substitute;
+						return (iterator(&substitute[targetIndex]));	
+					}
+					else
+					{
+						int targetIndex = _distance(this->begin(), target);
+						T* save = _alloc.allocate(_size - n);
+						for (size_type i = 0; i < _size - n; i++)
+							_alloc.construct(save + i, *(target + i));
+						for (size_type i = 0; i < n; i++)
+							_buffer[targetIndex + i] = value;
+						int startCopy = targetIndex + n;
+						for (size_type i = 0; i < n; i++)
+							_alloc.construct(&_buffer[_size + i], 0);
+						for (size_type i = 0; i < _size - n - 1 ; i++)
+						{
+							_buffer[startCopy + i] = save[i];
+							_alloc.destroy(_buffer + startCopy + i);
+						}
+						_alloc.deallocate(save, _size - n);
+						_size += n;
+						return (target);
+					}
+				}
 				
 				// template<class iter>
-				// iterator insert(const_iterator, iter, iter); //range
-				// iterator erase(const_iterator); //single elem
-				// iterator erase(const_iterator, const_iterator); //range
+				// iterator insert(const iterator target, iter first, iter last) {
+				// 	size_type n = 0;
+				// 	while (first + n != last)
+				// 		n++;
+				// 	if (n + _size > _capacity)
+				// 	{
+				// 		size_type newCapacity = _newCapacity(n + _size, _capacity);
+				// 		T* substitute = _alloc.allocate(newCapacity);
+				// 		int targetIndex = _distance(this->begin(), target);
+				// 		_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+				// 		for (size_t i = 0; i < n; i++)
+				// 			_alloc.construct(substitute + i + targetIndex, *(first++));
+				// 		_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+				// 		_size += n;
+				// 		_alloc.deallocate(_buffer, _capacity);
+				// 		_capacity = newCapacity;
+				// 		_buffer = substitute;
+				// 		return (iterator(&substitute[targetIndex]));	
+				// 	}
+				// 	else
+				// 	{
+				// 		int targetIndex = _distance(this->begin(), target);
+				// 		for (size_type i = 0; i != n; i++)
+				// 		{
+				// 			_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
+				// 			_buffer[targetIndex + i] = *(first++);
+				// 		}
+				// 		_size += n;
+				// 		return (target);
+				// 	}
+				// } //fix with enable_if
+				
+				iterator erase(iterator target) {
+					int targetIndex = _distance(this->begin(), target);
+					for (size_type i = 0; i + targetIndex != _size; i++)
+						*(target + i) = *(target + i + 1);
+					_size--;
+					_alloc.destroy(this->_buffer + _size);
+					return (iterator(&this->_buffer[targetIndex]));
+				}
+				
+				// iterator erase(iterator, iterator) {
+				// 	int targetIndex = _distance(this->begin(), target);
+				// 	for (size_type i = 0; i + targetIndex != _size; i++)
+				// 		*(target + i) = *(target + i + 1);
+				// 	_size--;
+				// 	_alloc.destroy(this->_buffer + _size);
+				// 	return (iterator(&this->_buffer[targetIndex]));
+				// }
+				
 				void clear() {
 					for (size_type i = 0; i < _size; i++) {
 							this->_alloc.destroy(this->_buffer + i);
@@ -556,6 +621,35 @@ namespace ft {
 					_alloc.deallocate(_buffer, _capacity);
 					_capacity = n;
 					_buffer = substitute;
+				}
+
+				ptrdiff_t _distance(iterator first, iterator last) { 
+					difference_type n = 0;
+					while (first != last)
+					{
+						n++;
+						first++;
+					}
+					return (n);
+				}
+
+				void _copyArrayConstructNDestroy(T* src, T* dest, size_t n) {
+					for (size_t i = 0; i < n; i++)
+					{
+						_alloc.construct(&dest[i], src[i]);
+						_alloc.destroy(&src[i]);
+					}
+				}
+
+				void _copyArrayConstruct(T* src, T* dest, size_t n) {
+					for (size_t i = 0; i < n; i++)
+						_alloc.construct(&dest[i], src[i]);
+				}
+
+				size_type _newCapacity(size_type goal, size_type capacity) {
+					while (capacity < goal)
+						capacity *= REALLOC_MULT;
+					return (capacity);
 				}
 		};
 

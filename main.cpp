@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/14 17:02:32 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/15 12:01:12 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,13 +255,40 @@ std::cout << "coucou2\n";
 	
 	std::cout << " rend = " << rite2[2];
 
-	ft::vector<int> insertTest(5);
+	ft::vector<int> insertTest(1);
 	insertTest.push_back(1);
 	insertTest.push_back(2);
-	printVec(insertTest, "\ninsert vec = ");
+	insertTest.push_back(3);
+	insertTest.push_back(4);
+	insertTest.push_back(5);
+
+
+
+	std::vector<int> insertT(1);
+	insertT.push_back(1);
+	insertT.push_back(2);
+	insertT.push_back(3);
+	insertT.push_back(4);
+	insertT.push_back(5);
+
+	
+	//printVec(insertTest, "\nInsert vec = ");
+	std::cout << "\nsize : " << insertTest.size() << "capacity : " << insertTest.capacity() << std::endl;
+	std::cout << "\nsize : " << insertT.size() << "capacity : " << insertT.capacity();
+	printVec(insertTest, "\ninsert vec      = ");
+	printVec(insertT, "\ninsert vec them = ");
+	
+	insertTest.insert(insertTest.begin() + 3, 2, 7);
+	std::cout << "return v = " << *(insertTest.erase(insertTest.begin() + 4)) << std::endl;
+	printVec(insertTest, "\ninsert vec      = ");
 	std::cout << "\nsize : " << insertTest.size() << "capacity : " << insertTest.capacity();
-	insertTest.insert(insertTest.begin() + 6, 5);
-	printVec(insertTest, "\ninsert vec = ");
+
+
+	insertT.insert(insertT.begin() + 3, 2, 7);
+	std::cout << "return v = " << *(insertT.erase(insertT.begin() + 4)) << insertTest.capacity() << std::endl;
+	printVec(insertT, "\ninsert vec them = ");
+	std::cout << "\nsize : " << insertT.size() << "capacity : " << insertT.capacity();
+
 
 	delete [] all;
 	delete [] mineAll;
