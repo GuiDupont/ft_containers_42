@@ -6,16 +6,21 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/15 11:58:42 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/15 14:57:27 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef VECTOR_FT
+
+#define VECTOR_FT
+
 
 #include <iostream>
 #include <cstddef>
 #include <iterator>
 #include <exception>
-
 #include <unistd.h>
+#include "namespaceFt.hpp"
 
 #define REALLOC_MULT 2
 
@@ -237,7 +242,8 @@ namespace ft {
 				// 	// {
 				// 	// 	std::cout << e.what() << std::endl;
 				// 	// }
-				// } //range (3)
+				// } // fix with enable if
+				
 				
 				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
 				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
@@ -443,21 +449,23 @@ namespace ft {
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
-					for (size_type i = 0; i + targetIndex != _size; i++)
+					for (size_type i = 0; i + targetIndex + 1 != _size; i++)
 						*(target + i) = *(target + i + 1);
 					_size--;
 					_alloc.destroy(this->_buffer + _size);
 					return (iterator(&this->_buffer[targetIndex]));
 				}
 				
-				// iterator erase(iterator, iterator) {
-				// 	int targetIndex = _distance(this->begin(), target);
-				// 	for (size_type i = 0; i + targetIndex != _size; i++)
-				// 		*(target + i) = *(target + i + 1);
-				// 	_size--;
-				// 	_alloc.destroy(this->_buffer + _size);
-				// 	return (iterator(&this->_buffer[targetIndex]));
-				// }
+				iterator erase(iterator first, iterator last) {
+					int firstIndex = _distance(this->begin(), first);
+					std::cout << firstIndex ;
+					for (size_type i = 0; last + i != this->end(); i++)
+						*(first + i) = *(last + i);
+					for (int i = 0; i < _distance(first, last); i++)
+						_alloc.destroy(&_buffer[_size - i]);
+					_size -= _distance(first, last);
+					return (first);
+				}
 				
 				void clear() {
 					for (size_type i = 0; i < _size; i++) {
@@ -465,8 +473,17 @@ namespace ft {
 						}
 					_size = 0;
 				}
+				
 				// template<class iter>
-				// void assign(iter, iter); //range
+				// void assign(iter first, iter last) {
+				// 	size_type length = last - 
+				// 	if (length > _size)
+				// 		this->reallocate(length);
+				// 	else
+				// 		this->destroyElems();
+				// 	for (int i = 0; first + i != last; i++)
+				// 		_alloc.construct(&_buffer[i], first[i]);
+				// } // fix with enable_if
 				
 				void assign(size_type n, const T& value) {
 					T* substitute;
@@ -623,6 +640,11 @@ namespace ft {
 					_buffer = substitute;
 				}
 
+				void		destroyElems(void) {
+					for (size_type i = 0; i < _size; i++)
+						_alloc.destroy(_buffer + i);
+				}
+
 				ptrdiff_t _distance(iterator first, iterator last) { 
 					difference_type n = 0;
 					while (first != last)
@@ -692,4 +714,6 @@ namespace ft {
 
 // https://stackoverflow.com/questions/7758580/writing-your-own-stl-container
 
+// https://eli.thegreenplace.net/2014/sfinae-and-enable_if/
 
+#endif

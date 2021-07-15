@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/15 12:01:12 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/15 14:03:38 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,95 +200,7 @@ std::cout << "coucou2\n";
 			std::cout << *it << " ";
 		std::cout << "\n###########################\n";
 		
-		
 	}
-	mineAll[3].clear();
-	mineAll[3].push_back(1);
-	mineAll[3].push_back(2);
-	mineAll[3].push_back(3);
-	mineAll[3].push_back(4);
-	mineAll[3].push_back(5);
-
-	all[3].clear();
-	all[3].push_back(1);
-	all[3].push_back(2);
-	all[3].push_back(3);
-	all[3].push_back(4);
-	all[3].push_back(5);
-
-
-	for (ft::vector<int>::iterator  it = mineAll[3].begin(); it != mineAll[3].end(); it++)
-			std::cout << *it << " ";
-	ft::vector<int>::iterator it = mineAll[3].begin();
-	std::cout << *it;
-
-	it = it + 2;
-	std::cout << (*it);
-
-	it = it + (-1);
-	std::cout << (*it);
-
-	it = it + 3;
-	std::cout << (*it);
-	
-	it = it - 2;
-	std::cout << (*it);
-
-	it = it - (-1);
-	std::cout << (*it);
-	std::cout << "\ndistance :" << ft::distance<int>(mineAll[3].begin(), mineAll[3].begin());
-	std::cout << "\nsize :" << mineAll[3].size();
-	std::cout << "\nend: " << *mineAll[3].end();
-	printVec(mineAll[3], "\nmineall3: ");
-	//std::for_each(mineAll[3].begin(), mineAll[3].end(), myfunction);
-	printVec(mineAll[3], "\nmineall3: ");
-	
-	std::cout << "coucou\n";
-	printVec(all[3], "\nall3: ");
-
-	std::vector<int>::reverse_iterator rite = all[3].rbegin();
-	std::cout << "coucou\n";
-	(void)rite;
-	std::cout << " rend = " << rite[2];
-	
-	ft::vector<int>::reverse_iterator rite2 = mineAll[3].rbegin();;
-	
-	std::cout << " rend = " << rite2[2];
-
-	ft::vector<int> insertTest(1);
-	insertTest.push_back(1);
-	insertTest.push_back(2);
-	insertTest.push_back(3);
-	insertTest.push_back(4);
-	insertTest.push_back(5);
-
-
-
-	std::vector<int> insertT(1);
-	insertT.push_back(1);
-	insertT.push_back(2);
-	insertT.push_back(3);
-	insertT.push_back(4);
-	insertT.push_back(5);
-
-	
-	//printVec(insertTest, "\nInsert vec = ");
-	std::cout << "\nsize : " << insertTest.size() << "capacity : " << insertTest.capacity() << std::endl;
-	std::cout << "\nsize : " << insertT.size() << "capacity : " << insertT.capacity();
-	printVec(insertTest, "\ninsert vec      = ");
-	printVec(insertT, "\ninsert vec them = ");
-	
-	insertTest.insert(insertTest.begin() + 3, 2, 7);
-	std::cout << "return v = " << *(insertTest.erase(insertTest.begin() + 4)) << std::endl;
-	printVec(insertTest, "\ninsert vec      = ");
-	std::cout << "\nsize : " << insertTest.size() << "capacity : " << insertTest.capacity();
-
-
-	insertT.insert(insertT.begin() + 3, 2, 7);
-	std::cout << "return v = " << *(insertT.erase(insertT.begin() + 4)) << insertTest.capacity() << std::endl;
-	printVec(insertT, "\ninsert vec them = ");
-	std::cout << "\nsize : " << insertT.size() << "capacity : " << insertT.capacity();
-
 
 	delete [] all;
 	delete [] mineAll;
