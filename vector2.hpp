@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/15 14:57:27 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/15 15:50:20 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,38 +414,39 @@ namespace ft {
 					}
 				}
 				
-				// template<class iter>
-				// iterator insert(const iterator target, iter first, iter last) {
-				// 	size_type n = 0;
-				// 	while (first + n != last)
-				// 		n++;
-				// 	if (n + _size > _capacity)
-				// 	{
-				// 		size_type newCapacity = _newCapacity(n + _size, _capacity);
-				// 		T* substitute = _alloc.allocate(newCapacity);
-				// 		int targetIndex = _distance(this->begin(), target);
-				// 		_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
-				// 		for (size_t i = 0; i < n; i++)
-				// 			_alloc.construct(substitute + i + targetIndex, *(first++));
-				// 		_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
-				// 		_size += n;
-				// 		_alloc.deallocate(_buffer, _capacity);
-				// 		_capacity = newCapacity;
-				// 		_buffer = substitute;
-				// 		return (iterator(&substitute[targetIndex]));	
-				// 	}
-				// 	else
-				// 	{
-				// 		int targetIndex = _distance(this->begin(), target);
-				// 		for (size_type i = 0; i != n; i++)
-				// 		{
-				// 			_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
-				// 			_buffer[targetIndex + i] = *(first++);
-				// 		}
-				// 		_size += n;
-				// 		return (target);
-				// 	}
-				// } //fix with enable_if
+				template<class iter, typename ft::enable_if<iter::iterator_category ,
+                                 iter>::type>
+				iterator insert(const iterator target, iter first, iter last) {
+					size_type n = 0;
+					while (first + n != last)
+						n++;
+					if (n + _size > _capacity)
+					{
+						size_type newCapacity = _newCapacity(n + _size, _capacity);
+						T* substitute = _alloc.allocate(newCapacity);
+						int targetIndex = _distance(this->begin(), target);
+						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+						for (size_t i = 0; i < n; i++)
+							_alloc.construct(substitute + i + targetIndex, *(first++));
+						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+						_size += n;
+						_alloc.deallocate(_buffer, _capacity);
+						_capacity = newCapacity;
+						_buffer = substitute;
+						return (iterator(&substitute[targetIndex]));	
+					}
+					else
+					{
+						int targetIndex = _distance(this->begin(), target);
+						for (size_type i = 0; i != n; i++)
+						{
+							_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
+							_buffer[targetIndex + i] = *(first++);
+						}
+						_size += n;
+						return (target);
+					}
+				} //fix with enable_if
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
