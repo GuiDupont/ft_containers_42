@@ -29,24 +29,33 @@ namespace ft {
 	template <typename T>
 		class vector {
 			public:
-				typedef std::allocator<T> A;
+				typedef std::allocator<T> allocator_type; //Here we defined the allocator we will use;
+				typedef allocator_type A;
 				typedef T valueType;
 				typedef T* pointer;
 				typedef const T* const_pointer;
 				typedef T& reference;
 				typedef const T& const_reference;
-				typedef ptrdiff_t difference_type;
+				typedef typename A::difference_type difference_type;
 				//typedef typename A::difference_type difference_type;
-				typedef A allocator_type;
+				
 				typedef typename A::size_type size_type;
-				// typedef vector<T>::iterator iterator;
+				//typedef vector<T>::iterator iterator;
 				// typedef const vector<T>::iterator const_iterator;				
 				
 				class iterator { 
 					public:
-						
-						typedef std::random_access_iterator_tag iterator_category;
-						
+
+
+						typedef ft::iterator_traits<iterator>		__traits_type;
+						// typedef _Iterator					iterator_type;
+						typedef typename __traits_type::iterator_category iterator_category;
+						// typedef typename __traits_type::value_type  	value_type;
+						// typedef typename __traits_type::difference_type 	difference_type;
+						// typedef typename __traits_type::reference 	reference;
+						// typedef typename __traits_type::pointer   	pointer;
+						//typedef std::random_access_iterator_tag iterator_category;
+
 						iterator(T* ptr) : _ptr(ptr) {}
 						iterator(vector const & lhs) : _ptr(lhs._buffer) {}
 						iterator(void) : _ptr(NULL) {}
@@ -131,7 +140,7 @@ namespace ft {
 				
 					private:
 						pointer _ptr;
-				};
+				}; // class iterator
 
 				class reverse_iterator {
 					public:
@@ -224,7 +233,7 @@ namespace ft {
 				
 					protected:
 						pointer _ptr;
-				};
+				}; // class reverse iterator
 
 				
 				// vector (class it, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
@@ -674,7 +683,7 @@ namespace ft {
 						capacity *= REALLOC_MULT;
 					return (capacity);
 				}
-		};
+		}; // class vector
 
 	template <class T>
 	void swap(vector<T>& a, vector<T>& b) {
@@ -709,7 +718,7 @@ namespace ft {
 	void advance(typename ft::vector<T>::iterator &it, distance n) 
 	{ it += n; }
 		
-}
+} // namespace ft
 
 // https://www.youtube.com/watch?v=F9eDv-YIOQ0
 
