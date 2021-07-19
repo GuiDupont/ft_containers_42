@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector2.hpp                                        :+:      :+:    :+:   */
+/*   ft_vector.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/19 12:53:17 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/19 15:39:54 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 #include <iterator>
 #include <exception>
 #include <unistd.h>
-#include "namespaceFt.hpp"
-#include "enable_if.hpp"
+#include "ft_enable_if.hpp"
 
 
 #define REALLOC_MULT 2
@@ -39,6 +38,7 @@ namespace ft {
 				typedef T& reference;
 				typedef const T& const_reference;
 				typedef typename A::difference_type difference_type;
+				typedef typename iterator::iterator_category iterator_category;
 				//typedef typename A::difference_type difference_type;
 				
 				typedef typename A::size_type size_type;
@@ -47,7 +47,6 @@ namespace ft {
 				
 				class iterator { 
 					public:
-
 
 						//typedef ft::iterator_traits<iterator>		__traits_type;
 						// typedef _Iterator					iterator_type;
@@ -58,6 +57,7 @@ namespace ft {
 						// typedef typename __traits_type::pointer   	pointer;
 						//typedef std::random_access_iterator_tag iterator_category;
 
+						
 						iterator(T* ptr) : _ptr(ptr) {}
 						iterator(vector const & lhs) : _ptr(lhs._buffer) {}
 						iterator(void) : _ptr(NULL) {}

@@ -198,7 +198,8 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   /**
    *  This function is not a part of the C++ standard but is syntactic
    *  sugar for internal library use only.
-  */
+  **/
+
   template<typename _Iter>
     inline _GLIBCXX_CONSTEXPR
     typename iterator_traits<_Iter>::iterator_category
