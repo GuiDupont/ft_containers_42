@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/15 15:50:20 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/19 12:53:17 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <exception>
 #include <unistd.h>
 #include "namespaceFt.hpp"
+#include "enable_if.hpp"
+
 
 #define REALLOC_MULT 2
 
@@ -47,9 +49,9 @@ namespace ft {
 					public:
 
 
-						typedef ft::iterator_traits<iterator>		__traits_type;
+						//typedef ft::iterator_traits<iterator>		__traits_type;
 						// typedef _Iterator					iterator_type;
-						typedef typename __traits_type::iterator_category iterator_category;
+						typedef typename std::random_access_iterator_tag iterator_category;
 						// typedef typename __traits_type::value_type  	value_type;
 						// typedef typename __traits_type::difference_type 	difference_type;
 						// typedef typename __traits_type::reference 	reference;
@@ -423,9 +425,8 @@ namespace ft {
 					}
 				}
 				
-				template<class iter, typename ft::enable_if<iter::iterator_category ,
-                                 iter>::type>
-				iterator insert(const iterator target, iter first, iter last) {
+				template<class inputIter, typename ft::enable_if<inputIter::iterator_category, inputIter>::type>
+				iterator insert(const iterator target, inputIter first, inputIter last) {
 					size_type n = 0;
 					while (first + n != last)
 						n++;
@@ -718,7 +719,7 @@ namespace ft {
 	void advance(typename ft::vector<T>::iterator &it, distance n) 
 	{ it += n; }
 		
-} // namespace ft
+} /* NAMESPACE FT */ 
 
 // https://www.youtube.com/watch?v=F9eDv-YIOQ0
 

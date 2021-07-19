@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/15 15:32:45 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/19 10:22:13 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,8 +208,14 @@ std::cout << "coucou2\n";
 	a.push_back(2);
 	a.push_back(3);
 	a.push_back(4);
+	std::vector<int> c(5);
+	c.push_back(0);
+	c.push_back(1);
+	c.push_back(2);
+	c.push_back(3);
+	c.push_back(4);
 	ft::vector<int> b(5);
-	b.insert(b.begin(), a.begin(), a.end());
+	b.insert(b.begin(), c.begin(), c.end());
 	b.insert(b.begin() + 2, 3, 3);
 	printVec(b, "\nLe vecteur b: ");
 	delete [] all;

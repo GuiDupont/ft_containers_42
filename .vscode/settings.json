@@ -65,6 +65,22 @@
 		"clocale": "cpp",
 		"memory_resource": "cpp",
 		"fstream": "cpp",
-		"__memory": "cpp"
+		"__memory": "cpp",
+		"__tree": "cpp",
+		"codecvt": "cpp",
+		"condition_variable": "cpp",
+		"iomanip": "cpp",
+		"list": "cpp",
+		"map": "cpp",
+		"numeric": "cpp",
+		"queue": "cpp",
+		"random": "cpp",
+		"set": "cpp",
+		"shared_mutex": "cpp",
+		"stack": "cpp",
+		"thread": "cpp",
+		"netfwd": "cpp",
+		"cfenv": "cpp",
+		"cinttypes": "cpp"
 	}
 }
