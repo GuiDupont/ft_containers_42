@@ -1,4 +1,4 @@
-// Functions used by iterators -*- C++ -*-
+s// Functions used by iterators -*- C++ -*-
 
 // Copyright (C) 2001-2019 Free Software Foundation, Inc.
 //

@@ -6,11 +6,11 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/19 10:22:13 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/20 14:11:04 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vector2.hpp"
+#include "ft_vector.hpp"
 #include <vector>
 #include <algorithm>
 
@@ -215,8 +215,8 @@ std::cout << "coucou2\n";
 	c.push_back(3);
 	c.push_back(4);
 	ft::vector<int> b(5);
-	b.insert(b.begin(), c.begin(), c.end());
-	b.insert(b.begin() + 2, 3, 3);
+	//b.insert(b.begin(), c.begin(), c.end());
+	//b.insert(b.begin() + 2, 3, 3);
 	printVec(b, "\nLe vecteur b: ");
 	delete [] all;
 	delete [] mineAll;

@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/19 15:39:54 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/20 14:14:48 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,45 +27,40 @@
 
 namespace ft {
 	
-	template <typename T>
+	template <typename T, class allocator_type = std::allocator<T> >
 		class vector {
 			public:
-				typedef std::allocator<T> allocator_type; //Here we defined the allocator we will use;
-				typedef allocator_type A;
-				typedef T valueType;
-				typedef T* pointer;
-				typedef const T* const_pointer;
-				typedef T& reference;
-				typedef const T& const_reference;
+				typedef allocator_type 				A;
+				typedef T 							value_type;
+				typedef T* 							pointer;
+				typedef const T* 					const_pointer;
+				typedef T& 							reference;
+				typedef const T& 					const_reference;
 				typedef typename A::difference_type difference_type;
-				typedef typename iterator::iterator_category iterator_category;
-				//typedef typename A::difference_type difference_type;
+				typedef typename A::size_type 		size_type;
 				
-				typedef typename A::size_type size_type;
-				//typedef vector<T>::iterator iterator;
-				// typedef const vector<T>::iterator const_iterator;				
 				
-				class iterator { 
+				class iterator : public std::iterator<std::random_access_iterator_tag, T> { 
 					public:
 
 						//typedef ft::iterator_traits<iterator>		__traits_type;
 						// typedef _Iterator					iterator_type;
-						typedef typename std::random_access_iterator_tag iterator_category;
+						//typedef typename std::random_access_iterator_tag iterator_category;
 						// typedef typename __traits_type::value_type  	value_type;
 						// typedef typename __traits_type::difference_type 	difference_type;
 						// typedef typename __traits_type::reference 	reference;
 						// typedef typename __traits_type::pointer   	pointer;
 						//typedef std::random_access_iterator_tag iterator_category;
 
-						
+				
+
+						iterator() : _ptr(NULL) {}
 						iterator(T* ptr) : _ptr(ptr) {}
-						iterator(vector const & lhs) : _ptr(lhs._buffer) {}
-						iterator(void) : _ptr(NULL) {}
-						iterator& operator++() 
-						{
-							_ptr++;
-							return (*this);
-						}
+						iterator(vector const & rhs) : _ptr(rhs._buffer) {}
+						iterator(iterator const & rhs) : _ptr(rhs._ptr) { }
+						
+						
+						iterator& operator++() { _ptr++; return (*this); }
 
 						iterator& operator=(const_reference & lhs) { this->_ptr = lhs; return (*this); }
 
@@ -131,23 +126,35 @@ namespace ft {
 						reference operator[](int index) { return (*(_ptr + index)); }
 						
 						pointer operator->() { return (this); }
-						pointer operator->() const { return (this); }
+						const_pointer operator->() const { return (this); }
 
 						reference operator*() { return (*_ptr); }
-						reference operator*() const { return (*_ptr); }
+						const_reference operator*() const { return (*_ptr); }
 
-						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
+						bool operator==( const iterator &rhs) const { return (this->_ptr == rhs._ptr); }
 						
-						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
+						bool operator!=(const iterator &rhs) const { return !(*this == rhs); }
 				
 					private:
 						pointer _ptr;
 				}; // class iterator
 
-				class reverse_iterator {
+
+				
+
+				// bool operator<(const iterator &lhs, const iterator &rhs) { return ((*lsh._ptr) < (*rhs._ptr)); }
+				
+				// bool operator<=(const iterator &lhs, const iterator &rhs) { return !(lhs > )}
+
+				// bool operator>(const iterator &lhs, const iterator &rhs) { return !(lhs < rhs); }
+
+				// bool operator>=(const iterator &lhs, const iterator &rhs) { return }
+				
+				
+				class reverse_iterator : public iterator {
 					public:
 
-					//typedef const reverse_iterator const_reverse_iterator;
+						typedef const reverse_iterator const_reverse_iterator;
 					
 						reverse_iterator(T* ptr) : _ptr(ptr) {}
 						reverse_iterator(vector const & lhs) : _ptr(lhs._buffer) {}
@@ -237,6 +244,8 @@ namespace ft {
 						pointer _ptr;
 				}; // class reverse iterator
 
+				typedef const typename vector<T>::iterator const_iterator;				
+
 				
 				// vector (class it, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
 				// {
@@ -259,7 +268,7 @@ namespace ft {
 				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
 				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
 				
-				explicit vector (size_type n, const valueType& val = valueType(), 
+				explicit vector (size_type n, const value_type& val = value_type(), 
 									const allocator_type& alloc = allocator_type()) 
 									: _alloc(alloc), _size(n), _capacity(n) {
 					this->_buffer = this->_alloc.allocate(_capacity);
@@ -425,38 +434,38 @@ namespace ft {
 					}
 				}
 				
-				template<class inputIter, typename ft::enable_if<inputIter::iterator_category, inputIter>::type>
-				iterator insert(const iterator target, inputIter first, inputIter last) {
-					size_type n = 0;
-					while (first + n != last)
-						n++;
-					if (n + _size > _capacity)
-					{
-						size_type newCapacity = _newCapacity(n + _size, _capacity);
-						T* substitute = _alloc.allocate(newCapacity);
-						int targetIndex = _distance(this->begin(), target);
-						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
-						for (size_t i = 0; i < n; i++)
-							_alloc.construct(substitute + i + targetIndex, *(first++));
-						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
-						_size += n;
-						_alloc.deallocate(_buffer, _capacity);
-						_capacity = newCapacity;
-						_buffer = substitute;
-						return (iterator(&substitute[targetIndex]));	
-					}
-					else
-					{
-						int targetIndex = _distance(this->begin(), target);
-						for (size_type i = 0; i != n; i++)
-						{
-							_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
-							_buffer[targetIndex + i] = *(first++);
-						}
-						_size += n;
-						return (target);
-					}
-				} //fix with enable_if
+				// template<class inputIter, typename ft::enable_if<inputIter::iterator_category, inputIter>::type>
+				// iterator insert(const iterator target, inputIter first, inputIter last) {
+				// 	size_type n = 0;
+				// 	while (first + n != last)
+				// 		n++;
+				// 	if (n + _size > _capacity)
+				// 	{
+				// 		size_type newCapacity = _newCapacity(n + _size, _capacity);
+				// 		T* substitute = _alloc.allocate(newCapacity);
+				// 		int targetIndex = _distance(this->begin(), target);
+				// 		_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+				// 		for (size_t i = 0; i < n; i++)
+				// 			_alloc.construct(substitute + i + targetIndex, *(first++));
+				// 		_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+				// 		_size += n;
+				// 		_alloc.deallocate(_buffer, _capacity);
+				// 		_capacity = newCapacity;
+				// 		_buffer = substitute;
+				// 		return (iterator(&substitute[targetIndex]));	
+				// 	}
+				// 	else
+				// 	{
+				// 		int targetIndex = _distance(this->begin(), target);
+				// 		for (size_type i = 0; i != n; i++)
+				// 		{
+				// 			_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
+				// 			_buffer[targetIndex + i] = *(first++);
+				// 		}
+				// 		_size += n;
+				// 		return (target);
+				// 	}
+				// } //fix with enable_if
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
@@ -549,7 +558,7 @@ namespace ft {
 				
 				size_type size() const { return (_size); }
 				
-				void resize (size_type n, valueType val = valueType()) {
+				void resize (size_type n, value_type val = value_type()) {
 					if (n < _size)
 						for (size_type i = n; i < _size; i++)
 							_alloc.destroy(_buffer + i);
