@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/20 14:14:48 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/21 15:36:32 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <exception>
 #include <unistd.h>
 #include "ft_enable_if.hpp"
-
+#include "ft_reverse_iterator.hpp"
 
 #define REALLOC_MULT 2
 
@@ -139,114 +139,8 @@ namespace ft {
 						pointer _ptr;
 				}; // class iterator
 
-
-				
-
-				// bool operator<(const iterator &lhs, const iterator &rhs) { return ((*lsh._ptr) < (*rhs._ptr)); }
-				
-				// bool operator<=(const iterator &lhs, const iterator &rhs) { return !(lhs > )}
-
-				// bool operator>(const iterator &lhs, const iterator &rhs) { return !(lhs < rhs); }
-
-				// bool operator>=(const iterator &lhs, const iterator &rhs) { return }
-				
-				
-				class reverse_iterator : public iterator {
-					public:
-
-						typedef const reverse_iterator const_reverse_iterator;
-					
-						reverse_iterator(T* ptr) : _ptr(ptr) {}
-						reverse_iterator(vector const & lhs) : _ptr(lhs._buffer) {}
-						reverse_iterator(void) : _ptr(NULL) {}
-						reverse_iterator& operator++() 
-						{
-							_ptr--;
-							return (*this);
-						}
-
-						reverse_iterator& operator=(reference lhs) 
-						{ this->_ptr = lhs->_ptrl; return (*this); }
-
-						reverse_iterator& operator=(iterator const & lhs) 
-						{ this->_ptr = lhs._ptr; return (*this); }
-						
-						reverse_iterator& operator+=(int n)
-						{
-							this->_ptr -= n;
-							return (*this);
-						}
-
-						reverse_iterator& operator-=(int n)
-						{
-							this->_ptr += n;
-							return (*this);
-						}
-
-						reverse_iterator operator++(int) 
-						{
-							reverse_iterator it = *this;
-							--(*this);
-							return (it);
-						}
-
-						reverse_iterator operator+(int n) 
-						{
-							pointer it = _ptr;
-							if (n < 0)
-								for (int i = 0; i > n; i--)
-									it++;
-							else
-								for (int i = 0; i < n; i++)
-									it--;
-							return (reverse_iterator(it));	
-						}
-
-						reverse_iterator operator-(int n) 
-						{
-							pointer it = _ptr;
-							if (n < 0)
-								for (int i = 0; i > n; i--)
-									it--;
-							else
-								for (int i = 0; i < n; i++)
-									it++;
-							return (reverse_iterator(it));
-						}
-
-						reverse_iterator& operator--() 
-						{
-							_ptr++;
-							return (*this);
-						}
-						
-						reverse_iterator operator--(int) 
-						{
-							reverse_iterator it = *this;
-							++(*this);
-							return (it);
-						}
-
-						reference operator[](int index) { return (*(_ptr - index)); }
-						
-						pointer operator->() { return (this); }
-						pointer operator->() const { return (this); }
-
-						reference operator*() { return (*_ptr); }
-						reference operator*() const { return (*_ptr); }
-
-
-						bool operator==(const iterator &rhs) const { return (_ptr == rhs._ptr) ;}
-						
-						bool operator!=(const iterator &rhs) const { return (_ptr != rhs._ptr) ;}
-				
-					protected:
-						pointer _ptr;
-				}; // class reverse iterator
-
 				typedef const typename vector<T>::iterator const_iterator;				
 
-				
 				// vector (class it, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
 				// {
 				// 	std::cout << "gdgdfsgdsgsd\n";
@@ -320,10 +214,10 @@ namespace ft {
 				
 				const iterator begin() const {  return (iterator(_buffer)); }
 				const iterator end() const { return (iterator(&_buffer[_size])); }
-				reverse_iterator rbegin() { return (reverse_iterator(&_buffer[_size - 1]));}
-				const reverse_iterator rbegin() const { return (reverse_iterator(&_buffer[_size - 1])); }; 
-				reverse_iterator rend() { return (reverse_iterator(_buffer - 1)); }
-				const reverse_iterator rend() const { return (reverse_iterator(_buffer - 1)); }
+				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size - 1]));}
+				const reverse_iterator<iterator> rbegin() const { return (reverse_iterator<iterator>(&_buffer[_size - 1])); }; 
+				reverse_iterator<iterator> rend() { return (reverse_iterator<iterator>(_buffer - 1)); }
+				const reverse_iterator<iterator> rend() const { return (reverse_iterator<iterator>(_buffer - 1)); }
 
 				reference front() { return (*_buffer); }
 				const_reference front() const { return (*_buffer); }
@@ -433,39 +327,39 @@ namespace ft {
 						return (target);
 					}
 				}
-				
-				// template<class inputIter, typename ft::enable_if<inputIter::iterator_category, inputIter>::type>
-				// iterator insert(const iterator target, inputIter first, inputIter last) {
-				// 	size_type n = 0;
-				// 	while (first + n != last)
-				// 		n++;
-				// 	if (n + _size > _capacity)
-				// 	{
-				// 		size_type newCapacity = _newCapacity(n + _size, _capacity);
-				// 		T* substitute = _alloc.allocate(newCapacity);
-				// 		int targetIndex = _distance(this->begin(), target);
-				// 		_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
-				// 		for (size_t i = 0; i < n; i++)
-				// 			_alloc.construct(substitute + i + targetIndex, *(first++));
-				// 		_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
-				// 		_size += n;
-				// 		_alloc.deallocate(_buffer, _capacity);
-				// 		_capacity = newCapacity;
-				// 		_buffer = substitute;
-				// 		return (iterator(&substitute[targetIndex]));	
-				// 	}
-				// 	else
-				// 	{
-				// 		int targetIndex = _distance(this->begin(), target);
-				// 		for (size_type i = 0; i != n; i++)
-				// 		{
-				// 			_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
-				// 			_buffer[targetIndex + i] = *(first++);
-				// 		}
-				// 		_size += n;
-				// 		return (target);
-				// 	}
-				// } //fix with enable_if
+
+				template<class inputIter>
+				iterator insert(const iterator target, typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type first, inputIter last) {
+					size_type n = 0;
+					while (first + n != last)
+						n++;
+					if (n + _size > _capacity)
+					{
+						size_type newCapacity = _newCapacity(n + _size, _capacity);
+						T* substitute = _alloc.allocate(newCapacity);
+						int targetIndex = _distance(this->begin(), target);
+						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+						for (size_t i = 0; i < n; i++)
+							_alloc.construct(substitute + i + targetIndex, *(first++));
+						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+						_size += n;
+						_alloc.deallocate(_buffer, _capacity);
+						_capacity = newCapacity;
+						_buffer = substitute;
+						return (iterator(&substitute[targetIndex]));	
+					}
+					else
+					{
+						int targetIndex = _distance(this->begin(), target);
+						for (size_type i = 0; i != n; i++)
+						{
+							_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
+							_buffer[targetIndex + i] = *(first++);
+						}
+						_size += n;
+						return (target);
+					}
+				} //fix with enable_if
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
