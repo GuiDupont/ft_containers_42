@@ -6,9 +6,12 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/21 11:04:14 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/22 11:19:57 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef FT_REVERSE_ITERATOR
+#define FT_REVERSE_ITERATOR
 
 #include "ft_iterators_traits.hpp"
 
@@ -112,7 +115,6 @@ namespace ft {
 	bool operator>=( const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs ) {
 		return lhs.base() <= rhs.base();
 	}
-
-	
-	
 }
+
+#endif

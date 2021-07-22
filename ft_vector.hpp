@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/21 15:36:32 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/22 12:13:10 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ namespace ft {
 				class iterator : public std::iterator<std::random_access_iterator_tag, T> { 
 					public:
 
-						//typedef ft::iterator_traits<iterator>		__traits_type;
+						
 						// typedef _Iterator					iterator_type;
 						//typedef typename std::random_access_iterator_tag iterator_category;
 						// typedef typename __traits_type::value_type  	value_type;
@@ -86,7 +86,7 @@ namespace ft {
 							return (it);
 						}
 
-						iterator operator+(int n) 
+						iterator operator+(int n) const
 						{
 							pointer it = _ptr;
 							if (n < 0)
@@ -98,7 +98,7 @@ namespace ft {
 							return (iterator(it));
 						}
 
-						iterator operator-(int n) 
+						iterator operator-(int n) const
 						{
 							pointer it = _ptr;
 							if (n < 0)
@@ -139,25 +139,19 @@ namespace ft {
 						pointer _ptr;
 				}; // class iterator
 
-				typedef const typename vector<T>::iterator const_iterator;				
+				typedef const typename vector<T>::iterator		const_iterator;
+				typedef ft::iterator_traits<iterator>			iterator_traits;
 
-				// vector (class it, typename vector<T>::iterator last,  const A& alloc = allocator_type()) : _alloc(alloc)
-				// {
-				// 	std::cout << "gdgdfsgdsgsd\n";
-				// 	std::cout << *first << " " << *last << "\n";
-				// 	//distance(first, last);
-				// 	// this->_buffer = this->_alloc.allocate(distance(last, first));
-				// 	// 	for (inputiterator it = first; it != last; it++) {
-				// 	// 		this->_alloc.construct(this->_buffer + (it - first), *inputiterator );
-				// 	// 		_size++;
-				// 	// 	}
-				// 	// }
-				// 	// catch (std::exception & e)
-				// 	// {
-				// 	// 	std::cout << e.what() << std::endl;
-				// 	// }
-				// } // fix with enable if
-				
+
+				template <class inputIter>
+				vector (inputIter first , typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type last,  const A& alloc = allocator_type())
+						: _alloc(alloc), _size(std::distance(first, last)) {
+					this->_buffer = this->_alloc.allocate(_size);
+					for (inputIter it = first; it != last; it++) {
+						this->_alloc.construct(this->_buffer + (it - first), *it );
+					}
+					_capacity = _size;
+				}
 				
 				explicit vector (const A& alloc = allocator_type()) : _alloc(alloc), _size(0), 
 				_capacity(0) { this->_buffer = this->_alloc.allocate(_capacity); } 
@@ -214,15 +208,16 @@ namespace ft {
 				
 				const iterator begin() const {  return (iterator(_buffer)); }
 				const iterator end() const { return (iterator(&_buffer[_size])); }
-				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size - 1]));}
-				const reverse_iterator<iterator> rbegin() const { return (reverse_iterator<iterator>(&_buffer[_size - 1])); }; 
-				reverse_iterator<iterator> rend() { return (reverse_iterator<iterator>(_buffer - 1)); }
-				const reverse_iterator<iterator> rend() const { return (reverse_iterator<iterator>(_buffer - 1)); }
+				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size]));}
+				const reverse_iterator<iterator> rbegin() const { return (reverse_iterator<iterator>(&_buffer[_size])); }; 
+				reverse_iterator<iterator> rend() { return (reverse_iterator<iterator>(_buffer)); }
+				const reverse_iterator<iterator> rend() const { return (reverse_iterator<iterator>(_buffer)); }
 
 				reference front() { return (*_buffer); }
 				const_reference front() const { return (*_buffer); }
 				reference back() { return ( *(_buffer + _size - 1)) ; } 
 				const_reference back() const { return ( *(_buffer + _size - 1)) ; }
+				
 				void push_back(const T& value) {
 					
 					if (!_capacity)
@@ -234,8 +229,7 @@ namespace ft {
 					if (_capacity == _size)
 						reallocateNCopy(_capacity * REALLOC_MULT);
 					_alloc.construct(this->_buffer + _size, value);
-					_size++;
-						
+					_size++;		
 				}
 				
 				void pop_back() {
@@ -252,15 +246,13 @@ namespace ft {
 						throw std::out_of_range("Out of range exeption");
 					else
 						return (*(this->_buffer + n)) ;
-					
 					};
 				const_reference at(size_type n) const { return (at(n)); }
 
-				iterator insert(const iterator place, const T& val) {
+				iterator insert(iterator place, const T& val) {
 					if (_size == _capacity)
 					{
 						T* substitute;
-						
 						substitute = _alloc.allocate(_capacity * REALLOC_MULT);
 						int n = _distance(this->begin(), place);
 						_copyArrayConstructNDestroy(this->_buffer, substitute, n);
@@ -299,7 +291,7 @@ namespace ft {
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
 						for (size_t i = 0; i < n; i++)
 							_alloc.construct(substitute + i + targetIndex, value);
-						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
+						_copyArrayConstructNDestroy(this->_buffer + targetIndex , &substitute[targetIndex + n], _size - targetIndex);
 						_size += n;
 						_alloc.deallocate(_buffer, _capacity);
 						_capacity = newCapacity;
@@ -315,8 +307,8 @@ namespace ft {
 						for (size_type i = 0; i < n; i++)
 							_buffer[targetIndex + i] = value;
 						int startCopy = targetIndex + n;
-						for (size_type i = 0; i < n; i++)
-							_alloc.construct(&_buffer[_size + i], 0);
+						// for (size_type i = 0; i < n; i++)
+						// 	_alloc.construct(&_buffer[_size + i], 0);
 						for (size_type i = 0; i < _size - n - 1 ; i++)
 						{
 							_buffer[startCopy + i] = save[i];
@@ -326,7 +318,7 @@ namespace ft {
 						_size += n;
 						return (target);
 					}
-				}
+				} //to fix
 
 				template<class inputIter>
 				iterator insert(const iterator target, typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type first, inputIter last) {
@@ -388,16 +380,16 @@ namespace ft {
 					_size = 0;
 				}
 				
-				// template<class iter>
-				// void assign(iter first, iter last) {
-				// 	size_type length = last - 
-				// 	if (length > _size)
-				// 		this->reallocate(length);
-				// 	else
-				// 		this->destroyElems();
-				// 	for (int i = 0; first + i != last; i++)
-				// 		_alloc.construct(&_buffer[i], first[i]);
-				// } // fix with enable_if
+				template<class inputIter>
+				void assign(typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type first, inputIter last) {
+					size_type length = distance(first, last);
+					if (length > _size)
+						this->reallocate(length);
+					else
+						this->destroyElems();
+					for (int i = 0; first + i != last; i++)
+						_alloc.construct(&_buffer[i], first[i]);
+				} // fix with enable_if
 				
 				void assign(size_type n, const T& value) {
 					T* substitute;
@@ -606,17 +598,17 @@ namespace ft {
 		return (n);
 	}
 
-	// template <class T>
-	// typename ft::vector<T>::difference_type distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
-	// { 
-	// 	typename ft::vector<T>::difference_type n = 0;
-	// 	while (first != last)
-	// 	{
-	// 		n++;
-	// 		first++;
-	// 	}
-	// 	return (n);
-	// }
+	template <class T>
+	typename ft::vector<T>::difference_type distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
+	{ 
+		typename ft::vector<T>::difference_type n = 0;
+		while (first != last)
+		{
+			n++;
+			first++;
+		}
+		return (n);
+	}
 
 	template <class T, class distance>
 	void advance(typename ft::vector<T>::iterator &it, distance n) 
