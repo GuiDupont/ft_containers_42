@@ -6,14 +6,16 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 13:34:39 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 14:23:39 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vector.hpp"
+#include "ft_stack.hpp"
 #include <vector>
 #include <algorithm>
 #include "ft_reverse_iterator.hpp"
+#include "ft_map.hpp"
 
 #define NBVECTOR 5
 

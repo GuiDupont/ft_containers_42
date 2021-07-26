@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 13:32:49 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 15:16:22 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,6 @@ namespace ft {
 				
 				iterator insert(iterator target, size_type n, const T& value)
 				{
-					std::cout << "ici\n";
 					if (n + _size > _capacity)
 					{
 						size_type newCapacity = _newCapacity(n + _size, _capacity);
