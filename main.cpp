@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/22 12:18:07 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 10:27:11 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,12 +150,12 @@ int main(void)
 	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
 	printVec(ftVec2, "ftVec2  aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
 	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
-	stdVec2.insert(stdVec4.begin() + 12, ftVec4.begin() + 8, ftVec4.begin() + 18);
+	stdVec2.insert(stdVec4.begin() + 12, ftVec4.begin() + 18, ftVec4.begin() + 8); // issue here ask for help
 	ftVec2.insert(ftVec4.begin() + 12, stdVec4.begin() + 8, stdVec4.begin() + 18);
-	// printVec(stdVec2, "StdVec2 aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
-	// std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
-	// printVec(ftVec2, "ftVec2  aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
-	// std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+	printVec(stdVec2, "StdVec2 aprés un insert de la valeur , 20 fois à partir de l'index 18: ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2  aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
 	
 
 	

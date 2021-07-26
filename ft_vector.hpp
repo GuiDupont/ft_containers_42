@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/22 12:13:10 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 10:18:57 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include "ft_enable_if.hpp"
 #include "ft_reverse_iterator.hpp"
+#include "ft_type_traits.hpp"
 
 #define REALLOC_MULT 2
 
@@ -110,6 +111,11 @@ namespace ft {
 							return (iterator(it));
 						}
 
+						difference_type operator-(const iterator b) const
+						{
+							return _ptr - b._ptr;
+						}
+
 						iterator& operator--() 
 						{
 							_ptr--;
@@ -137,6 +143,16 @@ namespace ft {
 				
 					private:
 						pointer _ptr;
+
+						// ptrdiff_t _distance(iterator first, iterator last) const { 
+						// 	difference_type n = 0;
+						// 	while (first != last)
+						// 	{
+						// 		n++;
+						// 		first++;
+						// 	}
+						// 	return (n);
+							// }
 				}; // class iterator
 
 				typedef const typename vector<T>::iterator		const_iterator;
@@ -144,7 +160,7 @@ namespace ft {
 
 
 				template <class inputIter>
-				vector (inputIter first , typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type last,  const A& alloc = allocator_type())
+				vector (typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last,  const A& alloc = allocator_type())
 						: _alloc(alloc), _size(std::distance(first, last)) {
 					this->_buffer = this->_alloc.allocate(_size);
 					for (inputIter it = first; it != last; it++) {
@@ -283,6 +299,7 @@ namespace ft {
 				
 				iterator insert(iterator target, size_type n, const T& value)
 				{
+					std::cout << "ici\n";
 					if (n + _size > _capacity)
 					{
 						size_type newCapacity = _newCapacity(n + _size, _capacity);
@@ -321,7 +338,7 @@ namespace ft {
 				} //to fix
 
 				template<class inputIter>
-				iterator insert(const iterator target, typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type first, inputIter last) {
+				iterator insert(const iterator target, typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type n = 0;
 					while (first + n != last)
 						n++;
@@ -342,7 +359,7 @@ namespace ft {
 					}
 					else
 					{
-						int targetIndex = _distance(this->begin(), target);
+						difference_type targetIndex = target - this->begin();
 						for (size_type i = 0; i != n; i++)
 						{
 							_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
@@ -381,7 +398,7 @@ namespace ft {
 				}
 				
 				template<class inputIter>
-				void assign(typename ft::enable_if< std::is_convertible< typename std::iterator_traits< inputIter >::iterator_category, std::input_iterator_tag >::value, inputIter>::type first, inputIter last) {
+				void assign(typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type length = distance(first, last);
 					if (length > _size)
 						this->reallocate(length);
