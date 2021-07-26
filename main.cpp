@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 10:27:11 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 13:34:39 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,207 +138,98 @@ int main(void)
 	{
 		std::cout << "My exception message: " << e.what() << std::endl;
 	}
+	
 	stdVec2.insert(stdVec2.begin() + 5, 244);
 	ftVec2.insert(ftVec2.begin() + 5, 244);
 	printVec(stdVec2, "StdVec2 aprés un insert de la valeur 244 à l'index 5: ");
 	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
 	printVec(ftVec2, "ftVec2  aprés un insert de la valeur 244 à l'index 5: ");
 	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+	
 	stdVec2.insert(stdVec2.begin() + 18, 20 ,666);
 	ftVec2.insert(ftVec2.begin() + 18, 20, 666);
 	printVec(stdVec2, "StdVec2 aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
 	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
 	printVec(ftVec2, "ftVec2  aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
 	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
-	stdVec2.insert(stdVec4.begin() + 12, ftVec4.begin() + 18, ftVec4.begin() + 8); // issue here ask for help
-	ftVec2.insert(ftVec4.begin() + 12, stdVec4.begin() + 8, stdVec4.begin() + 18);
-	printVec(stdVec2, "StdVec2 aprés un insert de la valeur , 20 fois à partir de l'index 18: ");
+	
+	stdVec2.insert(stdVec2.begin() + 4, ftVec4.begin() + 8, ftVec4.begin() + 18);
+	ftVec2.insert(ftVec2.begin() + 4, stdVec4.begin() + 8, stdVec4.begin() + 18);
+	printVec(stdVec2, "StdVec2 aprés un insert des valeurs allant de 8 à 18, à partir de l'index 4: ");
 	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
-	printVec(ftVec2, "ftVec2  aprés un insert de la valeur 666, 20 fois à partir de l'index 18: ");
+	printVec(ftVec2, "ftVec2 aprés un insert des valeurs allant de 8 à 18, à partir de l'index 4:  ");
 	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
 	
+	stdVec2.erase(stdVec2.begin() + 12);
+	ftVec2.erase(ftVec2.begin() + 12);
+	printVec(stdVec2, "StdVec2 aprés un erase à l'index 23 (valeur 17): ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés un erase à l'index 23 (valeur 17):  ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+	
+	stdVec2.erase(stdVec2.begin() + 12, stdVec2.begin() + 22);
+	ftVec2.erase(ftVec2.begin() + 12, ftVec2.begin() + 22);
+	printVec(stdVec2, "StdVec2 aprés un erase de l'index 12 à 22: ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés un erase de l'index 12 à 22:    ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+	
+	stdVec2.clear();
+	ftVec2.clear();
+	printVec(stdVec2, "StdVec2 aprés un clear: ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés un clear:    ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
 
 	
+	stdVec2.assign(stdVec4.begin(), stdVec4.end());
+	ftVec2.assign(ftVec4.begin(), ftVec4.end());
+	printVec(stdVec2, "StdVec2 aprés un assign d'interval : ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés un assign d'interval :  ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
 
+	stdVec2.assign(20, 99);
+	ftVec2.assign(20, 99);
+	printVec(stdVec2, "StdVec2 aprés un assign de 20 fois 99 : ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés un assign de 20 fois 99 :  ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+
+	stdVec2.swap(stdVec4);
+	ftVec2.swap(ftVec4);
+	printVec(stdVec2, "StdVec2 aprés le swap : ");
+	std::cout << " Size = " << stdVec2.size() << " " << "| Capacity = " << stdVec2.capacity() << std::endl;
+	printVec(ftVec2, "ftVec2 aprés le swap :  ");
+	std::cout << " Size = " << ftVec2.size() << " " << "| Capacity = " << ftVec2.capacity() << std::endl;
+	printVec(stdVec4, "StdVec4 aprés le swap : ");
+	std::cout << " Size = " << stdVec4.size() << " " << "| Capacity = " << stdVec4.capacity() << std::endl;
+	printVec(ftVec4, "ftVec4 aprés le swap :  ");
+	std::cout << " Size = " << ftVec4.size() << " " << "| Capacity = " << ftVec4.capacity() << std::endl;
+
+	std::cout << "Max size de stdVec2: " << stdVec2.max_size() << std::endl;
+	std::cout << "Max size de ftVec2:  " << ftVec2.max_size() << std::endl;
+
+	std::cout << "Empty() de stdVec2: " << stdVec2.empty() << std::endl;
+	std::cout << "Empty() de ftVec2:  " << ftVec2.empty() << std::endl;
+
+	stdVec5.clear();
+	ftVec5.clear();
 	
-// 	std::vector<int> them(5);
-// 	std::vector<int> them2(5, 5);
-// 	std::vector<int> them3;
-// 	std::vector<int> themSwap(6, 5);
+	std::cout << "Empty() de stdVec5: " << stdVec5.empty() << std::endl;
+	std::cout << "Empty() de ftVec5:  " << ftVec5.empty() << std::endl;
 	
-// 	std::cout << "coucou\n";
-
-// 	std::vector<int> *all = new std::vector<int>[NBVECTOR];
-// 	all[0] = themEmpty;
-// 	all[1] = themEmpty2;
-// 	all[2] = them;
-// 	all[3] = them2;
-// 	all[4] = them3;
-
-// 	std::cout << "coucou\n";
-
-// 	ft::vector<int> mineEmpty;
-// 	ft::vector<int> mineEmpty2;
-// 	ft::vector<int> mine(5);
-// 	ft::vector<int> mine2(5, 5);
-// 	std::cout << "coucou\n";
-// 	ft::vector<int> mine3;
-// 	std::cout << "coucou1\n";
-// 	ft::vector<int> mineSwap(6, 5);
-// std::cout << "coucou2\n";
-
-// 	ft::vector<int> *mineAll = new ft::vector<int>[NBVECTOR];
-// 	mineAll[0] = mineEmpty;
-// 	mineAll[1] = mineEmpty2;
-// 	mineAll[2] = mine;
-// 	mineAll[3] = mine2;
-// 	mineAll[4] = mine3;
-
+	std::cout << "stdVec2 > stdVec4: " << (stdVec2 > stdVec4) << std::endl;
+	std::cout << "ftVec2 > ftVec4:   " << (ftVec2 > ftVec4) << std::endl;
 	
-// 	for (int i = 0; i < NBVECTOR - 1; i++)
-// 	{
-// 		std::cout << "###########################\n";
-// 		printVec(all[i], "\nVec at the begining: ");
-// 		if(all[i].size())
-// 		{
-// 			all[i].pop_back();
-// 			printVec(all[i], "Aprés un pop back =: ");
-// 			std::cout	<< "aprés le pop back, size = " << all[i].size() 
-// 				<< " capacity = " << all[i].capacity() << std::endl;
-// 		}
-// 		all[i].push_back(6);
-// 		printVec(all[i], "Aprés un push back =: ");
-// 		std::cout	<< "aprés le push back, size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		all[i].clear();
-// 		printVec(all[i], "Aprés un clear =: ");
-// 		std::cout	<< "aprés le clear, size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		all[i].assign(5, 0);
-// 		printVec(all[i], "Aprés un assign de 5 0=: ");
-// 		std::cout	<< "aprés le assign, size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		all[i].assign(5 * i + 5, i);
-// 		printVec(all[i], "Aprés un assign: ");
-// 		std::cout	<< "aprés le assign, size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		printVec(all[i], "Avant le swap A: ");
-// 		printVec(themSwap, "Avant le swap B: ");
-// 		all[i].swap(themSwap);
-// 		printVec(all[i], "Apres le swap A: ");
-// 		printVec(themSwap, "Apres le swap B: ");
-// 		std::cout	<< "aprés le swap, A: size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		std::cout	<< "aprés le swap, B: size = " << themSwap.size() 
-// 			<< " capacity = " << themSwap.capacity() << std::endl;
-// 		all[i].resize(12, 4);
-// 		printVec(all[i], "apres le resize 12 4: ");
-// 		std::cout	<< "aprés le resize: size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		all[i].resize(20);
-// 		printVec(all[i], "apres le resize 20: ");
-// 		std::cout	<< "aprés le resize: size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		std::cout << "max size = " << all[i].max_size() << std::endl;
-// 		std::cout << "empty= " << all[i].empty() << std::endl;
-// 		if (i % 2)
-// 		{
-// 			all[i].clear();
-// 			std::cout << "clear done " ;
-			
-// 		}
-// 		std::cout << "empty= " << all[i].empty() << std::endl;
-// 		all[i].reserve(i * 10);
-// 		std::cout	<< "Aprés le reserve de " << i * 10 << " : size = " << all[i].size() 
-// 			<< " capacity = " << all[i].capacity() << std::endl;
-// 		if (i < NBVECTOR - 2)
-// 			std::cout << "inequality : all[i] < all[i + 1] " << (all[i] < all[i + 1]) << "\n";
+	std::cout << "stdVec2 == stdVec4: " << (stdVec2 == stdVec4) << std::endl;
+	std::cout << "ftVec2 == ftVec4:   " << (ftVec2 == ftVec4) << std::endl;
+	
+	std::cout << "stdVec2 < stdVec4: " << (stdVec2 < stdVec4) << std::endl;
+	std::cout << "ftVec2 < ftVec4:   " << (ftVec2 < ftVec4) << std::endl;
 
-// 		std::cout << "--------------------------\n";
-
-// 		printVec(mineAll[i], "\nVec at the begining: ");
-// 		if(mineAll[i].size())
-// 		{
-// 			mineAll[i].pop_back();
-// 			printVec(mineAll[i], "Aprés un pop back =: ");
-// 			std::cout	<< "aprés le pop back, size = " << mineAll[i].size() 
-// 				<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		}
-// 		mineAll[i].push_back(6);
-// 		printVec(mineAll[i], "Aprés un push back =: ");
-// 		std::cout	<< "aprés le push back, size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		mineAll[i].clear();
-// 		printVec(mineAll[i], "Aprés un clear =: ");
-// 		std::cout	<< "aprés le clear, size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		mineAll[i].assign(5, 0);
-// 		printVec(mineAll[i], "Aprés un assign de 5 0=: ");
-// 		std::cout	<< "aprés le assign, size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		mineAll[i].assign(5 * i + 5, i);
-// 		printVec(mineAll[i], "Aprés un assign: ");
-// 		std::cout	<< "aprés le assign, size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		printVec(mineAll[i], "Avant le swap A: ");
-// 		printVec(mineSwap, "Avant le swap B: ");
-// 		mineAll[i].swap(mineSwap);
-// 		printVec(mineAll[i], "Apres le swap A: ");
-// 		printVec(mineSwap, "Apres le swap B: ");
-// 		std::cout	<< "aprés le swap, A: size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		std::cout	<< "aprés le swap, B: size = " << mineSwap.size() 
-// 			<< " capacity = " << mineSwap.capacity() << std::endl;
-// 		mineAll[i].resize(12, 4);
-// 		printVec(mineAll[i], "apres le resize 12 4: ");
-// 		std::cout	<< "aprés le resize: size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		mineAll[i].resize(20);
-// 		printVec(mineAll[i], "apres le resize 20: ");
-// 		std::cout	<< "aprés le resize: size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		std::cout << "max size = " << mineAll[i].max_size() << std::endl;
-// 		std::cout << "empty= " << mineAll[i].empty() << std::endl;
-// 		if (i % 2)
-// 		{
-// 			mineAll[i].clear();
-// 			std::cout << "clear done " ;
-			
-// 		}
-// 		std::cout << "empty= " << mineAll[i].empty() << std::endl;
-// 		mineAll[i].reserve(i * 10);
-// 		std::cout	<< "Aprés le reserve de " << i * 10 << " : size = " << mineAll[i].size() 
-// 			<< " capacity = " << mineAll[i].capacity() << std::endl;
-// 		if (i < NBVECTOR - 2)
-// 			std::cout << "inequality : mineAll[i] < mineAll[i + 1] " << (mineAll[i] < mineAll[i + 1]) << "\n";
-
-// 		mineAll[i].assign(i*3,i);
-// 		for (ft::vector<int>::iterator it = mineAll[i].begin(); it != mineAll[i].end(); it++)
-// 			std::cout << *it << " ";
-// 		std::cout << "\n###########################\n";
-		
-// 	}
-
-// 	ft::vector<int> a(5);
-// 	a.push_back(0);
-// 	a.push_back(1);
-// 	a.push_back(2);
-// 	a.push_back(3);
-// 	a.push_back(4);
-// 	std::vector<int> c(5);
-// 	c.push_back(0);
-// 	c.push_back(1);
-// 	c.push_back(2);
-// 	c.push_back(3);
-// 	c.push_back(4);
-// 	ft::vector<int> b(5);
-// 	b.insert(b.begin(), a.begin(), a.end());
-// 	b.insert(b.begin() + 2, 3, 3);
-// 	c.insert(c.begin() + 2, 3, 3);
-// 	c.insert(c.begin(), c.begin(), c.end());
-// 	printVec(b, "\nLe vecteur b: ");
-// 	delete [] all;
-// 	delete [] mineAll;
+	std::cout << "stdVec2 != stdVec4: " << (stdVec2 != stdVec4) << std::endl;
+	std::cout << "ftVec2 != ftVec4:   " << (ftVec2 != ftVec4) << std::endl;
 	
 }
 

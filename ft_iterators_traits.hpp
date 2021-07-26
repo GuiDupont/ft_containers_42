@@ -6,15 +6,13 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 11:27:11 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/22 11:17:29 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 10:28:16 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_ITERATORS_TRAITS
 
 # define FT_ITERATORS_TRAITS
-
-
 
 
 namespace ft {

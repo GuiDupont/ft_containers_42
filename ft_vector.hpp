@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 10:18:57 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 13:32:49 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,11 @@ namespace ft {
 				
 				class iterator : public std::iterator<std::random_access_iterator_tag, T> { 
 					public:
-
-						
-						// typedef _Iterator					iterator_type;
-						//typedef typename std::random_access_iterator_tag iterator_category;
-						// typedef typename __traits_type::value_type  	value_type;
-						// typedef typename __traits_type::difference_type 	difference_type;
-						// typedef typename __traits_type::reference 	reference;
-						// typedef typename __traits_type::pointer   	pointer;
-						//typedef std::random_access_iterator_tag iterator_category;
-
-				
-
+					
 						iterator() : _ptr(NULL) {}
 						iterator(T* ptr) : _ptr(ptr) {}
 						iterator(vector const & rhs) : _ptr(rhs._buffer) {}
 						iterator(iterator const & rhs) : _ptr(rhs._ptr) { }
-						
 						
 						iterator& operator++() { _ptr++; return (*this); }
 
@@ -339,9 +327,7 @@ namespace ft {
 
 				template<class inputIter>
 				iterator insert(const iterator target, typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
-					size_type n = 0;
-					while (first + n != last)
-						n++;
+					size_type n = last - first;
 					if (n + _size > _capacity)
 					{
 						size_type newCapacity = _newCapacity(n + _size, _capacity);
@@ -359,16 +345,16 @@ namespace ft {
 					}
 					else
 					{
-						difference_type targetIndex = target - this->begin();
 						for (size_type i = 0; i != n; i++)
-						{
-							_alloc.construct(&_buffer[_size + i], _buffer[targetIndex + i]);
-							_buffer[targetIndex + i] = *(first++);
-						}
+							_alloc.construct(&_buffer[_size + n - i], _buffer[_size - i]);
+						for (size_type i = 0; _size - n - i > 0 ; i++)
+							_buffer[_size - i] = _buffer[_size - n - i];
+						for (ptrdiff_t i = 0 ; i != last - first; i++)
+							*(target + i) = *(first + i); 
 						_size += n;
 						return (target);
 					}
-				} //fix with enable_if
+				}
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
@@ -400,13 +386,14 @@ namespace ft {
 				template<class inputIter>
 				void assign(typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type length = distance(first, last);
-					if (length > _size)
+					if (length > _capacity)
 						this->reallocate(length);
 					else
 						this->destroyElems();
 					for (int i = 0; first + i != last; i++)
 						_alloc.construct(&_buffer[i], first[i]);
-				} // fix with enable_if
+					_size = length;
+				}
 				
 				void assign(size_type n, const T& value) {
 					T* substitute;
@@ -439,6 +426,10 @@ namespace ft {
 					{
 						for (size_type i = 0; i < n; i++)
 							_buffer[i] = value;
+						for (size_type i = n; i < _size; i++)
+							_alloc.destroy(_buffer + i);
+						_size = n;
+						
 					}
 				}
 
@@ -482,7 +473,9 @@ namespace ft {
 				size_type capacity() const { return (_capacity); }
 				
 				void reserve (size_type n) {
-					if (n > _capacity)
+					if (n > max_size())
+						throw std::length_error("Size asked is greater than max_size in function reserve");
+					else if (n > _capacity)
 						reallocateNCopy(n);
 				}
 				
@@ -601,18 +594,6 @@ namespace ft {
 	template <class T>
 	void swap(vector<T>& a, vector<T>& b) {
 		a.swap(b);
-	}
-	
-	template <class T>
-	ptrdiff_t distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
-	{ 
-		typename ft::vector<T>::difference_type n = 0;
-		while (first != last)
-		{
-			n++;
-			first++;
-		}
-		return (n);
 	}
 
 	template <class T>
