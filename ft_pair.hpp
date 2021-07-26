@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pair.hpp                                           :+:      :+:    :+:   */
+/*   ft_pair.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 12:00:32 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/19 12:52:52 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 17:05:59 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@ namespace ft {
 			pair& operator=( const pair& other ) { this->first = other.first; this->second = other.second;
 												return (*this); }								
 		
+		private:
+			pair *left;
+			pair *right;
 	}; //STRUCT PAIR
 
 	/*

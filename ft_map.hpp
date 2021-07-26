@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 10:28:07 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 15:26:00 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/26 17:07:33 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,39 @@ namespace ft {
 	
 	template < class Key,                                     // map::key_type
            class T,                                       // map::mapped_type
-           class Compare = std::less<Key>,                     // map::key_compare
-           class Alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
-           > 
-    class map{
+           class compare = std::less<Key>,                     // map::key_compare
+           class alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
+           >
+    class map {
         
         public:
 
         typedef	Key	                                    key_type;
         typedef	T                                       mapped_type;
-        typedef	ft::pair<const Key, T>                 value_type;
+        typedef	ft::pair<const Key, T>                	value_type;
         typedef	std::size_t                             size_type;
         typedef	std::ptrdiff_t                          difference_type;
-        typedef	Compare	                                key_compare;
-        typedef	Alloc									allocator_type;
+        typedef	compare	                                key_compare;
+        typedef	alloc									allocator_type;
         typedef	value_type&								reference;
         typedef	const value_type&                       const_reference;
-        typedef	typename Alloc::pointer  	     		pointer;
-        typedef	typename Alloc::const_pointer           const_pointer;
+        typedef	typename alloc::pointer  	     		pointer;
+        typedef	typename alloc::const_pointer           const_pointer;
        // typedef	LegacyBidirectionalIterator to value_type	iterator;
         //typedef	LegacyBidirectionalIterator to const value_type	const_iterator	;
         
+		class value_compare {
+			public:
+				typedef bool		result_type;
+				typedef value_type	first_argument_type;
+				typedef value_type	second_argument_type;
+			
+				bool operator()( const value_type& lhs, const value_type& rhs ) const { return (comp(lhs.first, rhs.first));}
+			
+			protected:
+				compare comp;
+				value_compare(compare c) : comp(c) { }
+		};
 
         class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
             
@@ -48,12 +60,17 @@ namespace ft {
         typedef const iterator                          const_iterator;
         typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
-        
+        map() {
+			// _tree._left = NULL;
+			// _tree._right = NULL;
+		}
 		
-		
-        
-        map() left(NULL), right(NULL) {}
-        explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) left(NULL), right(NULL) {}
+        explicit map( const compare& comp, const allocator_type& a = alloc() ) {
+				_tree(NULL);
+				_alloc = a;
+				_comp = comp;
+				_vComp(comp);
+		}
         ~map() { };
 
 		// map& operator=( const map& other ) { }; 
@@ -91,17 +108,51 @@ namespace ft {
 		// iterator upper_bound( const Key& key );
 		// const_iterator upper_bound( const Key& key ) const;
 
+		key_compare key_comp() const { return (_comp); }
+		map::value_compare value_comp() const { return (_vComp); }
+
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //          const ft::map<Key,T,Compare,Alloc>& rhs );
+
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //          const ft::map<Key,T,Compare,Alloc>& rhs ) { return !(lhs == rhs); }
+				 
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //         const ft::map<Key,T,Compare,Alloc>& rhs );
+				
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //          const ft::map<Key,T,Compare,Alloc>& rhs );
+				 
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //         const ft::map<Key,T,Compare,Alloc>& rhs );
+
+		// template< class Key, class T, class Compare, class Alloc >
+		// bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
+        //          const ft::map<Key,T,Compare,Alloc>& rhs );
 
 		private:
-        typedef struct s_node {
-            struct s_node *_left;
-            struct s_node *_right;
-            ft::pair<const Key, T> _data;
-        }               t_node;
+		
+			typedef struct	s_node {
+				struct s_node				*_left;
+				struct s_node				*_right;
+				ft::pair<const Key, T>		_data;
+			}				t_node;
 
-		t_node 		_tree;
-		size_type	_size;
-    };
-           
+			t_node 		*_tree;
+			size_type	_size;
+			compare		_comp;
+			value_compare	_vComp(compare c);
+			alloc		_alloc;
+			
+    };	
+	template< class Key, class T, class Compare, class Alloc >
+	void swap( map<Key,T,Compare,Alloc>& lhs,
+          map<Key,T,Compare,Alloc>& rhs ) { lhs.swap(rhs); }
+	
 	
 } /* NAMESPACE FT */ 
