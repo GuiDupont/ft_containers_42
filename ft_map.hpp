@@ -61,14 +61,13 @@ namespace ft {
         typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
         map() {
-			// _tree._left = NULL;
-			// _tree._right = NULL;
+			_tree(NULL);
+			_size(0);
+
 		}
 		
-        explicit map( const compare& comp, const allocator_type& a = alloc() ) {
-				_tree(NULL);
-				_alloc = a;
-				_comp = comp;
+        explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(NULL), _alloc(a), _comp(comp) {
+				
 				_vComp(comp);
 		}
         ~map() { };
@@ -82,6 +81,7 @@ namespace ft {
 		size_type size() const { return _size; }
 		bool empty() const { return (!_size); }
 		size_type max_size() const { return (_alloc.max_size());}
+		
 		// void clear();
 		// ft::pair<iterator, bool> insert( const value_type& value ); 
 		
@@ -143,11 +143,15 @@ namespace ft {
 				ft::pair<const Key, T>		_data;
 			}				t_node;
 
-			t_node 		*_tree;
-			size_type	_size;
-			compare		_comp;
+			typedef std::allocator<t_node> nodeAlloc;
+
+			t_node 			*_tree;
+			size_type		_size;
+			compare			_comp;
 			value_compare	_vComp(compare c);
-			alloc		_alloc;
+			alloc			_alloc;
+			nodeAlloc		_nodeAlloc;
+
 			
     };	
 	template< class Key, class T, class Compare, class Alloc >
