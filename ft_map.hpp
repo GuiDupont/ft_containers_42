@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_map.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
+/*					        */
+/*					     :::      ::::::::   */
+/*   ft_map.hpp					       :+:      :+:    :+:   */
+/*					 +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*					              +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 10:28:07 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/28 15:45:44 by gdupont          ###   ########.fr       */
-/*                                                                            */
+/*   Updated: 2021/07/28 16:31:35 by gdupont          ###   ########.fr       */
+/*					        */
 /* ************************************************************************** */
 
 #include <functional>
@@ -16,24 +16,24 @@
 
 namespace ft {
 	
-	template < class Key,                                     // map::key_type
-           class T,                                       // map::mapped_type
-           class compare = std::less<Key>,                     // map::key_compare
+	template < class Key,					   // map::key_type
+           class T,					     // map::mapped_type
+           class compare = std::less<Key>,					    // map::key_compare
            class alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
            >
     class map {
         
         public:
 
-        typedef	Key	                                    key_type;
-        typedef	T                                       mapped_type;
+        typedef	Key										key_type;
+        typedef	T										mapped_type;
         typedef	ft::pair<const Key, T>                	value_type;
-        typedef	std::size_t                             size_type;
-        typedef	std::ptrdiff_t                          difference_type;
-        typedef	compare	                                key_compare;
+        typedef	std::size_t					            size_type;
+        typedef	std::ptrdiff_t							difference_type;
+        typedef	compare									key_compare;
         typedef	alloc									allocator_type;
         typedef	value_type&								reference;
-        typedef	const value_type&                       const_reference;
+        typedef	const value_type&					    const_reference;
         typedef	typename alloc::pointer  	     		pointer;
         typedef	typename alloc::const_pointer           const_pointer;
        // typedef	LegacyBidirectionalIterator to value_type	iterator;
@@ -66,11 +66,15 @@ namespace ft {
 		public:
 		
         class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
-            
+			iterator() : _tree(NULL) {}
+		
+			private:
+			
+			
         };
         
         typedef	std::reverse_iterator<iterator>         reverse_iterator;
-        typedef const iterator                          const_iterator;
+        typedef const iterator					         const_iterator;
         typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
         map() : _tree(NULL), _size(0) { }
@@ -118,8 +122,6 @@ namespace ft {
 			}
 		}
 
-		
-		
 		private:
 			int computeBalanceFactorNRebalance(t_node *current) {
 				if (!current)
