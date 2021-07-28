@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 10:28:07 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/27 15:52:15 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:45:44 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ namespace ft {
 				struct s_node				*left;
 				struct s_node				*right;
 				value_type					*data;
-				int							weight;
+				int							height;
+				int							balanceFactor;
 			}				t_node;
 
 		public:
@@ -85,9 +86,11 @@ namespace ft {
 				current = this->_tree;
 			if (!current)
 				return ;
-			std::cout << depth << " | Key: " << current->data->first << "    Value : " << current->data->second << " " << current->weight << std::endl;
+			std::cout << depth << " | Key: " << current->data->first << " Height : " << current->height << " Balance factor " << current->balanceFactor << std::endl;
 			printTree(current->left, depth + 1);
 			printTree(current->right, depth + 1);
+			if (depth == 0)
+				std::cout << std::endl;
 		}
 
 		// map& operator=( const map& other ) { }; 
@@ -106,15 +109,11 @@ namespace ft {
 			if (!_tree)
 			{
 				_tree = setUpNode(value, NULL);
-				// ft::pair<
 			}
 			else
 			{
 				findSpot(value, _tree);
-				checkNodeBalance(_tree);
-				
-				//if (compute balance )
-				// balance it;
+				computeBalanceFactorNRebalance(_tree);
 				
 			}
 		}
@@ -122,36 +121,30 @@ namespace ft {
 		
 		
 		private:
-			void	checkNodeBalance(t_node *current) {
-				int leftNodeWeight = 0;
-				int rightNodeWeight = 0;
-
+			int computeBalanceFactorNRebalance(t_node *current) {
 				if (!current)
-					return ;
-				checkNodeBalance(current->left);
-				checkNodeBalance(current->right);
-				if (current->left)
-					leftNodeWeight = current->left->weight;
-				if (current->right)
-					rightNodeWeight = current->right->weight;
-				int balanceFactor = leftNodeWeight - rightNodeWeight;
-				std::cout << "leftNodeHeight: " << leftNodeWeight << " and rightNodeHeight: " << rightNodeWeight << std::endl;  
-				if (balanceFactor > 1 || balanceFactor < -1)
+					return (0);
+				if (!current->left && !current->right)
+					return (1);
+				current->balanceFactor = computeBalanceFactorNRebalance(current->left) - computeBalanceFactorNRebalance(current->right);
+				if (current->balanceFactor > 1 || current->balanceFactor < -1)
 				{
 					rebalanceTree(current);
-					std::cout << "balance factor = " << balanceFactor << " " << current->data->first << std::endl;
 				}
+				current->height = std::max(computeBalanceFactorNRebalance(current->left), computeBalanceFactorNRebalance(current->right)) + 1;
+				return (current->height);
 			}
 
 			void	rebalanceTree(t_node *current)
 			{
-				if (current->left && current->left->left)
-					doRightRotation(current);
-				else if (current->right && current->right->right)
+
+				if (current->balanceFactor < 0 && current->right && current->right->balanceFactor < 0)
 					doLeftRotation(current);
-				else if (current->right && current->right->left)
+				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor > 0)
+					doRightRotation(current);
+				else if (current->balanceFactor < 0 && current->right && current->right->balanceFactor > 0)
 					doRightLeftRotation(current);
-				else
+				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor < 0)
 					doLeftRightRotation(current);
 			}
 
@@ -159,9 +152,10 @@ namespace ft {
 			{
 				t_node *b = c->left;
 				
-				std::cout << "dorightrotation\n";
+				c->left = b->right;
+				if (c->left)
+					c->left->parent = c;
 				b->right = c;
-				c->left = NULL;
 				b->parent = c->parent;
 				c->parent = b;
 				if (b->parent && b->parent->left == c)
@@ -170,15 +164,16 @@ namespace ft {
 				 	b->parent->right = b;
 				else
 					_tree = b;
-				
 			}
 
 			void	doLeftRotation(t_node *c)
 			{
-				
 				t_node *b = c->right;
+
+				c->right = b->left;
+				if (c->right)
+					c->right->parent = c;
 				b->left = c;
-				c->right = NULL;
 				b->parent = c->parent;
 				c->parent = b;
 				if (b->parent && b->parent->left == c)
@@ -187,7 +182,6 @@ namespace ft {
 				 	b->parent->right = b;
 				else
 					_tree = b;
-				std::cout << "doleftrotation\n";
 			}
 
 			void	doLeftRightRotation(t_node *c)
@@ -195,13 +189,14 @@ namespace ft {
 				t_node *b = c->left;
 				t_node *a = b->right;
 				
+				b->right = a->left;
+				if (b->right)
+					b->right->parent = b;
 				c->left = a;
 				a->parent = c;
 				a->left = b;
 				b->parent = a;
-				b->right = NULL;
 				doRightRotation(c);
-				std::cout << "doleftrightrotation\n";				
 			}
 
 			void	doRightLeftRotation(t_node *c)
@@ -209,15 +204,14 @@ namespace ft {
 				t_node *b = c->right;
 				t_node *a = b->left;
 				
+				b->left = a->right;
+				if (b->left)
+					b->left->parent = b;
 				c->right = a;
 				a->parent = c;
 				a->right = b;
 				b->parent = a;
-				b->left = NULL;
 				doLeftRotation(c);
-				std::cout << "dorightleftrotation\n";
-
-
 			}
 		
 			t_node *setUpNode(const value_type& value, t_node *parent) {
@@ -229,7 +223,8 @@ namespace ft {
 				this->_alloc.construct(node->data, value);
 				node->left = NULL;
 				node->right = NULL;
-				node->weight = 1;
+				node->height = 0;
+				node->balanceFactor = 0;
 				return (node);
 			}
 		
@@ -238,19 +233,19 @@ namespace ft {
 					return ;
 				else if (this->_comp(value.first, current->data->first))
 				{
-					if (!current->right)
-						current->right = setUpNode(value, current);
-					else
-						findSpot(value, current->right);
-				}
-				else
-				{
 					if (!current->left)
 						current->left = setUpNode(value, current);
 					else
 						findSpot(value, current->left);
 				}
-				current->weight += 1; //add a condition;
+				else
+				{
+					if (!current->right)
+						current->right = setUpNode(value, current);
+					else
+						findSpot(value, current->right);
+				}
+				current->height += 1; //add a condition;
 				
 			}
 
