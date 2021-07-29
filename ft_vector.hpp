@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 15:16:22 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/29 08:57:48 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ namespace ft {
 						iterator(T* ptr) : _ptr(ptr) {}
 						iterator(vector const & rhs) : _ptr(rhs._buffer) {}
 						iterator(iterator const & rhs) : _ptr(rhs._ptr) { }
+						~iterator() { }
 						
 						iterator& operator++() { _ptr++; return (*this); }
 

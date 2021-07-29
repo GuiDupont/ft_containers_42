@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   mainVector.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 14:23:39 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/07/29 09:18:49 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <vector>
 #include <algorithm>
 #include "ft_reverse_iterator.hpp"
-#include "ft_map.hpp"
+// #include "ft_map.hpp"
 
 #define NBVECTOR 5
 
@@ -232,7 +232,6 @@ int main(void)
 
 	std::cout << "stdVec2 != stdVec4: " << (stdVec2 != stdVec4) << std::endl;
 	std::cout << "ftVec2 != ftVec4:   " << (ftVec2 != ftVec4) << std::endl;
-	
 }
 
 

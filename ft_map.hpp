@@ -13,6 +13,8 @@
 #include <functional>
 
 #include "ft_pair.hpp"
+#include "ft_reverse_iterator.hpp"
+
 
 namespace ft {
 	
@@ -36,9 +38,10 @@ namespace ft {
         typedef	const value_type&					    const_reference;
         typedef	typename alloc::pointer  	     		pointer;
         typedef	typename alloc::const_pointer           const_pointer;
-       // typedef	LegacyBidirectionalIterator to value_type	iterator;
+       	//typedef	LegacyBidirectionalIterator to value_type	iterator;
         //typedef	LegacyBidirectionalIterator to const value_type	const_iterator	;
         
+		
 		class value_compare {
 			public:
 				typedef bool		result_type;
@@ -66,16 +69,133 @@ namespace ft {
 		public:
 		
         class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
-			iterator() : _tree(NULL) {}
-		
+			
+			public:
+
+				iterator() : _node(NULL), _end(0) {}
+				iterator(const iterator & rhs) : _node(rhs._node), _end(0) {}
+				iterator(t_node * node)  { _node = node; }
+
+				iterator& operator=(iterator const & rhs)
+							{	this->_node = rhs._node; return (*this); }
+
+				~iterator() { }
+
+				bool operator==( const iterator &rhs) const { return (this->_node == rhs._node);}
+				bool operator!=(const iterator &rhs) const { return !(*this == rhs); }
+
+				reference operator*() { return *(_node->data); }
+				const_reference operator*() const { return (*(_node->_data)); }
+				
+				pointer operator->() { return (_node->data); }
+				const_pointer operator->() const { return (_node->data); }
+
+				iterator operator++(int) 
+				{
+					iterator it = *this;
+					++(*this);
+					return (it);
+				}
+
+				iterator& operator++() {  //pre inc
+					t_node * current = this->_node;
+					compare comp;
+							
+					if (current->right)
+					{
+						current = current->right;
+						while (1)
+						{
+							if (current->left)
+								current = current->left;
+							else
+							{
+								_node = current;
+								break;
+							}
+						}
+					}
+					else
+					{
+						while (current->parent)
+						{
+							if (comp(current->data->first, current->parent->data->first))
+							{
+								_node = current->parent;
+								return (*this);
+							}
+							current = current->parent;
+						}
+						_node = NULL;
+					}
+					return (*this);
+				}
+
+				iterator& operator--() 
+				{
+					t_node * current = this->_node;
+					compare comp;
+					if (!current->data)
+						return (goToLastNode(_tree));
+					if (current->left)
+					{
+						current = current->left;
+						while (1)
+						{
+							if (current->right)
+								current = current->right;
+							else
+							{
+								_node = current;
+								break;
+							}
+						}
+					}
+					else
+					{
+						while (current->parent)
+						{
+							if (!comp(current->data->first, current->parent->data->first))
+							{
+								_node = current->parent;
+								return (*this);
+							}
+							current = current->parent;
+						}
+						_node = NULL;
+					}
+					return (*this);
+				}
+				
+				iterator operator--(int) 
+				{
+					iterator iterator = *this;
+					--(*this);
+					return (iterator);
+				}
+				
+				// iterator& operator=(const_reference & lhs) { this->_ptr = lhs; return (*this); }
+
+
 			private:
+				t_node*		_node;
+				t_node*		_previous;
+				int			_end;
+				map*		_map;
 			
-			
+			t_node * goToLastNode(t_node *node) {
+				while (node->right)
+					node = node->right;
+				return (node);
+			}
+
+
+				
         };
         
-        typedef	std::reverse_iterator<iterator>         reverse_iterator;
+        typedef	ft::reverse_iterator<iterator>         reverse_iterator;
         typedef const iterator					         const_iterator;
-        typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
+        typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
         map() : _tree(NULL), _size(0) { }
 		
@@ -97,17 +217,72 @@ namespace ft {
 				std::cout << std::endl;
 		}
 
+
+
 		// map& operator=( const map& other ) { }; 
 		allocator_type get_allocator() const { return (_alloc); }
 
 		//T& at( const Key& key );
 		//const T& at( const Key& key ) const;
 		// T& operator[]( const Key& key );
+		
+		public:
+
+		iterator begin() {
+			t_node* node = _tree;
+		
+			while (1) {
+				if (node->left)
+					node = node->left;
+				else
+					break;
+			}
+			return (iterator(node));
+		}
+
+		const_iterator begin() const {
+			iterator ret = begin();
+			return (ret);
+		}
+		
+		iterator end() {
+			t_node* node = _tree;
+		
+			while (node->right)
+				node = node->right;
+
+			return (iterator());
+		}
+
+		const_iterator end() const {
+			iterator ret = end();
+			return (ret);
+		}
+
+		reverse_iterator rbegin() {
+			return (reverse_iterator(begin()));
+		}
+
+		const_reverse_iterator rbegin() const {
+			const_iterator ret = begin();
+			return (reverse_iterator(ret));
+		}
+
+		reverse_iterator rend() {
+			return (reverse_iterator(end()));
+		}
+		
+		const_reverse_iterator rend() const {
+			const_iterator ret = end();
+			return (reverse_iterator(ret));
+		}
+
 		size_type size() const { return _size; }
 		bool empty() const { return (!_size); }
 		size_type max_size() const { return (_alloc.max_size());}
 		
 		// void clear();
+
 		// ft::pair<iterator, bool> 
 		void insert( const value_type& value ) {
 			if (!_tree)
@@ -188,31 +363,13 @@ namespace ft {
 
 			void	doLeftRightRotation(t_node *c)
 			{
-				t_node *b = c->left;
-				t_node *a = b->right;
-				
-				b->right = a->left;
-				if (b->right)
-					b->right->parent = b;
-				c->left = a;
-				a->parent = c;
-				a->left = b;
-				b->parent = a;
+				doLeftRotation(c->left);
 				doRightRotation(c);
 			}
 
 			void	doRightLeftRotation(t_node *c)
 			{
-				t_node *b = c->right;
-				t_node *a = b->left;
-				
-				b->left = a->right;
-				if (b->left)
-					b->left->parent = b;
-				c->right = a;
-				a->parent = c;
-				a->right = b;
-				b->parent = a;
+				doRightRotation(c->right);
 				doLeftRotation(c);
 			}
 		
@@ -300,10 +457,10 @@ namespace ft {
 		// template< class Key, class T, class Compare, class Alloc >
 		// bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
         //          const ft::map<Key,T,Compare,Alloc>& rhs );
-
-		
-
 			typedef std::allocator<t_node> nodeAlloc;
+
+		private:
+
 
 			t_node 			*_tree;
 			size_type		_size;
@@ -311,6 +468,13 @@ namespace ft {
 			value_compare	_vComp(compare c);
 			alloc			_alloc;
 			nodeAlloc		_nodeAlloc;
+
+			t_node *goToLastNode(t_node *node)
+			{
+				while (node->right)
+					node = node->right;
+				return (node);
+			}
 
 			
     };	
