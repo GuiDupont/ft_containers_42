@@ -51,6 +51,7 @@ int main()
 	ftmap.insert(ft::pair<int, std::string>(16, "sal"));
 	ftmap.printTree(NULL, 0);
 
+	ftmap.insert(ft::pair<int, std::string>(16, "sal"));
 	ftmap.insert(ft::pair<int, std::string>(20, "sal"));
 	ftmap.printTree(NULL, 0);
 
@@ -77,20 +78,22 @@ int main()
 
 	stdmap.insert(std::pair<int, std::string>(20, "sal"));
 	std::map<int, std::string>::iterator it = stdmap.end();
-
-	ft::map<int, std::string>::iterator it2 = ftmap.end();
 	while (it != stdmap.begin())
 		std::cout << (--it)->first << std::endl;
+	
+	ft::map<int, std::string>::iterator it2 = ftmap.end();
 	
 	while (it2 != ftmap.begin())
 	 	std::cout << (--it2)->first << std::endl;
 	while (it2 != ftmap.end())
 	 	std::cout << (it2++)->first << std::endl;
-	// while (it != stdmap.end())
-	//  	std::cout << (it++)->first << std::endl;
+	while (it != stdmap.end())
+	 	std::cout << (it++)->first << std::endl;
 	ft::map<int, std::string>::const_reverse_iterator it3 = ftmap.rbegin();
 	// std::cout << it3->second;
 	
+	std::cout << "my size = " << ftmap.size() << std::endl;
+	std::cout << "my size = " << stdmap.size() << std::endl;
 
 	std::map<int, std::string>::iterator it4 = stdmap.end();
 

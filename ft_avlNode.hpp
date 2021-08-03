@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_avlTree.hpp                                     :+:      :+:    :+:   */
+/*   ft_avlNODE.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,29 +10,26 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_AVLTREE_HPP
-#define FT_AVLTREE_HPP
+#ifndef FT_AVLNODE_HPP
+#define FT_AVLNODE_HPP
 
 #include "ft_pair.hpp"
-
 
 namespace ft {
 
 	
-	template <class key, class value>
+	template <class T>
 	struct	s_node {
 
-		typedef ft::pair<key, value> value_type;
 		struct s_node				*parent;
 		struct s_node				*left;
 		struct s_node				*right;
-		value_type					*data;
+		T*							data;
 		int							height;
 		int							balanceFactor;
+
+		s_node(void) : parent(NULL), left(NULL), right(NULL), data(NULL), height(0), balanceFactor(0) {} 
 	};
-
-
-
 }
 
 # endif

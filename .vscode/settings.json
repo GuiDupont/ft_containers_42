@@ -82,6 +82,9 @@
 		"netfwd": "cpp",
 		"cfenv": "cpp",
 		"cinttypes": "cpp",
-		"filesystem": "cpp"
+		"filesystem": "cpp",
+		"compare": "cpp",
+		"concepts": "cpp",
+		"ranges": "cpp"
 	}
 }
