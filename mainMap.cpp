@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/29 15:04:58 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/04 16:04:03 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,14 @@ int main()
 	std::cout << "my size = " << stdmap.size() << std::endl;
 
 	std::map<int, std::string>::iterator it4 = stdmap.end();
-
+	
+	
+	ftmap.insert(ft::pair<int, std::string>(20, "sal"));
+	it2 = ftmap.begin();
+	// / while (it2 != ftmap.begin())
+	it2++;
+	std::cout << it->first << "\n";
+	ftmap.erase(it2);
 	(void)it4;
 	(void)it3;
 }
