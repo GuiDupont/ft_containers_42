@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/04 16:04:03 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/05 16:05:14 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,28 @@ int main()
 	ftmap.insert(ft::pair<int, std::string>(20, "sal"));
 	ftmap.printTree(NULL, 0);
 
+	ft::map<int, std::string> ftmap1;
+	ftmap1.insert(ft::pair<int, std::string>(14, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(17, "salut"));
+	
+	ftmap1.insert(ft::pair<int, std::string>(11, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(7, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(53, "sal"));
+	
+	ftmap1.insert(ft::pair<int, std::string>(4, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(13, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(12, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(8, "sal"));
+
+	ftmap1.insert(ft::pair<int, std::string>(60, "sal"));
+
+	ftmap1.insert(ft::pair<int, std::string>(19, "sal"));
+
+	ftmap1.insert(ft::pair<int, std::string>(16, "sal"));
+
+	ftmap1.insert(ft::pair<int, std::string>(16, "sal"));
+	ftmap1.insert(ft::pair<int, std::string>(20, "sal"));
+
 	std::map<int, std::string> stdmap;
 	stdmap.insert(std::pair<int, std::string>(14, "sal"));
 	stdmap.insert(std::pair<int, std::string>(17, "salut"));
@@ -77,6 +99,31 @@ int main()
 	stdmap.insert(std::pair<int, std::string>(16, "sal"));
 
 	stdmap.insert(std::pair<int, std::string>(20, "sal"));
+
+	std::map<int, std::string> stdmap2;
+	stdmap2.insert(std::pair<int, std::string>(14, "sal"));
+	stdmap2.insert(std::pair<int, std::string>(17, "salut"));
+	
+	stdmap2.insert(std::pair<int, std::string>(11, "sal"));
+	stdmap2.insert(std::pair<int, std::string>(7, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(53, "sal"));
+	
+	stdmap2.insert(std::pair<int, std::string>(4, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(13, "sal"));
+	stdmap2.insert(std::pair<int, std::string>(12, "sal"));
+	stdmap2.insert(std::pair<int, std::string>(8, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(60, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(19, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(16, "sal"));
+
+	stdmap2.insert(std::pair<int, std::string>(20, "sal"));
+
+	
 	std::map<int, std::string>::iterator it = stdmap.end();
 	while (it != stdmap.begin())
 		std::cout << (--it)->first << std::endl;
@@ -100,10 +147,33 @@ int main()
 	
 	ftmap.insert(ft::pair<int, std::string>(20, "sal"));
 	it2 = ftmap.begin();
-	// / while (it2 != ftmap.begin())
-	it2++;
-	std::cout << it->first << "\n";
-	ftmap.erase(it2);
+	
+	std::cout << ftmap.count(12) << std::endl;
+	std::cout << ftmap.count(120) << std::endl;
+
+	std::cout << (--(ftmap.find(120)))->first << std::endl;
+
+	//ftmap.erase(it2);
+	ftmap.printTree(NULL, 0);
+	ftmap1.printTree(NULL,0);
+	std::cout << stdmap.lower_bound(18)->first << std::endl;
+	ftmap.insert(ft::pair<int, std::string>(234, "sal"));
+	ftmap.insert(ft::pair<int, std::string>(2, "sal"));
+	stdmap.insert(std::pair<int, std::string>(2000, "sal"));
+	ftmap.insert(ft::pair<int, std::string>(2000, "sal"));
+
+	ft::map<int, std::string> ftmap3 = ftmap;
+	// std::cout << (ftmap < ftmap1) << std::endl;
+	// std::cout << (stdmap < stdmap2) << std::endl;
+	
+	// std::cout << ftmap.lower_bound(3)->first << std::endl;
+	ftmap3.printTree(NULL, 0);
+	ftmap.printTree(NULL, 0);
+	std::cout << (ftmap == ftmap1) << std::endl;
+	
+	
+	
 	(void)it4;
 	(void)it3;
+	
 }

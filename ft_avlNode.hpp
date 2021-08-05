@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/04 16:01:30 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/05 11:45:40 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ namespace ft {
 
 	template <class T>
 	bool isEndNode(struct s_node<T> *node) {
+		if (!node)
+			return (0);
 		return (!node->data);
 	}
 
@@ -107,14 +109,14 @@ namespace ft {
 				if (current->left)
 					current = current->left;
 				else
-					break;
+					return (NULL);
 			}
 			else
 			{
-				if (current->right)
+				if (current->right && !isEndNode(current->right))
 					current = current->right;
 				else
-					break;
+					return (NULL);
 			}
 		}
 		return (current);
@@ -184,9 +186,7 @@ namespace ft {
 		struct s_node<T> *gparent = node->parent;
 		struct s_node<T> *right = node->right;
 		struct s_node<T> *left = node->left;
-		
-
-		std::cout << "coucoiiiiii'\n";
+	
 		child->parent = gparent;
 		if (gparent->left == node)
 			gparent->left = child;
@@ -215,6 +215,30 @@ namespace ft {
 		for (; node->parent; node = node->parent)
 			;
 		return (node);
+	}
+
+	template <class T, class compare>
+	bool compare2NodesNchilds(struct s_node<T> *node1, struct s_node<T> *node2, compare comp) {
+		if ((!node1 && !node2))
+			return (1);
+		if (!nodesAreEqual(node1, node2, comp))
+			return (0);
+		return (compare2NodesNchilds(node1->left, node2->left, comp) && compare2NodesNchilds(node1->right, node2->right, comp));
+	}
+
+	template <class T, class compare>
+	bool nodesAreEqual(struct s_node<T> *node1, struct s_node<T> *node2, compare comp) {
+		if ((!node1 && !node2) || (isEndNode(node1) && isEndNode(node2)))
+			return (1);
+		if ((!node1 && node2) || 
+			(!node2 && node1) || 
+			(!isEndNode(node1) && isEndNode(node2)) || 
+			(isEndNode(node1) && !isEndNode(node2)) )
+			return (0);
+		if ( comp(node1->data->first, node2->data->first) || 
+						comp(node2->data->first, node1->data->first) )
+			return (0);
+		return (1);
 	}
 }
 

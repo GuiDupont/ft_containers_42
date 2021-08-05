@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 13:02:41 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/19 14:46:06 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/05 14:01:20 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ namespace ft {
         	if (comp(*first1, *first2)) return true;
         	if (comp(*first2, *first1)) return false;
     	}
-    	return (first1 == last1) && (first2 != last2);	  
+    	return (first1 == last1) && (first2 != last2);
 	}
 	
 } /* NAMESPACE FT */ 
