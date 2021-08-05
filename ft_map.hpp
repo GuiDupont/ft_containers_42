@@ -22,7 +22,7 @@
 
 
 namespace ft {
-	
+
 	template < class Key,					   // map::key_type
            class T,					     // map::mapped_type
            class compare = std::less<Key>,					    // map::key_compare
@@ -134,7 +134,25 @@ namespace ft {
         explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(NULL), _alloc(a), _comp(comp), _size(0) { _vComp(comp); }
         
 		~map() { deleteSubTree(_tree); };
-		
+
+		map& operator=( const map& other ) { 
+			std::cout << "bite" << std::endl;
+			deleteSubTree(_tree);
+			_tree = NULL;
+			copyNode(&_tree, other._tree, NULL);
+//////////////////// add end node;
+			return (*this);
+		};
+//put private
+
+		void	copyNode(t_node **dst, t_node *src, t_node *parent) {
+			if (!src || !src->data)
+				return ;
+			*dst = setUpNode(*(src->data), parent);
+			copyNode(&((*dst)->left), src->left, *dst);
+			copyNode(&((*dst)->right), src->right, *dst);
+		}
+
 		void	printTree(t_node *current, int depth) {
 			if (depth == 0)
 				current = this->_tree;
@@ -145,21 +163,6 @@ namespace ft {
 			printTree(current->right, depth + 1);
 			if (depth == 0)
 				std::cout << std::endl;
-		}
-
-		map& operator=( const map& other ) { 
-			deleteSubTree(_tree);
-			_tree = NULL;
-			copyNode(&_tree, other->_tree, NULL);
-		};
-//put private
-
-		void	copyNode(t_node **dst, t_node *src, t_node *parent) {
-			if (!src || !src->data)
-				return ;
-			*dst = setUpNode(src->data, parent);
-			copyNode(&((*dst)->left), src->left, *dst);
-			copyNode(&((*dst)->right), src->right, *dst);
 		}
 
 		allocator_type get_allocator() const { return (_alloc); }
@@ -329,7 +332,8 @@ namespace ft {
 				node->left = NULL;
 				node->right = NULL;
 				node->height = 0;
-				node->balanceFactor = 0;								//to potentially delete
+				node->balanceFactor = 0;
+				std::cout << value.first << std::endl;								//to potentially delete
 				return (node);
 			}
 		

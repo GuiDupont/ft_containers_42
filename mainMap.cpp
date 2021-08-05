@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/05 16:05:14 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/05 16:36:35 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,15 +162,17 @@ int main()
 	stdmap.insert(std::pair<int, std::string>(2000, "sal"));
 	ftmap.insert(ft::pair<int, std::string>(2000, "sal"));
 
-	ft::map<int, std::string> ftmap3 = ftmap;
+	ft::map<int, std::string> ftmap3;
+	ftmap3 = ftmap;
 	// std::cout << (ftmap < ftmap1) << std::endl;
 	// std::cout << (stdmap < stdmap2) << std::endl;
 	
 	// std::cout << ftmap.lower_bound(3)->first << std::endl;
+	std::cout << "ftmap3:\n";
 	ftmap3.printTree(NULL, 0);
+	std::cout << "ftmap:\n";
 	ftmap.printTree(NULL, 0);
 	std::cout << (ftmap == ftmap1) << std::endl;
-	
 	
 	
 	(void)it4;
