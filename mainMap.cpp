@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/05 16:36:35 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/06 12:15:45 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,6 @@ int main()
 
 	std::cout << (--(ftmap.find(120)))->first << std::endl;
 
-	//ftmap.erase(it2);
 	ftmap.printTree(NULL, 0);
 	ftmap1.printTree(NULL,0);
 	std::cout << stdmap.lower_bound(18)->first << std::endl;
@@ -162,8 +161,8 @@ int main()
 	stdmap.insert(std::pair<int, std::string>(2000, "sal"));
 	ftmap.insert(ft::pair<int, std::string>(2000, "sal"));
 
-	ft::map<int, std::string> ftmap3;
-	ftmap3 = ftmap;
+	ft::map<int, std::string> ftmap3(ftmap);
+	// ftmap3 = ftmap;
 	// std::cout << (ftmap < ftmap1) << std::endl;
 	// std::cout << (stdmap < stdmap2) << std::endl;
 	
@@ -172,9 +171,13 @@ int main()
 	ftmap3.printTree(NULL, 0);
 	std::cout << "ftmap:\n";
 	ftmap.printTree(NULL, 0);
-	std::cout << (ftmap == ftmap1) << std::endl;
+	std::cout << (ftmap == ftmap3) << std::endl;
+	it2++;
+	it2++;
+	it2++;
 	
-	
+	std::cout << it2->first << std::endl;
+	ftmap.erase(10);
 	(void)it4;
 	(void)it3;
 	

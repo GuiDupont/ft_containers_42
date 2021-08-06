@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/05 11:45:40 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/06 11:36:24 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ namespace ft {
 	};
 
 	template <class T>
-	bool isEndNode(struct s_node<T> *node) {
+	bool isEndNode(struct s_node<T> *node) {       // see ft::pair<iterator, bool> insert( const value_type& value ) from ft_map.hpp for explanations
 		if (!node)
 			return (0);
 		return (!node->data);
@@ -122,93 +122,6 @@ namespace ft {
 		return (current);
 	}
 
-	template <class T, class comp>
-	void		putTargetInLeaf(struct s_node<T> *target, comp compare) {
-		
-		if (!target->right && !target->left)
-			;
-		else if (target->right && isEndNode(target->right))       // end_node special case
-		{
-			std::cout << "je ne dois passer ici\n";
-			if (target->parent)
-				target->parent->right = target->right;
-			target->right->parent = target->parent;
-		}
-		else if (target->left && !target->right)
-			swapWithChild(target, target->left);
-		else if (target->right && !target->left)
-			swapWithChild(target, target->right);
-		else
-		{
-			std::cout << "je dois passer ici\n";
-			swapNodePos(target, getUpperNode(target, compare));
-			//putTargetInLeaf(target, compare);
-		}
-	}
-
-	template <class T>
-	void	swapNodePos(struct s_node<T> *node1, struct s_node<T> *node2) {
-		struct s_node<T> *parent = node1->parent;
-		struct s_node<T> *right = node1->right;
-		struct s_node<T> *left = node1->left;
-		if (node1->parent)
-		{
-			if (node1->parent->left == node1)
-				node1->parent->left = node2;
-			else
-				node1->parent->right = node2;			
-		}
-		if (node1->left)
-			node1->left->parent = node2;
-		if (node1->right)
-			node1->right->parent = node2;
-		if (node2->parent)
-		{
-			if (node2->parent->left == node2)
-				node2->parent->left = node1;
-			else
-				node2->parent->right = node1;			
-		}
-		if (node2->left)
-			node2->left->parent = node1;
-		if (node2->right)
-			node2->right->parent = node1;
-		node1->parent = node2->parent;
-		node2->parent = parent;
-		node1->right = node2->right;
-		node2->right = right;
-		node1->left = node2->left;
-		node2->left = left;
-	}
-
-		template <class T>
-	void	swapWithChild(struct s_node<T> *node, struct s_node<T> *child) {
-		struct s_node<T> *gparent = node->parent;
-		struct s_node<T> *right = node->right;
-		struct s_node<T> *left = node->left;
-	
-		child->parent = gparent;
-		if (gparent->left == node)
-			gparent->left = child;
-		else
-			gparent->right = child;
-		node->left = child->left;
-		node->right = child->right;
-		node->parent = child;
-		if (right == child)
-		{
-			child->right = node;
-			child->left = right;
-		}
-		else
-		{
-			child->left = node;
-			child->right = left;
-		}
-		node->left->parent = node;
-		node->right->parent = node;
-		
-	}
 	
 	template <class T>
 	struct s_node<T> *getRootNode(struct s_node<T> *node) {

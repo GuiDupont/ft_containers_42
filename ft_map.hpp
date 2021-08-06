@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "ft_lexicographical_compare.hpp"
+#include <string.h>
 
 
 namespace ft {
@@ -133,22 +134,23 @@ namespace ft {
 		
         explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(NULL), _alloc(a), _comp(comp), _size(0) { _vComp(comp); }
         
+		map( const map& other ) { *this = other; }
+
 		~map() { deleteSubTree(_tree); };
 
 		map& operator=( const map& other ) { 
-			std::cout << "bite" << std::endl;
 			deleteSubTree(_tree);
 			_tree = NULL;
+			_size = other._size;
 			copyNode(&_tree, other._tree, NULL);
-//////////////////// add end node;
 			return (*this);
 		};
 //put private
 
 		void	copyNode(t_node **dst, t_node *src, t_node *parent) {
-			if (!src || !src->data)
+			if (!src)
 				return ;
-			*dst = setUpNode(*(src->data), parent);
+			*dst = setUpNode(src->data, parent);
 			copyNode(&((*dst)->left), src->left, *dst);
 			copyNode(&((*dst)->right), src->right, *dst);
 		}
@@ -202,7 +204,7 @@ namespace ft {
 
 			reverse_iterator 		rend() { return (reverse_iterator(end())); }
 			
-			const_reverse_iterator rend() const { return (reverse_iterator(end())); }
+			const_reverse_iterator	rend() const { return (reverse_iterator(end())); }
 
 			size_type 				size() const { return _size; }
 
@@ -221,24 +223,22 @@ namespace ft {
 			ft::pair<iterator, bool> insert( const value_type& value ) {
 				t_node *nodeCreated = NULL;
 
-				if (!_tree)
-				{
-					_tree = setUpNode(value, NULL);
-					_tree->right = this->_nodeAlloc.allocate(1);
-					this->_nodeAlloc.construct(_tree->right, t_node());  	// for the first insertion we had a end_node, 
-					_tree->right->parent = _tree;					// that is empty and that we will use later for our iterators
-					nodeCreated = _tree;							// this node is always the right child of the biggest element regarding the key
+				if (!_tree)									// for the first insertion we had a end_node that is empty 
+				{											// and that we will use later for our iterators
+					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
+					_tree->right = setUpNode(NULL, _tree);
+					nodeCreated = _tree;
 				}
 				else if (!_tree->data)
 				{
-					nodeCreated = setUpNode(value, NULL);
+					nodeCreated = setUpNode(&value, NULL);
 					nodeCreated->right = _tree;
 					_tree->parent = nodeCreated;
 					_tree = nodeCreated;
 				}												
 				else
 				{
-					nodeCreated = findNodePlace(value, _tree);
+					nodeCreated = findValuePlace(value, _tree);
 					if (nodeCreated)
 						computeBalanceFactorNRebalance(_tree);
 				}
@@ -322,22 +322,25 @@ namespace ft {
 				doLeftRotation(c);
 			}
 		
-			t_node *setUpNode(const value_type& value, t_node *parent) {
+			t_node *setUpNode(const value_type* value, t_node *parent) {
 				t_node *node = this->_nodeAlloc.allocate(1);
 
 				this->_nodeAlloc.construct(node, t_node());
+				bzero(reinterpret_cast<char *>(node), sizeof(t_node));
 				node->parent = parent;
-				node->data = this->_alloc.allocate(1);
-				this->_alloc.construct(node->data, value);
 				node->left = NULL;
 				node->right = NULL;
 				node->height = 0;
 				node->balanceFactor = 0;
-				std::cout << value.first << std::endl;								//to potentially delete
+				node->data = NULL;
+				if (!value)
+					return (node);
+				node->data = this->_alloc.allocate(1);
+				this->_alloc.construct(node->data, *value);
 				return (node);
 			}
 		
-			t_node	*findNodePlace(const value_type& value, t_node *current) {
+			t_node	*findValuePlace(const value_type& value, t_node *current) {
 				t_node *ret = NULL;
 				
 				if (!_comp(value.first, current->data->first) && !_comp(current->data->first, value.first))
@@ -345,26 +348,36 @@ namespace ft {
 				else if (this->_comp(value.first, current->data->first))
 				{
 					if (!current->left)
-						ret = current->left = setUpNode(value, current);
+						ret = current->left = setUpNode(&value, current);
 					else
-						ret = findNodePlace(value, current->left);
+						ret = findValuePlace(value, current->left);
 				}
 				else
 				{
 					if (!current->right)
-						ret = current->right = setUpNode(value, current);
-					else if (!current->right->data) //if we reached the end node of the tree, see insert(const value_type& value)
+						ret = current->right = setUpNode(&value, current);
+					else if (isEndNode(current->right))
 					{
-						current->right->right = setUpNode(value, current);
+						current->right->right = setUpNode(&value, current);
 						std::swap(current->right->data, current->right->right->data);
 						ret = current->right->right->parent = current->right;
 					}
 					else
-						ret = findNodePlace(value, current->right);
+						ret = findValuePlace(value, current->right);
 				}
 				if (ret)
 					current->height += 1;
 				return (ret);
+			}
+
+			void findNodePlace(t_node* toPlace, t_node *current) {
+				if (current->left)
+					findNodePlace(toPlace, current->left);
+				else
+				{
+					current->left = toPlace;
+					toPlace->parent = current->left;
+				}
 			}
 
 			void	deleteSubTree(t_node *node) {
@@ -401,11 +414,29 @@ namespace ft {
 		
 			void erase(iterator pos) {
 				key_compare comp;
+				if (pos == end())
+					return ;
+				
 				value_type value(pos->first, pos->second);
 				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
+				if (!target)
+					return ;
+				t_node *left = target->left;
+				t_node *right = target->right;
+				if (target->parent->right == target)
+					target->parent->right = right;
+				else
+					target->parent->left = right;
+				right->parent = target->parent;
+				target->right = NULL;
+				target->left = NULL;
+				deleteSubTree(target);
+				findNodePlace(left, right);
+				computeBalanceFactorNRebalance(_tree);
+				_size--;
+
+
 				printTree(_tree, 0);
-				putTargetInLeaf(target, comp);
-				//printTree(_tree, 0);
 			}
 
 			void erase( iterator first, iterator last ) {
@@ -413,8 +444,16 @@ namespace ft {
 					this->erase(*first);
 			}
 
-		// size_type erase( const key_type& key );
-		
+			size_type erase( const key_type& key ) {
+				size_type sizeBefore = _size;
+				value_type value(key, T());
+				t_node *target = getNode(_tree, value,_comp);
+				if (!target)
+					return (0);
+				erase(iterator(target));
+				return (sizeBefore - _size);
+			}
+			
 		void swap( map& other ) { 
 			t_node *temp = other._tree;
 			other._tree = _tree;
@@ -442,10 +481,15 @@ namespace ft {
 			return (find(key));
 		}
 
-		// ft::pair<iterator,iterator> equal_range( const Key& key ) {
+		ft::pair<iterator,iterator> equal_range( const Key& key ) {
+			ft::pair<iterator,iterator> range(lower_bound(key), upper_bound(key));
+			return (range);
+		}
 
-		// }
-		// // ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const;
+		ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const {
+			ft::pair<const_iterator, const_iterator> range(lower_bound(key), upper_bound(key));
+			return (range);
+		}
 		
 		iterator lower_bound( const Key& key ) {
 			iterator	current = iterator(_tree);
