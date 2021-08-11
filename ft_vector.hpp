@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/29 08:57:48 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/11 12:13:39 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,12 @@ namespace ft {
 					
 						iterator() : _ptr(NULL) {}
 						iterator(T* ptr) : _ptr(ptr) {}
-						iterator(vector const & rhs) : _ptr(rhs._buffer) {}
-						iterator(iterator const & rhs) : _ptr(rhs._ptr) { }
+						iterator(vector const & rhs) : _ptr(rhs._buffer) {} // to protect
+						iterator(iterator const & rhs) : _ptr(rhs._ptr) { 
+							// if (_ptr)
+							// 	std::cout << "l'iterator pointe sur :"<< *rhs << "\n";
+						
+							}
 						~iterator() { }
 						
 						iterator& operator++() { _ptr++; return (*this); }
@@ -78,44 +82,28 @@ namespace ft {
 
 						iterator operator+(int n) const
 						{
-							pointer it = _ptr;
-							if (n < 0)
-								for (int i = 0; i > n; i--)
-									it--;
-							else
-								for (int i = 0; i < n; i++)
-									it++;
+							pointer it = _ptr + n;
 							return (iterator(it));
 						}
 
 						iterator operator-(int n) const
 						{
-							pointer it = _ptr;
-							if (n < 0)
-								for (int i = 0; i > n; i--)
-									it++;
-							else
-								for (int i = 0; i < n; i++)
-									it--;
+							pointer it = _ptr - n;
 							return (iterator(it));
 						}
 
 						difference_type operator-(const iterator b) const
 						{
-							return _ptr - b._ptr;
+							return (_ptr - b._ptr);
 						}
 
-						iterator& operator--() 
-						{
-							_ptr--;
-							return (*this);
-						}
+						iterator& operator--() { _ptr--; return (*this); }
 						
 						iterator operator--(int) 
 						{
-							iterator iterator = *this;
+							iterator it = *this;
 							--(*this);
-							return (iterator);
+							return (it);
 						}
 
 						reference operator[](int index) { return (*(_ptr + index)); }
@@ -128,23 +116,98 @@ namespace ft {
 
 						bool operator==( const iterator &rhs) const { return (this->_ptr == rhs._ptr); }
 						
-						bool operator!=(const iterator &rhs) const { return !(*this == rhs); }
+						bool operator!=( const iterator &rhs) const { return !(*this == rhs); }
 				
-					private:
+					protected:
 						pointer _ptr;
 
-						// ptrdiff_t _distance(iterator first, iterator last) const { 
-						// 	difference_type n = 0;
-						// 	while (first != last)
-						// 	{
-						// 		n++;
-						// 		first++;
-						// 	}
-						// 	return (n);
-							// }
+
+					friend class const_iterator;
 				}; // class iterator
 
-				typedef const typename vector<T>::iterator		const_iterator;
+				
+				class const_iterator : public iterator { 
+					public:
+
+						typedef const value_type&		reference;
+						typedef const value_type*		pointer;
+						
+						const_iterator() : iterator() {}
+						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr;
+						std::cout << "coucou\n"; } // to put private
+						const_iterator(vector const & rhs) : iterator(rhs) {} // to put private
+						const_iterator(const iterator & rhs) : iterator(rhs) { }
+						// ~const_iterator() { }
+						
+						const_iterator& operator++() { this->_ptr++; return (*this); }
+
+						const_iterator& operator=(reference & lhs) { this->_ptr = lhs; return (*this); }
+
+						const_iterator& operator=(iterator const & lhs) 
+						{ this->_ptr = lhs._ptr; return (*this); }
+						
+						const_iterator& operator+=(int n)
+						{
+							this->_ptr += n;
+							return (*this);
+						}
+
+						const_iterator& operator-=(int n)
+						{
+							this->_ptr -= n;
+							return (*this);
+						}
+
+						const_iterator operator++(int) 
+						{
+							iterator it = *this;
+							++(*this);
+							return (it);
+						}
+
+						const_iterator operator+(int n) const
+						{
+							return (iterator(this->_ptr + n));
+						}
+
+						const_iterator operator-(int n) const
+						{
+							pointer it = this->_ptr - n;
+							return (iterator(it));
+						}
+
+						difference_type operator-(const iterator b) const
+						{
+							return (this->_ptr - b._ptr);
+						}
+
+						const_iterator& operator--() { this->_ptr--; return (*this); }
+						
+						const_iterator operator--(int) 
+						{
+							iterator it = *this;
+							--(*this);
+							return (it);
+						}
+
+						reference operator[](int index) const { return (*(this->_ptr + index)); }
+						
+						pointer operator->() const { return (this); }
+
+						reference operator*() const { return (*this->_ptr); }
+
+						bool operator==( const const_iterator &rhs) const { return (this->_ptr == rhs._ptr); }
+						
+						bool operator!=( const const_iterator &rhs) const { return !(*this == rhs); }
+				
+					// protected:
+					// 	pointer _ptr;
+
+					friend class vector;
+					friend class iterator;
+					
+				}; /* CONST_ITERATOR */
+
 				typedef ft::iterator_traits<iterator>			iterator_traits;
 
 
@@ -211,12 +274,12 @@ namespace ft {
 				iterator begin() { return (iterator(_buffer)); }
 				iterator end() { return (iterator(&_buffer[_size])); }
 				
-				const iterator begin() const {  return (iterator(_buffer)); }
-				const iterator end() const { return (iterator(&_buffer[_size])); }
-				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size]));}
-				const reverse_iterator<iterator> rbegin() const { return (reverse_iterator<iterator>(&_buffer[_size])); }; 
+				const_iterator begin() const { return (const_iterator(_buffer)); }
+				const_iterator end() const { return (const_iterator(&_buffer[_size])); }
+				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size - 1]));}
+				reverse_iterator<const_iterator> rbegin() const { return (reverse_iterator<const_iterator>(&_buffer[_size - 1])); }; 
 				reverse_iterator<iterator> rend() { return (reverse_iterator<iterator>(_buffer)); }
-				const reverse_iterator<iterator> rend() const { return (reverse_iterator<iterator>(_buffer)); }
+				reverse_iterator<const_iterator> rend() const { return (reverse_iterator<const_iterator>(_buffer)); }
 
 				reference front() { return (*_buffer); }
 				const_reference front() const { return (*_buffer); }
@@ -312,8 +375,6 @@ namespace ft {
 						for (size_type i = 0; i < n; i++)
 							_buffer[targetIndex + i] = value;
 						int startCopy = targetIndex + n;
-						// for (size_type i = 0; i < n; i++)
-						// 	_alloc.construct(&_buffer[_size + i], 0);
 						for (size_type i = 0; i < _size - n - 1 ; i++)
 						{
 							_buffer[startCopy + i] = save[i];
