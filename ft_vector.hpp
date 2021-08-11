@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/11 12:13:39 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/11 15:35:57 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,7 @@ namespace ft {
 						typedef const value_type*		pointer;
 						
 						const_iterator() : iterator() {}
-						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr;
-						std::cout << "coucou\n"; } // to put private
+						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr; } // to put private
 						const_iterator(vector const & rhs) : iterator(rhs) {} // to put private
 						const_iterator(const iterator & rhs) : iterator(rhs) { }
 						// ~const_iterator() { }
@@ -276,8 +275,8 @@ namespace ft {
 				
 				const_iterator begin() const { return (const_iterator(_buffer)); }
 				const_iterator end() const { return (const_iterator(&_buffer[_size])); }
-				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size - 1]));}
-				reverse_iterator<const_iterator> rbegin() const { return (reverse_iterator<const_iterator>(&_buffer[_size - 1])); }; 
+				reverse_iterator<iterator> rbegin() { return (reverse_iterator<iterator>(&_buffer[_size]));}
+				reverse_iterator<const_iterator> rbegin() const { return (reverse_iterator<const_iterator>(&_buffer[_size])); }; 
 				reverse_iterator<iterator> rend() { return (reverse_iterator<iterator>(_buffer)); }
 				reverse_iterator<const_iterator> rend() const { return (reverse_iterator<const_iterator>(_buffer)); }
 
@@ -309,13 +308,20 @@ namespace ft {
 				
 				reference operator[](size_type n) { return (*(this->_buffer + n)) ;}
 				const_reference operator[](size_type n) const { return (*(this->_buffer + n)) ;}
+				
 				reference at(size_type n) { 
 					if (n >= _size)
 						throw std::out_of_range("Out of range exeption");
 					else
 						return (*(this->_buffer + n)) ;
 					};
-				const_reference at(size_type n) const { return (at(n)); }
+				
+				const_reference at(size_type n) const { 
+					if (n >= _size)
+						throw std::out_of_range("Out of range exeption");
+					else
+						return (*(this->_buffer + n)) ;
+					}
 
 				iterator insert(iterator place, const T& val) {
 					if (_size == _capacity)
@@ -389,14 +395,16 @@ namespace ft {
 				template<class inputIter>
 				iterator insert(const iterator target, typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type n = last - first;
+
 					if (n + _size > _capacity)
-					{
-						size_type newCapacity = _newCapacity(n + _size, _capacity);
+					{ 
+						size_type newCapacity = _newCapacity(n + _size, _size);
 						T* substitute = _alloc.allocate(newCapacity);
 						int targetIndex = _distance(this->begin(), target);
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
 						for (size_t i = 0; i < n; i++)
 							_alloc.construct(substitute + i + targetIndex, *(first++));
+						
 						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
 						_size += n;
 						_alloc.deallocate(_buffer, _capacity);
@@ -413,9 +421,16 @@ namespace ft {
 						for (ptrdiff_t i = 0 ; i != last - first; i++)
 							*(target + i) = *(first + i); 
 						_size += n;
+						
 						return (target);
 					}
 				}
+
+				// size_type _newCapacity(size_type goal, size_type capacity) {
+				// 	while (capacity < goal)
+				// 		capacity *= REALLOC_MULT;
+				// 	return (capacity);
+				// }
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
@@ -646,6 +661,8 @@ namespace ft {
 				}
 
 				size_type _newCapacity(size_type goal, size_type capacity) {
+					if (!capacity)
+						capacity = goal;
 					while (capacity < goal)
 						capacity *= REALLOC_MULT;
 					return (capacity);

@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/22 11:19:57 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/11 13:36:19 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ namespace ft {
 
 		reverse_iterator& operator--() { return(*(++_current)); }
 
-		reverse_iterator& operator++(int) { reverse_iterator temp = *this;
+		reverse_iterator operator++(int) { reverse_iterator temp = *this;
 											_current--;
 											return (temp); }
 
-		reverse_iterator& operator--(int) { reverse_iterator temp = *this;
+		reverse_iterator operator--(int) { reverse_iterator temp = *this;
 											_current++;
 											return (temp); }
 
@@ -81,9 +81,9 @@ namespace ft {
 	}
 
 	template< class Iter >
-	reverse_iterator<Iter>
+	typename reverse_iterator<Iter>::difference_type
     operator-( const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs ) {
-		return reverse_iterator<Iter>(rhs.base() - lhs.base());
+		return (rhs.base() -lhs.base());
 	}
 
 	template< class Iterator1, class Iterator2 >

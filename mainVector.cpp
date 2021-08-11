@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/11 12:42:18 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/11 13:03:09 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 
 #define NBVECTOR 5
 
+
+#define TESTED_NAMESPACE ft
+#define TESTED_TYPE int
 template<typename T>
 void	printVec(std::vector<T> const & v, std::string s)
 {
@@ -42,6 +45,25 @@ void	printVec(ft::vector<T> const & v, std::string s)
 void myfunction (int &i) {  // function:
   i++;
 }
+
+
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = 1)
+{
+	std::cout << "size: " << vct.size() << std::endl;
+	std::cout << "capacity: " << vct.capacity() << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
 
 
 int main(void)
@@ -234,6 +256,16 @@ int main(void)
 
 	std::cout << "stdVec2 != stdVec4: " << (stdVec2 != stdVec4) << std::endl;
 	std::cout << "ftVec2 != ftVec4:   " << (ftVec2 != ftVec4) << std::endl;
+
+
+
+
+
+	
 }
+
+
+
+
 
 
