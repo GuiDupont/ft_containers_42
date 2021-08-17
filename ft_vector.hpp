@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/17 11:15:48 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/17 17:36:04 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include "ft_enable_if.hpp"
 #include "ft_reverse_iterator.hpp"
 #include "ft_type_traits.hpp"
+#include "ft_lexicographical_compare.hpp"
+#include <algorithm>
 
 #define REALLOC_MULT 2
 
@@ -388,7 +390,7 @@ namespace ft {
 				{
 					if (n + _size > _capacity)
 					{
-						size_type newCapacity = n + _size;
+						size_type newCapacity = std::max(_size * 2, n + _size);
 						T* substitute = _alloc.allocate(newCapacity);
 						int targetIndex = _distance(this->begin(), target);
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
@@ -438,8 +440,7 @@ namespace ft {
 					size_type n = _distance(first, last);
 					if (n + _size > _capacity)
 					{ 
-						size_type newCapacity = _newCapacity(n + _size, _capacity);
-						
+						size_type newCapacity = std::max(_size * 2, n + _size);
 						T* substitute = _alloc.allocate(newCapacity);
 						int targetIndex = _distance(this->begin(), target);
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
@@ -575,7 +576,7 @@ namespace ft {
 					else 
 					{
 						if (n > _capacity)
-							this->reallocateNCopy(n);
+							this->reallocateNCopy(std::max(_size * 2, n));
 						for (size_type i = _size; i < n; i++)
 							_alloc.construct(_buffer + i, val);
 					}
@@ -600,6 +601,7 @@ namespace ft {
 				friend bool operator==(vector<T> const & lhs, vector<T> const & rhs) {
 					if (lhs._size != rhs._size)
 						return (0);
+					// lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())
 					for (typename A::size_type i = 0; i < lhs._size; i++)
 						if (lhs._buffer[i] != rhs._buffer[i])
 							return (0);
@@ -615,30 +617,20 @@ namespace ft {
 					return (0);
 				}
 				
-				friend bool operator<(const vector<T>& lhs, const vector<T>& rhs) {
-					for (size_type i = 0; i < lhs._capacity && i < rhs._capacity; i++)
-					{
-						if (lhs._buffer[i] < rhs._buffer[i])
-							return (1);
-						if (lhs._buffer[i] > rhs._buffer[i])
-							return (0);
-						if (i == lhs._size && i == rhs._size)
-							return (0);
-					}
-	
-					return (0);
-				} /// a refaire
+				friend bool operator<(const vector<T>& lhs, const vector<T>& rhs) {						
+						return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+				} 
 				
 				friend bool operator>(const vector<T>& lhs, const vector<T>& rhs) {
-					return (!(lhs < rhs));
+					return (!(lhs < rhs) && (lhs != rhs));
 				}
 				
 				friend bool operator<=(const vector<T>& lhs, const vector<T>& rhs) {
-					return (lhs == rhs || lhs < rhs);
+					return lhs < rhs || lhs == rhs;
 				}
 				
 				friend bool operator>=(const vector<T>& lhs, const vector<T>& rhs) {
-					return (lhs == rhs || lhs > rhs);
+					return lhs > rhs || lhs == rhs;
 					
 				}
 			
