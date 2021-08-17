@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:01:31 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/29 09:18:49 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/11 15:52:28 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 
 #define NBVECTOR 5
 
+
+#define TESTED_NAMESPACE ft
+#define TESTED_TYPE int
 template<typename T>
 void	printVec(std::vector<T> const & v, std::string s)
 {
@@ -44,6 +47,25 @@ void myfunction (int &i) {  // function:
 }
 
 
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = 1)
+{
+	std::cout << "size: " << vct.size() << std::endl;
+	std::cout << "capacity: " << vct.capacity() << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
+
+
 int main(void)
 {
 
@@ -62,6 +84,7 @@ int main(void)
 	ft::vector<int> ftVec3(20, 42);
 	ft::vector<int> ftVec4(&array[0], &array[19]);
 	ft::vector<int> ftVec5(ftVec3);
+
 	
 	std::cout << "######### Let's test constructors and operator = #########" << std::endl << std::endl;
 	printVec(stdVec, "StdVec : ");
@@ -87,7 +110,7 @@ int main(void)
 
 	std::cout << "*stdVec4.rbegin() : " << * (stdVec4.rbegin()) << std::endl;
 	std::cout << "*ftVec4.rbegin()  : " << *(ftVec4.rbegin()) << std::endl;
-	std::cout << "*(stdVec4.rend()- 1) : " << *(stdVec4.rend()- 1) << std::endl;
+	std::cout << "*(stdVec4.rend()- 1) : " << *(stdVec4.rend() - 1) << std::endl;
 	std::cout << "*(ftVec4.rend() - 1) : " << *(ftVec4.rend() - 1) << std::endl;
 	
 	std::cout << "stdVec4.front() : " << stdVec4.front() << std::endl;
@@ -123,7 +146,8 @@ int main(void)
 	for (int i = 0; i < static_cast<int>(ftVec4.size()); i++)
 		std::cout << ftVec4.at(i) << " ";
 	std::cout << std::endl;
-	std::cout << "Maintenant on utilise at avec un index hors des linites" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Maintenant on utilise at avec un index hors des limites" << std::endl;
 	try
 	{
 		stdVec4.at(200);
@@ -232,6 +256,11 @@ int main(void)
 
 	std::cout << "stdVec2 != stdVec4: " << (stdVec2 != stdVec4) << std::endl;
 	std::cout << "ftVec2 != ftVec4:   " << (ftVec2 != ftVec4) << std::endl;
+	
 }
+
+
+
+
 
 

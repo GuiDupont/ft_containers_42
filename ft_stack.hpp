@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 13:45:51 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/12 15:09:37 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ namespace ft {
 			return (lhs._data >= rhs._data);
 		}
 
-		private:
+		protected:
 
 		container 	_data;
 	};

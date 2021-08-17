@@ -7,7 +7,7 @@
 #include "ft_enable_if.hpp"
 #include "ft_reverse_iterator.hpp"
 
-#define TESTED_NAMESPACE ft
+#define TESTED_NAMESPACE std
 #define TESTED_TYPE int
 
 template <typename T>
@@ -53,8 +53,8 @@ void	checkErase(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct,
 	}
 
 
-void	checkErase(ft::vector<std::string> const &vct,
-						ft::vector<std::string>::const_iterator const &it)
+void	checkErase(std::vector<std::string> const &vct,
+						std::vector<std::string>::const_iterator const &it)
 	{
 		static int i = 0;
 		std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
@@ -274,7 +274,7 @@ int main()
 
 	// {
 	// 	//#define TESTED_TYPE std::string
-	// 	ft::vector<std::string> vct(10);
+	// 	std::vector<std::string> vct(10);
 
 	// 	for (unsigned long int i = 0; i < vct.size(); ++i)
 	// 		vct[i] = std::string((vct.size() - i), i + 65);
@@ -357,7 +357,6 @@ int main()
 	// 	vct2.insert(vct2.end() - 2, 42);
 	// 	printSize(vct2);
 
-	
 	// 	vct2.insert(vct2.end(), 2, 84);
 	// 	printSize(vct2);
 
@@ -472,6 +471,8 @@ int main()
 		std::cout << "\t\tft_eq_ope:" << std::endl;
 		// regular it
 		ft_eq_ope(it_0 + 3, it_mid);
+		//it_0 + 3 < it_mid;
+
 		ft_eq_ope(it_0, it_1);
 		ft_eq_ope(it_1 - 3, it_mid);
 		// const it
@@ -494,7 +495,7 @@ int main()
 // 		const int size = 5;
 // 		TESTED_NAMESPACE::vector<TESTED_TYPE> vct(size);
 // 		TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
-// 		TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite = vct.begin();
+// 		//TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite = vct.begin();
 
 // 		for (int i = 0; i < size; ++i)
 // 			it[i] = i;
@@ -508,7 +509,7 @@ int main()
 // 		const int size = 5;
 // 		TESTED_NAMESPACE::vector<TESTED_TYPE> vct(size);
 // 		TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
-// 		TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite = vct.begin();
+// 	//	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite = vct.begin();
 
 // 		for (int i = 0; i < size; ++i)
 // 			it[i] = i;
@@ -518,21 +519,21 @@ int main()
 // 	}
 
 
-// 	{
-// 		const int size = 5;
-// 		TESTED_NAMESPACE::vector<TESTED_TYPE> const vct(size);
-// 		TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin(); // <-- error expected
+// 	// {
+// 	// 	const int size = 5;
+// 	// 	TESTED_NAMESPACE::vector<TESTED_TYPE> const vct(size);
+// 	// 	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin(); // <-- error expected
 
-// 		for (int i = 0; i < size; ++i)
-// 			it[i] = i;
+// 	// 	for (int i = 0; i < size; ++i)
+// 	// 		it[i] = i;
 
-// 	}
+// 	// }
 
 // 	{
 // 	//#define TESTED_TYPE std::string
-// 		ft::vector<std::string> vct(8);
-// 		ft::vector<std::string> vct2;
-// 		ft::vector<std::string>::iterator it = vct.begin();
+// 		std::vector<std::string> vct(8);
+// 		std::vector<std::string> vct2;
+// 		std::vector<std::string>::iterator it = vct.begin();
 
 // 		for (unsigned long int i = 0; i < vct.size(); ++i)
 // 			it[i] = std::string((vct.size() - i), i + 65);
@@ -817,7 +818,7 @@ int main()
 // 		std::cout << (it_foo == bar.begin()) << std::endl;
 // 		std::cout << (it_bar == foo.begin()) << std::endl;
 
-// 	}
+	// }
 
 	return (0);
 

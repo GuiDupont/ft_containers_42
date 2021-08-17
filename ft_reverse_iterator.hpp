@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/11 13:36:19 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/12 17:40:54 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ namespace ft {
 		reverse_iterator( const reverse_iterator<U>& other ) : _current(other.base()) { }
 		
 		template< class U >
-		reverse_iterator& operator=( const reverse_iterator<U>& other ) { _current = other.base(); }
+		reverse_iterator& operator=( const reverse_iterator<U>& other ) {	_current = other.base();
+																			return (*this); }
 
 		iterator_type base() const	{ return (_current); }
 		
@@ -51,11 +52,16 @@ namespace ft {
 		pointer operator->() const	{	iterator temp = _current;
 										return (--temp); }
 
-		reference operator[](difference_type n) const { return *(_current[-n - 1]); }
+		reference operator[](difference_type n) const {
+			iterator it = _current;
+			for (difference_type i = 0; i != -(-n - 1); i++, it--)
+				;
+			return (*it);
+		}
 
-		reverse_iterator& operator++() { return(*(--_current)); }
+		reverse_iterator& operator++() { --_current; return(*this); }
 
-		reverse_iterator& operator--() { return(*(++_current)); }
+		reverse_iterator& operator--() {  ++_current; return(*this); }
 
 		reverse_iterator operator++(int) { reverse_iterator temp = *this;
 											_current--;
@@ -83,7 +89,13 @@ namespace ft {
 	template< class Iter >
 	typename reverse_iterator<Iter>::difference_type
     operator-( const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs ) {
-		return (rhs.base() -lhs.base());
+		return (rhs.base() - lhs.base());
+	}
+
+	template< class IterL, class IterR >
+	typename reverse_iterator<IterL>::difference_type
+    operator-( const reverse_iterator<IterL>& lhs, const reverse_iterator<IterR>& rhs ) {
+		return (rhs.base() - lhs.base());
 	}
 
 	template< class Iterator1, class Iterator2 >
