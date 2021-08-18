@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include "ft_lexicographical_compare.hpp"
 #include <string.h>
+#include <iostream>
 
 
 namespace ft {
@@ -33,108 +34,166 @@ namespace ft {
         
         public:
 
-        typedef	Key										key_type;
-        typedef	T										mapped_type;
-        typedef	ft::pair<const Key, T>                	value_type;
-        typedef	std::size_t					            size_type;
-        typedef	std::ptrdiff_t							difference_type;
-        typedef	compare									key_compare;
-        typedef	alloc									allocator_type;
-        typedef	value_type&								reference;
-        typedef	const value_type&					    const_reference;
-        typedef	typename alloc::pointer  	     		pointer;
-        typedef	typename alloc::const_pointer           const_pointer;
-		typedef struct s_node<value_type>				t_node; 						
-       	//typedef	LegacyBidirectionalIterator to value_type	iterator;
-        //typedef	LegacyBidirectionalIterator to const value_type	const_iterator	;
+			typedef	Key										key_type;
+			typedef	T										mapped_type;
+			typedef	ft::pair<const Key, T>                	value_type;
+			typedef	std::size_t					            size_type;
+			typedef	std::ptrdiff_t							difference_type;
+			typedef	compare									key_compare;
+			typedef	alloc									allocator_type;
+			typedef	value_type&								reference;
+			typedef	const value_type&						const_reference;
+			typedef	typename alloc::pointer					pointer;
+			typedef	typename alloc::const_pointer			const_pointer;
+			typedef struct s_node<value_type>				t_node;
         
 		
-		class value_compare {
-			public:
-				typedef bool		result_type;
-				typedef value_type	first_argument_type;
-				typedef value_type	second_argument_type;
-			
-				bool operator()( const value_type& lhs, const value_type& rhs ) const { return (comp(lhs.first, rhs.first));}
-			
-			protected:
-				compare comp;
-				value_compare(compare c) : comp(c) { }
-		};
+			class value_compare {
+				public:
+					typedef bool		result_type;
+					typedef value_type	first_argument_type;
+					typedef value_type	second_argument_type;
+				
+					bool operator()( const value_type& lhs, const value_type& rhs ) const { return (comp(lhs.first, rhs.first));}
+				
+				protected:
+					compare comp;
+					value_compare(compare c) : comp(c) { }
+			};
 		
 		public:
 		
-        class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
-			
-			public:
-
-				iterator() : _node(NULL) {}
-				iterator(const iterator & rhs) : _node(rhs._node) {}
-				iterator(t_node * node)  { _node = node; }
-
-				iterator& operator=(iterator const & rhs)
-							{	this->_node = rhs._node; return (*this); }
-
-				~iterator() { }
-
-				bool operator==( const iterator &rhs) const { return (this->_node == rhs._node);}
-				bool operator!=(const iterator &rhs) const { return !(*this == rhs); }
-
-				reference operator*() { return *(_node->data); }
-				const_reference operator*() const { return (*(_node->_data)); }
+			class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 				
-				pointer operator->() { return (_node->data); }
-				const_pointer operator->() const { return (_node->data); }
+				public:
 
-				iterator operator++(int) 
-				{
-					iterator it = *this;
-					++(*this);
-					return (it);
-				}
+					iterator() : _node(NULL) {}
+					iterator(const iterator & rhs) : _node(rhs._node) {}
+					iterator(t_node * node)  { _node = node; }
 
-				iterator& operator++() {  //pre inc
-					compare comp;
+					iterator& operator=(iterator const & rhs)
+								{	this->_node = rhs._node; return (*this); }
 
-					_node = getUpperNode(_node, comp);	
-					return (*this);
-				}
+					~iterator() { }
 
-				iterator& operator--()
-				{
-					compare comp;
+					bool operator==( const iterator &rhs) const { return (this->_node == rhs._node);}
+					bool operator!=(const iterator &rhs) const { return !(*this == rhs); }
 
-					if (!_node->data)                                       /* special case for end_node */ 				
-						_node = _node->parent;
-					else
-						_node = getLowerNode(_node, comp);
-					return (*this);
-				}
+					reference operator*() { return *(_node->data); }
+					const_reference operator*() const { return (*(_node->_data)); }
+					
+					pointer operator->() { return (_node->data); }
+					const_pointer operator->() const { return (_node->data); }
+
+					iterator operator++(int) 
+					{
+						iterator it = *this;
+						++(*this);
+						return (it);
+					}
+
+					iterator& operator++() {  //pre inc
+						compare comp;
+
+						_node = getUpperNode(_node, comp);	
+						return (*this);
+					}
+
+					iterator& operator--()
+					{
+						compare comp;
+
+						if (!_node->data)                                    /* special case for end_node */ 				
+							_node = _node->parent;
+						else
+							_node = getLowerNode(_node, comp);
+						return (*this);
+					}
+					
+					iterator operator--(int) 
+					{
+						iterator iterator = *this;
+						--(*this);
+						return (iterator);
+					}
+					
+					iterator& operator=(const_reference & lhs) { _node = lhs._node; return (*this); }
+
+
+				protected:
+					t_node*		_node;
+			}; // iterator class
+
+
+			class const_iterator : public iterator {
 				
-				iterator operator--(int) 
-				{
-					iterator iterator = *this;
-					--(*this);
-					return (iterator);
-				}
-				
-				iterator& operator=(const_reference & lhs) { _node = lhs._node; return (*this); }
+				public:
 
+					typedef const value_type&		reference;
+					typedef const value_type*		pointer;
 
-			private:
+					const_iterator() : iterator() {}
+					const_iterator(const iterator & rhs) : iterator(rhs) {}
+					const_iterator(t_node * node) : iterator(node) {}
 
-				t_node*		_node;
-        }; // iterator class
+					const_iterator& operator=(const_iterator const & rhs)
+								{	this->_node = rhs._node; return (*this); }
+
+					~const_iterator() { }
+
+					bool operator==( const const_iterator &rhs) const { return (this->_node == rhs._node);}
+					bool operator!=(const const_iterator &rhs) const { return !(*this == rhs); }
+
+					reference operator*() { return *(this->_node->data); }
+					const_reference operator*() const { return (*(this->_node->_data)); }
+					
+					pointer operator->() { return (this->_node->data); }
+					const_pointer operator->() const { return (this->_node->data); }
+
+					const_iterator operator++(int) 
+					{
+						const_iterator it = *this;
+						++(*this);
+						return (it);
+					}
+
+					const_iterator& operator++() {  //pre inc
+						compare comp;
+
+						this->_node = getUpperNode(this->_node, comp);	
+						return (*this);
+					}
+
+					const_iterator& operator--()
+					{
+						compare comp;
+
+						if (!this->_node->data)                                    /* special case for end_node */ 				
+							this->_node = this->_node->parent;
+						else
+							this->_node = getLowerNode(this->_node, comp);
+						return (*this);
+					}
+					
+					const_iterator operator--(int) 
+					{
+						const_iterator const_iterator = *this;
+						--(*this);
+						return (const_iterator);
+					}
+					
+					const_iterator& operator=(const_reference & lhs) { this->_node = lhs._node; return (*this); }
+
+			}; // const_iterator class
         
         typedef	ft::reverse_iterator<iterator>				reverse_iterator;
-        typedef const iterator								const_iterator;
         typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
         map() : _tree(NULL), _size(0) { }
 		
         explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(NULL), _alloc(a), _comp(comp), _size(0) { _vComp(comp); }
         
-		map( const map& other ) { *this = other; }
+		map( const map& other ) : _tree(NULL) { *this = other; }
 
 		~map() { deleteSubTree(_tree); };
 
@@ -223,7 +282,7 @@ namespace ft {
 			ft::pair<iterator, bool> insert( const value_type& value ) {
 				t_node *nodeCreated = NULL;
 
-				if (!_tree)									// for the first insertion we had a end_node that is empty 
+				if (!_tree)									// for the first insertion we add a end_node that is empty 
 				{											// and that we will use later for our iterators
 					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
 					_tree->right = setUpNode(NULL, _tree);
@@ -383,7 +442,6 @@ namespace ft {
 			void	deleteSubTree(t_node *node) {
 				if (!node)
 					return ;
-
 				t_node *left = node->left;
 				t_node *right = node->right;
 				destroyNdeallocateData(node->data);

@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 11:35:54 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 11:49:31 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,6 @@ namespace ft {
 						
 						friend bool operator>=(typename vector<T>::iterator const &lhs, typename vector<T>::iterator const &rhs) { return !(lhs < rhs); }
 
-						
-				
 					protected:
 						pointer _ptr;
 

@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/12 17:40:54 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 11:56:01 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ namespace ft {
 		reverse_iterator() : _current() { }	
 
 		explicit reverse_iterator(iterator x) : _current(x) { }
+		
 		template< class U >
 		reverse_iterator( const reverse_iterator<U>& other ) : _current(other.base()) { }
 		
