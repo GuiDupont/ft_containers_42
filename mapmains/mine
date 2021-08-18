@@ -1,0 +1,104 @@
+node created: 7
+node created: 6
+node created: 5
+node created: 4
+node created: 3
+node created: 2
+node created: 1
+1lowest
+size: 7
+max_size: 461168601842738790
+1lowest
+
+Content is:
+-fsss key: 6 | value: 1
+- key: 1 | value: 6
+- key: 2 | value: 5
+- key: 3 | value: 4
+4lowest
+- key: 4 | value: 3
+- key: 5 | value: 2
+6lowest
+- key: 6 | value: 1
+###############################################
+node created: 1
+top node: 1
+node created: 2
+top node: 2
+node created: 3
+top node: 3
+4lowest
+node created: 4
+top node: 4
+top node: 1
+top node: 2
+top node: 3
+4lowest
+top node: 4
+1lowest
+top node: 1
+top node: 2
+top node: 3
+4lowest
+top node: 4
+	-- PART ONE --
+size: 7
+max_size: 461168601842738790
+1lowest
+
+Content is:
+-fsss key: 6 | value: 1
+- key: 1 | value: 7
+- key: 2 | value: 14
+- key: 3 | value: 21
+4lowest
+- key: 4 | value: 28
+- key: 5 | value: 2
+6lowest
+- key: 6 | value: 1
+###############################################
+size: 4
+max_size: 461168601842738790
+1lowest
+
+Content is:
+-fsss key: 3 | value: 4
+- key: 1 | value: 6
+- key: 2 | value: 5
+3lowest
+- key: 3 | value: 4
+4lowest
+###############################################
+size: 7
+max_size: 461168601842738790
+1lowest
+
+Content is:
+-fsss key: 6 | value: 1
+- key: 1 | value: 5
+- key: 2 | value: 10
+- key: 3 | value: 15
+4lowest
+- key: 4 | value: 20
+- key: 5 | value: 2
+6lowest
+- key: 6 | value: 1
+###############################################
+	-- PART TWO --
+size: 7
+max_size: 461168601842738790
+1lowest
+
+Content is:
+-fsss key: 6 | value: 1
+- key: 1 | value: 5
+- key: 2 | value: 10
+- key: 3 | value: 15
+4lowest
+- key: 4 | value: 20
+- key: 5 | value: 2
+6lowest
+- key: 6 | value: 1
+###############################################
+size: 0
+max_size: 461168601842738790
