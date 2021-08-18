@@ -6,14 +6,12 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/17 17:36:04 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 11:35:54 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_FT
-
 #define VECTOR_FT
-
 
 #include <iostream>
 #include <cstddef>
@@ -24,7 +22,6 @@
 #include "ft_reverse_iterator.hpp"
 #include "ft_type_traits.hpp"
 #include "ft_lexicographical_compare.hpp"
-#include <algorithm>
 
 #define REALLOC_MULT 2
 
@@ -32,6 +29,7 @@ namespace ft {
 	
 	template <typename T, class allocator_type = std::allocator<T> >
 		class vector {
+			
 			public:
 				typedef allocator_type 				A;
 				typedef T 							value_type;
@@ -41,18 +39,18 @@ namespace ft {
 				typedef const T& 					const_reference;
 				typedef typename A::difference_type difference_type;
 				typedef typename A::size_type 		size_type;
-				
-				
+			
+			/* #########################   ITERATORS  ######################## */ 
 				class iterator : public std::iterator<std::random_access_iterator_tag, T> { 
+					protected:
+						iterator(T* ptr) : _ptr(ptr) {}
+						iterator(vector const & rhs) : _ptr(rhs._buffer) {}
+					
 					public:
 					
 						iterator() : _ptr(NULL) {}
-						iterator(T* ptr) : _ptr(ptr) {}
-						iterator(vector const & rhs) : _ptr(rhs._buffer) {} // to protect
-						iterator(iterator const & rhs) : _ptr(rhs._ptr) { 
-							// if (_ptr)
-							// 	std::cout << "l'iterator pointe sur :"<< *rhs << "\n";
-						}
+						
+						iterator(iterator const & rhs) : _ptr(rhs._ptr) { }
 						
 						~iterator() { }
 						
@@ -140,23 +138,23 @@ namespace ft {
 					protected:
 						pointer _ptr;
 
+					friend class vector;
+				}; /* END ITERATOR CLASS */
 
-					friend class const_iterator;
-				}; // class iterator
-
-				
+			/* #########################  CONST ITERATORS  ######################## */ 
 				class const_iterator : public iterator { 
+					protected:
+						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr; }
+						const_iterator(const vector & rhs) : iterator(rhs) {}
+					
 					public:
 
 						typedef const value_type&		reference;
 						typedef const value_type*		pointer;
 						
 						const_iterator() : iterator() {}
-						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr; } // to put private
-						const_iterator(const vector & rhs) : iterator(rhs) {} // to put private
+						
 						const_iterator(const iterator & rhs) : iterator(rhs) { }
-
-						// ~const_iterator() { }
 						
 						const_iterator& operator++() { this->_ptr++; return (*this); }
 
@@ -212,26 +210,19 @@ namespace ft {
 
 						friend const_iterator	operator+(difference_type n, const const_iterator &rhs) { return rhs.operator+(n); };
 
-
 						reference operator[](int index) const { return (*(this->_ptr + index)); }
 						
 						pointer operator->() const { return (this); }
 
 						reference operator*() const { return (*this->_ptr); }
 
-				
-					// protected:
-					// 	pointer _ptr;
-
 					friend class vector;
-					friend class iterator;
 					
-				}; /* CONST_ITERATOR */
+				}; /* END CONST_ITERATOR CLASS */
 
 				typedef ft::iterator_traits<iterator>			iterator_traits;
 				typedef ft::reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-
 
 				template <class inputIter>
 				vector (typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last,  const A& alloc = allocator_type())
@@ -267,6 +258,7 @@ namespace ft {
 					for (size_type i = 0; i < _size; i++) {
 							this->_alloc.destroy(this->_buffer + i);
 						}
+					
 					this->_alloc.deallocate(this->_buffer, _capacity);
 				}
 
@@ -281,21 +273,6 @@ namespace ft {
 					_size = rhs._size;
 					return (*this);
 				}
-				
-		/////to delete---------------------------------------------------------------------------------------------
-				size_type getNbElem(void) const { return (this->_size); } 
-				T const * getBuff(void) const{ return (this->_size); } 
-				void printSelf(void) const {
-					for (typename A::size_type i = 0; i < this->_size; i++)
-						std::cout << this->_buffer[i] << " ";
-					// std::cout << "size = " << _size << " - ";
-					// std::cout << " capapcity = " << _capacity << "\n"; 
-					std::cout << "-\n"; 
-					
-					}
-		/////to delete-------------------------------------------------------------------------------------
-							
-								
 
 				iterator begin() { return (iterator(_buffer)); }
 				iterator end() { return (iterator(&_buffer[_size])); }
@@ -332,9 +309,6 @@ namespace ft {
 					_alloc.destroy(_buffer + _size);
 				}
 				
-				reference operator[](size_type n) { return (*(this->_buffer + n)) ;}
-				const_reference operator[](size_type n) const { return (*(this->_buffer + n)) ;}
-				
 				reference at(size_type n) { 
 					if (n >= _size)
 						throw std::out_of_range("Out of range exeption");
@@ -354,9 +328,7 @@ namespace ft {
 						push_back(val);
 						return (--end());
 					}
-					
-					if (_size == _capacity)
-					{
+					if (_size == _capacity) {
 						T* substitute;
 						substitute = _alloc.allocate(_capacity * REALLOC_MULT);
 						int n = _distance(this->begin(), place);
@@ -369,8 +341,7 @@ namespace ft {
 						_buffer = substitute;
 						return (iterator(&substitute[n]));
 					}
-					else
-					{
+					else {
 						_alloc.construct(this->_buffer + _size, 0);
 						_size++;
 						T next = *place;
@@ -394,8 +365,7 @@ namespace ft {
 						T* substitute = _alloc.allocate(newCapacity);
 						int targetIndex = _distance(this->begin(), target);
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
-						for (size_t i = 0; i < n; i++)
-							_alloc.construct(substitute + i + targetIndex, value);
+						_assignArrayConstruct(value, substitute + targetIndex, n);
 						_copyArrayConstructNDestroy(this->_buffer + targetIndex , &substitute[targetIndex + n], _size - targetIndex);
 						_size += n;
 						_alloc.deallocate(_buffer, _capacity);
@@ -419,7 +389,6 @@ namespace ft {
 						for (size_type i = 0; i < n; i++)
 							_buffer[targetIndex + i] = value;
 						int startCopy = targetIndex + n;
-
 						for (size_type i = 0; i < _size - n - 1; i++)
 						{
 							std::cout << startCopy << std::endl;
@@ -427,17 +396,16 @@ namespace ft {
 
 							_alloc.destroy(_buffer + startCopy + i);
 						}
-						
-
 						_alloc.deallocate(save, _size - n);
 						_size += n;
 						return (target);
 					}
-				} //to fix
+				}
 
 				template<class inputIter>
 				iterator insert(const iterator target, typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type n = _distance(first, last);
+					
 					if (n + _size > _capacity)
 					{ 
 						size_type newCapacity = std::max(_size * 2, n + _size);
@@ -446,7 +414,6 @@ namespace ft {
 						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
 						for (size_t i = 0; i < n; i++)
 							_alloc.construct(substitute + i + targetIndex, *(first++));
-						
 						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
 						_size += n;
 						_alloc.deallocate(_buffer, _capacity);
@@ -468,12 +435,6 @@ namespace ft {
 						return (target);
 					}
 				}
-
-				// size_type _newCapacity(size_type goal, size_type capacity) {
-				// 	while (capacity < goal)
-				// 		capacity *= REALLOC_MULT;
-				// 	return (capacity);
-				// }
 				
 				iterator erase(iterator target) {
 					int targetIndex = _distance(this->begin(), target);
@@ -506,7 +467,7 @@ namespace ft {
 					if (length > _capacity)
 						this->reallocate(length);
 					else
-						this->destroyElems();
+						this->_destroyElems(0);
 					for (int i = 0; first != last; i++, first++)
 						_alloc.construct(&_buffer[i], *first);
 					_size = length;
@@ -543,8 +504,7 @@ namespace ft {
 					{
 						for (size_type i = 0; i < n; i++)
 							_buffer[i] = value;
-						for (size_type i = n; i < _size; i++)
-							_alloc.destroy(_buffer + i);
+						_destroyElems(n);
 						_size = n;
 						
 					}
@@ -571,18 +531,16 @@ namespace ft {
 				
 				void resize (size_type n, value_type val = value_type()) {
 					if (n < _size)
-						for (size_type i = n; i < _size; i++)
-							_alloc.destroy(_buffer + i);
+						_destroyElems(n);
 					else 
 					{
 						if (n > _capacity)
 							this->reallocateNCopy(std::max(_size * 2, n));
-						for (size_type i = _size; i < n; i++)
-							_alloc.construct(_buffer + i, val);
+						_assignArrayConstruct(val, _buffer + _size, n - _size);
 					}
 					_size = n;	
 				}
-				
+
 				size_type max_size() const { return (_alloc.max_size()); }
 
 				bool empty() const { return (!_size); }
@@ -601,8 +559,7 @@ namespace ft {
 				friend bool operator==(vector<T> const & lhs, vector<T> const & rhs) {
 					if (lhs._size != rhs._size)
 						return (0);
-					// lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())
-					for (typename A::size_type i = 0; i < lhs._size; i++)
+					for (size_type i = 0; i < lhs._size; i++)
 						if (lhs._buffer[i] != rhs._buffer[i])
 							return (0);
 					return (1);
@@ -634,6 +591,9 @@ namespace ft {
 					
 				}
 			
+				reference operator[](size_type n) { return (*(this->_buffer + n)) ;}
+				const_reference operator[](size_type n) const { return (*(this->_buffer + n)) ;}
+				
 			private:
 				T *			_buffer;
 				A			_alloc;
@@ -644,11 +604,7 @@ namespace ft {
 					T* substitute;
 				
 					substitute = _alloc.allocate(n);
-					for (size_type i = 0; i < _size; i++)
-					{
-						_alloc.construct(&substitute[i], _buffer[i]);
-						_alloc.destroy(_buffer + i);
-					}
+					_copyArrayConstructNDestroy( _buffer, substitute, _size);
 					_alloc.deallocate(_buffer, _capacity);
 					_capacity = n;
 					_buffer = substitute;
@@ -658,16 +614,15 @@ namespace ft {
 					T* substitute;
 				
 					substitute = _alloc.allocate(n);
-					for (size_type i = 0; i < _size; i++)
-						_alloc.destroy(_buffer + i);
+					_destroyElems(0);
 					_alloc.deallocate(_buffer, _capacity);
 					_capacity = n;
 					_buffer = substitute;
 					_size = 0;
 				}
 
-				void		destroyElems(void) {
-					for (size_type i = 0; i < _size; i++)
+				void		_destroyElems(size_type begin) {
+					for (size_type i = begin; i < _size; i++)
 						_alloc.destroy(_buffer + i);
 				}
 
@@ -682,7 +637,7 @@ namespace ft {
 					return (n);
 				}
 
-				void _copyArrayConstructNDestroy(T* src, T* dest, size_t n) {
+				void _copyArrayConstructNDestroy( T* src, T* dest, size_t n) {
 					for (size_t i = 0; i < n; i++)
 					{
 						_alloc.construct(&dest[i], src[i]);
@@ -690,10 +645,16 @@ namespace ft {
 					}
 				}
 
-				void _copyArrayConstruct(T* src, T* dest, size_t n) {
+				void _copyArrayConstruct(const T* src, T* dest, size_t n) {
 					for (size_t i = 0; i < n; i++)
 						_alloc.construct(&dest[i], src[i]);
 				}
+
+				void _assignArrayConstruct(const T& val, T* dest, size_t n) {
+					for (size_t i = 0; i < n; i++)
+						_alloc.construct(&dest[i], val);
+				}
+				
 
 				size_type _newCapacity(size_type goal, size_type capacity) {
 					if (!capacity)
@@ -702,7 +663,7 @@ namespace ft {
 						capacity *= REALLOC_MULT;
 					return (capacity);
 				}
-		}; // class vector
+		}; /* VECTOR CLASS END */
 
 	template <class T>
 	void swap(vector<T>& a, vector<T>& b) {
@@ -713,8 +674,7 @@ namespace ft {
 	typename ft::vector<T>::difference_type distance(typename ft::vector<T>::iterator first, typename ft::vector<T>::iterator last) 
 	{ 
 		typename ft::vector<T>::difference_type n = 0;
-		while (first != last)
-		{
+		while (first != last) {
 			n++;
 			first++;
 		}
@@ -722,18 +682,7 @@ namespace ft {
 	}
 
 	template <class T, class distance>
-	void advance(typename ft::vector<T>::iterator &it, distance n) 
-	{ it += n; }
-
-	// template <class inputIter>
-	// size_t distance(inputIter it, inputIter ite) {
-	// 	size_t i = 0;
-	// 	for (; it != ite; it++, i++)
-	// 		;
-	// 	return i;
-	// }
-
-	
+	void advance(typename ft::vector<T>::iterator &it, distance n) { it += n; }
 		
 } /* NAMESPACE FT */ 
 
