@@ -86,6 +86,7 @@ namespace ft {
 
 					iterator operator++(int) 
 					{
+
 						iterator it = *this;
 						++(*this);
 						return (it);
@@ -93,7 +94,6 @@ namespace ft {
 
 					iterator& operator++() {  //pre inc
 						compare comp;
-						std::cout << "top node: " << _node->data->first << std::endl;
 						_node = getUpperNode(_node, comp);
 						return (*this);
 					}
@@ -102,7 +102,7 @@ namespace ft {
 					{
 						compare comp;
 
-						if (!_node->data)                                    /* special case for end_node */ 				
+						if (!_node->data )                                  /* special case for end_node */ 				
 							_node = _node->parent;
 						else
 							_node = getLowerNode(_node, comp);
@@ -226,7 +226,7 @@ namespace ft {
 			if (!current || !current->data)
 				return ;
 			//std::cout << depth << " | Key: " << current->data->first << " Height : " << current->height << " Balance factor " << current->balanceFactor << std::endl;
-			std::cout << "Key: " << current->data->first << " | Value: " << current->data->second << std::endl;
+			std::cout << "Depth: " << depth << " |  Key: " << current->data->first << " | Value: " << current->data->second << std::endl;
 			
 			printTree(current->left, depth + 1);
 			printTree(current->right, depth + 1);
@@ -256,18 +256,26 @@ namespace ft {
 			t_node *target = getNode(_tree, val, _comp);
 			if (target)
 				return (target->data->second);
-			return ((insert(make_pair(key, T()))).first->second);
+			return ((insert(ft::make_pair(key, T()))).first->second);
 		}
 		
 		public: // fix to get constant perf
 
-			iterator 				begin() {	return(iterator(getLeftExtremNode(_tree))); }
+			iterator 				begin() { return(iterator(getLeftExtremNode(_tree))); }
 
 			const_iterator 			begin() const { return (const_iterator(getLeftExtremNode(_tree))); }
 			
-			iterator 				end() { return (iterator(getRightExtremNode(_tree))); }
+			iterator 				end() {
+										t_node* last = getRightExtremNode(_tree);
+										if (last->right)
+											return (iterator(last->right));
+										return (iterator(last)); }
 
-			const_iterator			end() const { return (const_iterator(getRightExtremNode(_tree))); }
+			const_iterator			end() const { 
+										t_node* last = getRightExtremNode(_tree);
+										if (last->right)
+											return (iterator(last->right));
+										return (iterator(last)); }
 
 			reverse_iterator 		rbegin() { return (reverse_iterator(begin())); }
 
@@ -294,7 +302,7 @@ namespace ft {
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
 				t_node *nodeCreated = NULL;
-
+				std::cout << value.first << std::endl;
 				if (!_tree)									// for the first insertion we add a end_node that is empty 
 				{									// and that we will use later for our iterators
 					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
@@ -315,25 +323,20 @@ namespace ft {
 						computeBalanceFactorNRebalance(_tree);
 				}
 				if (nodeCreated)
-				{
 					_size++;
-					std::cout << "node created: " << nodeCreated->data->first << std::endl;
-				}
 				return ft::pair<iterator, bool>(iterator(nodeCreated), nodeCreated != NULL);
 
 			}
 
 		private:
 			int computeBalanceFactorNRebalance(t_node *current) {
-				if (!current)
+				if (!current || isEndNode(current))   // if null or end node
 					return (0);
-				if (!current->left && (!current->right || !current->right->data))
+				if (!current->left && (!current->right || !current->right->data))  // if leaf
 					return (1);
 				current->balanceFactor = computeBalanceFactorNRebalance(current->left) - computeBalanceFactorNRebalance(current->right);
 				if (current->balanceFactor > 1 || current->balanceFactor < -1)
-				{
 					rebalanceTree(current);
-				}
 				current->height = std::max(computeBalanceFactorNRebalance(current->left), computeBalanceFactorNRebalance(current->right)) + 1;
 				return (current->height);
 			}
@@ -447,12 +450,15 @@ namespace ft {
 			}
 
 			void findNodePlace(t_node* toPlace, t_node *current) {
+				std::cout << "all_good\n";
+				
 				if (current->left)
 					findNodePlace(toPlace, current->left);
 				else
 				{
+
 					current->left = toPlace;
-					toPlace->parent = current->left;
+					toPlace->parent = current;
 				}
 			}
 
@@ -483,28 +489,38 @@ namespace ft {
 
 			template< class inputIt >
 			void insert( inputIt first, inputIt last) {
+				
 				for(; first != last; first++)
 					this->insert(*first);
 			}
 		
-			void erase(iterator pos) {
+			void erase(iterator pos) {  // endl leave cases
+				// std::cout << pos->first << std::endl;
+
 				key_compare comp;
 				if (pos == end())
 					return ;
-				
 				value_type value(pos->first, pos->second);
 				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
 				if (!target)
 					return ;
 				t_node *left = target->left;
 				t_node *right = target->right;
-				if (target->parent->right == target)
+
+				
+				if (target->parent && target->parent->right == target)
 					target->parent->right = right;
-				else
+				else if (target->parent)
 					target->parent->left = right;
-				right->parent = target->parent;
+				if (right)
+					right->parent = target->parent;
 				target->right = NULL;
-				target->left = NULL;
+				if (target->left)
+				{
+					target->left->parent = NULL;
+					target->left = NULL;
+				}
+
 				deleteSubTree(target);
 				findNodePlace(left, right);
 				computeBalanceFactorNRebalance(_tree);
@@ -513,7 +529,7 @@ namespace ft {
 
 			void erase( iterator first, iterator last ) {
 				for(; first != last; first++)
-					this->erase(*first);
+					this->erase(first);
 			}
 
 			size_type erase( const key_type& key ) {

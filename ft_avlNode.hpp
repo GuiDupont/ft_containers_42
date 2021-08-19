@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 16:44:13 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/19 15:51:42 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ namespace ft {
 			return (NULL);
 		while (node->left)
 			node = node->left;
-		std::cout << node->data->first << "lowest\n";
 		return (node);
 	}
 
@@ -62,6 +61,7 @@ namespace ft {
 	struct s_node<T> *getSmallestHigherParent(struct s_node<T> *node, comp compare) {
 		while (node->parent)
 		{
+			//std::cout << node->data->first << std::endl;
 			if (compare(node->data->first, node->parent->data->first))
 				return (node->parent);
 			node = node->parent;

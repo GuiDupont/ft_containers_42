@@ -6,13 +6,15 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 11:27:11 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 10:28:16 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/19 12:08:32 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_ITERATORS_TRAITS
 
 # define FT_ITERATORS_TRAITS
+
+#include <iterator>
 
 
 namespace ft {
@@ -33,7 +35,7 @@ namespace ft {
     {
       typedef std::random_access_iterator_tag iterator_category;
       typedef _Tp                         value_type;
-      typedef ptrdiff_t                   difference_type;
+      typedef std::ptrdiff_t                   difference_type;
       typedef _Tp*                        pointer;
       typedef _Tp&                        reference;
     };
@@ -44,7 +46,7 @@ namespace ft {
     {
       typedef std::random_access_iterator_tag iterator_category;
       typedef _Tp                         value_type;
-      typedef ptrdiff_t                   difference_type;
+      typedef std::ptrdiff_t                   difference_type;
       typedef const _Tp*                  pointer;
       typedef const _Tp&                  reference;
     };

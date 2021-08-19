@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE ft
+
 #include "common.hpp"
 #include <list>
 
@@ -10,7 +12,7 @@ static int iter = 0;
 template <typename MAP, typename U>
 void	ft_erase(MAP &mp, U param)
 {
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	std::cout << "\t-- [" << iter++ << "] -- " << param->first << std::endl;
 	mp.erase(param);
 	printSize(mp);
 }
@@ -35,22 +37,22 @@ int		main(void)
 	ft_erase(mp, ++mp.begin());
 
 	ft_erase(mp, mp.begin());
-	ft_erase(mp, --mp.end());
+	//ft_erase(mp, --mp.end());
 
-	ft_erase(mp, mp.begin(), ++(++(++mp.begin())));
-	ft_erase(mp, --(--(--mp.end())), --mp.end());
+	// ft_erase(mp, mp.begin(), ++(++(++mp.begin())));
+	// ft_erase(mp, --(--(--mp.end())), --mp.end());
 
-	mp[10] = "Hello";
-	mp[11] = "Hi there";
-	printSize(mp);
-	ft_erase(mp, --(--(--mp.end())), mp.end());
+	// mp[10] = "Hello";
+	// mp[11] = "Hi there";
+	// printSize(mp);
+	// ft_erase(mp, --(--(--mp.end())), mp.end());
 
-	mp[12] = "ONE";
-	mp[13] = "TWO";
-	mp[14] = "THREE";
-	mp[15] = "FOUR";
-	printSize(mp);
-	ft_erase(mp, mp.begin(), mp.end());
+	// mp[12] = "ONE";
+	// mp[13] = "TWO";
+	// mp[14] = "THREE";
+	// mp[15] = "FOUR";
+	// printSize(mp);
+	// ft_erase(mp, mp.begin(), mp.end());
 
 	return (0);
 }

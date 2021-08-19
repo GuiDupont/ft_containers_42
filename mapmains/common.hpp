@@ -12,7 +12,8 @@
 template <typename T>
 std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
 {
-	o << "key: " << iterator->first << " | value: " << iterator->second;
+	o << "key: " << iterator->first;
+	// << " | value: " << iterator->second;
 	if (nl)
 		o << std::endl;
 	return ("");
@@ -27,7 +28,7 @@ void	printSize(T_MAP const &mp, bool print_content = 1)
 	{
 		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
 		std::cout << std::endl << "Content is:" << std::endl;
-		std::cout << "-fsss " << printPair(--mp.end(), false) << std::endl;
+		//std::cout << "-fsss " << printPair(--mp.end(), false) << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << printPair(it, false) << std::endl;
 	}

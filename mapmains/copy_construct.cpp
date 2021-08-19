@@ -14,6 +14,10 @@ int		main(void)
 		lst.push_back(T3(lst_size - i, i));
 
 
+	for (std::list<T3>::iterator it = lst.begin(); it != lst.end(); it++)
+		std::cout << it->first << std::endl;
+
+
 	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end() );
 	TESTED_NAMESPACE::map<T1, T2>::iterator it = mp.begin(), ite = mp.end();
 
@@ -36,6 +40,7 @@ int		main(void)
 	mp = mp_copy;
 	mp_copy = mp_range;
 	mp_range.clear();
+
 
 	std::cout << "\t-- PART TWO --" << std::endl;
 	printSize(mp);
