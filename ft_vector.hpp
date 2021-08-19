@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 11:49:31 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 13:20:02 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,14 +244,14 @@ namespace ft {
 						this->_alloc.construct(this->_buffer + i, val);
 					}
 				}
-					
+
 				vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity) {
 					this->_buffer = this->_alloc.allocate(_capacity);
 					for (size_type i = 0; i < _size; i++) {
 							_alloc.construct(this->_buffer + i, x._buffer[i]);
 						}
 				}
-					
+
 				~vector() {
 					for (size_type i = 0; i < _size; i++) {
 							this->_alloc.destroy(this->_buffer + i);

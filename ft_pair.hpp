@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 12:00:32 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 17:05:59 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 14:51:08 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ namespace ft {
 
 	template< class T1, class T2 >
 	pair<T1,T2> make_pair( T1 t, T2 u ) { return (pair<T1, T2>(t, u)); }
-
 	
 	template< class T1, class T2 >
 	bool operator==( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs ) 
@@ -56,14 +55,15 @@ namespace ft {
 	bool operator!=( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs ) { return (!(lhs == rhs)); }
 
 	template< class T1, class T2 >
-	bool operator<( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs ) {	if (lhs.first<rhs.first) 
-																			return (true);
-																		else if (rhs.first<lhs.first)
-																			return (false);
-																		else if (lhs.second<rhs.second)
-																			return (true);
-																		else
-																			return (false);
+	bool operator<( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs ) {
+		if (lhs.first<rhs.first) 
+			return (true);
+		else if (rhs.first<lhs.first)
+			return (false);
+		else if (lhs.second<rhs.second)
+			return (true);
+		else
+			return (false);
 	}
 
 	template< class T1, class T2 >

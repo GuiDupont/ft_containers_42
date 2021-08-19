@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/06 11:36:24 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/18 16:44:13 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define FT_AVLNODE_HPP
 
 #include "ft_pair.hpp"
+#include "iostream"
 
 namespace ft {
 
@@ -53,6 +54,7 @@ namespace ft {
 			return (NULL);
 		while (node->left)
 			node = node->left;
+		std::cout << node->data->first << "lowest\n";
 		return (node);
 	}
 
@@ -80,6 +82,7 @@ namespace ft {
 
 	template <class T, class comp>
 	struct s_node<T> *getUpperNode(struct s_node<T> *node, comp compare) {
+		
 		if (node->right)
 			node = getLeftExtremNode(node->right);
 		else
@@ -89,7 +92,6 @@ namespace ft {
 
 	template <class T, class comp>
 	struct s_node<T> *getLowerNode(struct s_node<T> *node, comp compare) {
-
 		if (node->left)
 			node = getRightExtremNode(node->left);
 		else
