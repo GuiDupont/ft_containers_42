@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/19 15:51:42 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/20 16:01:33 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ namespace ft {
 				return (node->parent);
 			node = node->parent;
 		}
+		// return (node);
 		return (NULL);
 	}
 

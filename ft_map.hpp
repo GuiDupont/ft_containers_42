@@ -289,7 +289,7 @@ namespace ft {
 
 			bool 					empty() const { return (!_size); }
 
-			size_type 				max_size() const { return (_nodeAlloc.max_size());}
+			size_type 				max_size() const { return (_alloc.max_size());}
 			
 			void clear(void) {
 				t_node *end_node = getRightExtremNode(_tree)->right;
@@ -302,7 +302,6 @@ namespace ft {
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
 				t_node *nodeCreated = NULL;
-				std::cout << value.first << std::endl;
 				if (!_tree)									// for the first insertion we add a end_node that is empty 
 				{									// and that we will use later for our iterators
 					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
@@ -330,26 +329,49 @@ namespace ft {
 
 		private:
 			int computeBalanceFactorNRebalance(t_node *current) {
-				if (!current || isEndNode(current))   // if null or end node
+				if (!current || isEndNode(current))  // if null or end node
 					return (0);
 				if (!current->left && (!current->right || !current->right->data))  // if leaf
 					return (1);
-				current->balanceFactor = computeBalanceFactorNRebalance(current->left) - computeBalanceFactorNRebalance(current->right);
+				int leftHeight = computeBalanceFactorNRebalance(current->left);
+				int rightHeight = computeBalanceFactorNRebalance(current->right);
+				current->balanceFactor = leftHeight - rightHeight;
 				if (current->balanceFactor > 1 || current->balanceFactor < -1)
+				{
 					rebalanceTree(current);
-				current->height = std::max(computeBalanceFactorNRebalance(current->left), computeBalanceFactorNRebalance(current->right)) + 1;
+					leftHeight = computeBalanceFactorNRebalance(current->left);
+					rightHeight = computeBalanceFactorNRebalance(current->right);
+					current->balanceFactor = leftHeight - rightHeight;
+				}
+				current->height = std::max(leftHeight, rightHeight) + 1;
 				return (current->height);
 			}
 
+			int getNodeHeight(t_node *current) {
+				if (!current || isEndNode(current))  // if null or end node
+					return (0);
+				else
+				{
+					int leftHeight = getNodeHeight(current->left);
+					int rightHeight = getNodeHeight(current->right);
+					current->height = std::max(leftHeight, rightHeight) + 1;
+					current->balanceFactor = leftHeight - rightHeight;
+				}
+				std::cout << "Node " << current->data->first << " height is " << current->height << "and BF is " << current->balanceFactor << std::endl;
+				return (current->height);
+			}
+
+
+
 			void	rebalanceTree(t_node *current)
 			{
-				if (current->balanceFactor < 0 && current->right && current->right->balanceFactor < 0)
+				if (current->balanceFactor < 0 && current->right && current->right->balanceFactor <= 0)
 					doLeftRotation(current);
 				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor > 0)
 					doRightRotation(current);
 				else if (current->balanceFactor < 0 && current->right && current->right->balanceFactor > 0)
 					doRightLeftRotation(current);
-				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor < 0)
+				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor <= 0)
 					doLeftRightRotation(current);
 			}
 
@@ -450,8 +472,8 @@ namespace ft {
 			}
 
 			void findNodePlace(t_node* toPlace, t_node *current) {
-				std::cout << "all_good\n";
-				
+				if (!toPlace || !current)
+					return ;
 				if (current->left)
 					findNodePlace(toPlace, current->left);
 				else
@@ -492,11 +514,10 @@ namespace ft {
 				
 				for(; first != last; first++)
 					this->insert(*first);
+				
 			}
 		
-			void erase(iterator pos) {  // endl leave cases
-				// std::cout << pos->first << std::endl;
-
+			void erase(iterator pos) {
 				key_compare comp;
 				if (pos == end())
 					return ;
@@ -504,32 +525,116 @@ namespace ft {
 				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
 				if (!target)
 					return ;
-				t_node *left = target->left;
-				t_node *right = target->right;
-
-				
-				if (target->parent && target->parent->right == target)
-					target->parent->right = right;
-				else if (target->parent)
-					target->parent->left = right;
-				if (right)
-					right->parent = target->parent;
-				target->right = NULL;
-				if (target->left)
-				{
-					target->left->parent = NULL;
-					target->left = NULL;
-				}
-
-				deleteSubTree(target);
-				findNodePlace(left, right);
+				if (isEndNode(target->right))
+					eraseMaxNode(target);
+				else if (target->left && target->right)
+					eraseFullNode(target);
+				else if (!target->left && !target->right)
+					eraseLeaf(target);
+				else
+					eraseOnlyOneChildNode(target);
 				computeBalanceFactorNRebalance(_tree);
 				_size--;
 			}
 
+		private:
+			void eraseMaxNode(t_node *target) {
+				t_node *left = target->left;
+				t_node *right = target->right;
+				t_node *parent = target->parent;
+
+				if (!parent)
+				{
+					if (left)
+					{
+						_tree = left;
+						getRightExtremNode(left)->right = right;
+						left->parent = NULL;
+					}
+					else
+					{
+						_tree = right;
+						right->parent = NULL;
+					}
+				}
+				else if (left)
+				{					
+					parent->right = left;
+					left->parent = parent;
+					left->right = right;
+					right->parent = left;
+				}
+				else
+				{
+					right->parent = parent;
+					parent->right = right; 
+				}
+				target->left = NULL;
+				target->right = NULL;
+				deleteSubTree(target);
+			}
+
+			void eraseFullNode(t_node *target) {
+				t_node *left = target->left;
+				t_node *right = target->right;
+				t_node *parent = target->parent;
+
+				if (!parent)
+				{
+					findNodePlace(left, right);
+					_tree = right;
+					right->parent = NULL;
+				}
+				else
+				{
+					if (parent->right == target)
+						parent->right = right;
+					else
+						parent->left = right;
+					right->parent = parent;
+					findNodePlace(left, right);
+				}
+				target->right = NULL;
+				target->left = NULL;
+				deleteSubTree(target);
+			}
+
+			void eraseLeaf(t_node *target) {
+				if (target == target->parent->left)
+					target->parent->left = NULL;
+				else
+					target->parent->right = NULL;
+				deleteSubTree(target);
+				
+			}
+
+			void eraseOnlyOneChildNode(t_node *target) {
+
+				t_node *child = (target->left ? target->left : target->right);
+				t_node *parent = target->parent;
+				if (!parent)
+				{
+					_tree = child;
+					child->parent = NULL;
+				}
+				else if (parent->left == target)
+					parent->left = child;
+				else
+					parent->right = child;
+				child->parent = parent;
+				target->right = NULL;
+				target->left = NULL;
+				deleteSubTree(target);
+			}
+
+		public:
 			void erase( iterator first, iterator last ) {
-				for(; first != last; first++)
+				for(iterator it = first; it != last; )
+				{
+					it++;
 					this->erase(first);
+					first = it;
+				}
 			}
 
 			size_type erase( const key_type& key ) {
