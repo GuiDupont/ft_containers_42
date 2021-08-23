@@ -1,3 +1,4 @@
+
 #include "common.hpp"
 
 #define T1 int
@@ -23,11 +24,18 @@ void	ft_count(T1 const &k)
 
 int		main(void)
 {
+
 	mp[42] = "fgzgxfn";
+
 	mp[25] = "funny";
+
 	mp[80] = "hey";
+
+
 	mp[12] = "no";
+
 	mp[27] = "bee";
+
 	mp[90] = "8";
 	printSize(mp);
 

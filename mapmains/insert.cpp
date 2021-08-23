@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE ft
+
 #include "common.hpp"
 
 #define T1 int

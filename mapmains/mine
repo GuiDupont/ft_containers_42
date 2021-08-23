@@ -1,111 +1,119 @@
-size: 10
-max_size: 329406144173384850
+	-- [0] --
+insert return: key: 42
+Created new node: 1
+size: 1
+max_size: 128102389400760775
 
 Content is:
-- key: 0
-- key: 1
-- key: 2
-- key: 3
-- key: 4
-- key: 5
-- key: 6
-- key: 7
-- key: 8
-- key: 9
+- key: 42
 ###############################################
-	-- [0] -- 1 BBBBBBBBB
-size: 9
-max_size: 329406144173384850
+	-- [1] --
+insert return: key: 42
+Created new node: 0
+size: 1
+max_size: 128102389400760775
 
 Content is:
-- key: 0
-- key: 2
-- key: 3
-- key: 4
-- key: 5
-- key: 6
-- key: 7
-- key: 8
-- key: 9
+- key: 42
 ###############################################
-	-- [1] -- 0 AAAAAAAAAA
-size: 8
-max_size: 329406144173384850
+	-- [2] --
+insert return: key: 50
+Created new node: 1
+size: 2
+max_size: 128102389400760775
 
 Content is:
-- key: 2
-- key: 3
-- key: 4
-- key: 5
-- key: 6
-- key: 7
-- key: 8
-- key: 9
-###############################################
-	-- [2] -- 9 J
-size: 7
-max_size: 329406144173384850
-
-Content is:
-- key: 2
-- key: 3
-- key: 4
-- key: 5
-- key: 6
-- key: 7
-- key: 8
+- key: 42
+- key: 50
 ###############################################
 	-- [3] --
-
-size: 4
-max_size: 329406144173384850
+insert return: key: 35
+Created new node: 1
+size: 3
+max_size: 128102389400760775
 
 Content is:
-- key: 5
-- key: 6
-- key: 7
-- key: 8
+- key: 35
+- key: 42
+- key: 50
 ###############################################
 	-- [4] --
-
-size: 2
-max_size: 329406144173384850
-
-Content is:
-- key: 5
-- key: 8
-###############################################
+insert return: key: 45
+Created new node: 1
 size: 4
-max_size: 329406144173384850
+max_size: 128102389400760775
 
 Content is:
-- key: 5
-- key: 8
-- key: 10
-- key: 11
+- key: 35
+- key: 42
+- key: 45
+- key: 50
 ###############################################
 	-- [5] --
-
-size: 1
-max_size: 329406144173384850
-
-Content is:
-- key: 5
-###############################################
+insert return: key: 21
+Created new node: 1
 size: 5
-max_size: 329406144173384850
+max_size: 128102389400760775
 
 Content is:
-- key: 5
-- key: 12
-- key: 13
-- key: 14
-- key: 15
+- key: 21
+- key: 35
+- key: 42
+- key: 45
+- key: 50
 ###############################################
 	-- [6] --
-
-size: 0
-max_size: 329406144173384850
+insert return: key: 38
+Created new node: 1
+size: 6
+max_size: 128102389400760775
 
 Content is:
+- key: 21
+- key: 35
+- key: 38
+- key: 42
+- key: 45
+- key: 50
+###############################################
+	-- [7] --
+insert return: key: 55
+size: 7
+max_size: 128102389400760775
+
+Content is:
+- key: 21
+- key: 35
+- key: 38
+- key: 42
+- key: 45
+- key: 50
+- key: 55
+###############################################
+	-- [8] --
+insert return: key: 1337
+size: 1
+max_size: 128102389400760775
+
+Content is:
+- key: 1337
+###############################################
+	-- [9] --
+insert return: key: 1000
+size: 2
+max_size: 128102389400760775
+
+Content is:
+- key: 1000
+- key: 1337
+###############################################
+	-- [10] --
+insert return: key: 1500
+size: 3
+max_size: 128102389400760775
+
+Content is:
+- key: 1000
+- key: 1337
+- key: 1500
 ###############################################

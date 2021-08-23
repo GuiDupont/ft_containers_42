@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE ft
+
 #include "common.hpp"
 #include <list>
 
