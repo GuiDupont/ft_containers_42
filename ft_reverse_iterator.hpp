@@ -50,8 +50,7 @@ namespace ft {
 		reference operator*() const {	iterator temp = _current; 
 										return (*(--temp)); }
 		
-		pointer operator->() const	{	iterator temp = _current;
-										return (--temp); }
+		pointer operator->() const	{	_current.operator->(); }
 
 		reference operator[](difference_type n) const {
 			iterator it = _current;

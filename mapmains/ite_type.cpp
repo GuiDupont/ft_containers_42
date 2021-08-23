@@ -1,3 +1,6 @@
+#define TESTED_NAMESPACE std
+
+
 #include "common.hpp"
 
 int		main(void)

@@ -1,37 +1,32 @@
-size: 6
-max_size: 128102389400760775
-
-Content is:
-- key: 12
-- key: 25
-- key: 27
-- key: 42
-- key: 80
-- key: 90
-###############################################
-	-- FIND --
-key: 12
-map::find(3) returned end()
-map::find(35) returned end()
-key: 90
-map::find(100) returned end()
-	-- COUNT --
-map::count(-3)	returned [0]
-map::count(12)	returned [1]
-map::count(3)	returned [0]
-map::count(35)	returned [0]
-map::count(90)	returned [1]
-map::count(100)	returned [0]
-size: 6
-max_size: 128102389400760775
-
-Content is:
-- key: 12
-- key: 25
-- key: 27
-- key: 42
-- key: 80
-- key: 90
-###############################################
-const map.find(42)->second: [fgzgxfn]
-const map.count(80): [1]
+############### [0] ###############
+eq: 1 | ne: 0
+lt: 0 | le: 1
+gt: 1 | ge: 1
+############### [1] ###############
+eq: 1 | ne: 0
+lt: 0 | le: 1
+gt: 1 | ge: 1
+############### [2] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [3] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1
+############### [4] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1
+############### [5] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [6] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [7] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1

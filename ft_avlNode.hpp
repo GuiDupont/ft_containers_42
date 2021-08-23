@@ -61,7 +61,6 @@ namespace ft {
 	struct s_node<T> *getSmallestHigherParent(struct s_node<T> *node, comp compare) {
 		while (node->parent)
 		{
-			//std::cout << node->data->first << std::endl;
 			if (compare(node->data->first, node->parent->data->first))
 				return (node->parent);
 			node = node->parent;
@@ -105,7 +104,7 @@ namespace ft {
 		struct s_node<T> *current = root;
 	
 		while (current) {
-			if (!compare(data.first, current->data->first) && !compare(current->data->first, data.first))
+			if (!(current->data) || (!compare(data.first, current->data->first) && !compare(current->data->first, data.first)))
 				break ;
 			else if (compare(data.first, current->data->first))
 			{

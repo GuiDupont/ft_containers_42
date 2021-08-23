@@ -9,7 +9,7 @@
 /*   Updated: 2021/07/28 16:31:35 by gdupont          ###   ########.fr       */
 /*					        */
 /* ************************************************************************** */
-
+    
 #include <functional>
 
 #include "ft_pair.hpp"
@@ -68,7 +68,7 @@ namespace ft {
 
 					iterator() : _node(NULL) {}
 					iterator(const iterator & rhs) : _node(rhs._node) {}
-					iterator(t_node * node)  { _node = node; }
+					iterator(t_node * node)  { _node = node;}
 
 					iterator& operator=(iterator const & rhs)
 								{	this->_node = rhs._node; return (*this); }
@@ -84,7 +84,7 @@ namespace ft {
 					pointer operator->() { return (_node->data); }
 					const_pointer operator->() const { return (_node->data); }
 
-					iterator operator++(int) 
+					iterator operator++(int)
 					{
 
 						iterator it = *this;
@@ -118,22 +118,24 @@ namespace ft {
 					
 					iterator& operator=(const_reference & lhs) { _node = lhs._node; return (*this); }
 
-
 				protected:
 					t_node*		_node;
+
+				friend class const_iterator;
+				friend class map;
 			}; // iterator class
 
 
-			class const_iterator : public iterator {
+			class const_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 				
 				public:
 
 					typedef const value_type&		reference;
 					typedef const value_type*		pointer;
 
-					const_iterator() : iterator() {}
-					const_iterator(const iterator & rhs) : iterator(rhs) {}
-					const_iterator(t_node * node) : iterator(node) {}
+					const_iterator()  {}
+					const_iterator(const iterator & rhs) : _node(rhs._node) { }
+					const_iterator(t_node * node) : _node(node) { }
 
 					const_iterator& operator=(const_iterator const & rhs)
 								{	this->_node = rhs._node; return (*this); }
@@ -182,24 +184,30 @@ namespace ft {
 					}
 					
 					const_iterator& operator=(const_reference & lhs) { this->_node = lhs._node; return (*this); }
+				
+				protected:
+					t_node*		_node;
 
 			}; // const_iterator class
         
         typedef	ft::reverse_iterator<iterator>				reverse_iterator;
         typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
-        map() : _tree(NULL), _size(0) { }
+        map() : _tree(setUpNode(NULL, NULL)), _size(0) { _endNode = _tree; }
 		
-        explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(NULL), _alloc(a), _comp(comp), _size(0) { }
+        explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(setUpNode(NULL, NULL)), _alloc(a), _comp(comp), _size(0) 
+					{ _endNode = _tree; }
         
 		template < class inputIt >
 		map( inputIt first, inputIt last, const compare& comp = compare(), const allocator_type& allocator = allocator_type() )
-			:	_tree(NULL), _size(0), _comp(comp), _alloc(allocator){
-			for (; first != last; first++)
-				insert(*first);
+			:	_tree(setUpNode(NULL, NULL)), _size(0), _comp(comp), _alloc(allocator){
+				_endNode = _tree;
+				for (; first != last; first++)
+					insert(*first);
+	
 		}
 
-		map( const map& other ) : _tree(NULL) { *this = other; }
+		map( const map& other ) : _tree(setUpNode(NULL, NULL)) { *this = other; }
 
 		~map() { deleteSubTree(_tree); };
 
@@ -254,26 +262,30 @@ namespace ft {
 			// }
 			value_type val(key, T());
 			t_node *target = getNode(_tree, val, _comp);
-			if (target)
-				return (target->data->second);
-			return ((insert(ft::make_pair(key, T()))).first->second);
+			if (isEndNode(target) || !target)
+				return ((insert(ft::make_pair(key, T()))).first->second);
+			return (target->data->second);
 		}
 		
-		public: // fix to get constant perf
+		public: // fix to get constant perf with variable stored in class
 
-			iterator 				begin() { return(iterator(getLeftExtremNode(_tree))); }
+			iterator 				begin() {	return(iterator(getLeftExtremNode(_tree))); }
 
 			const_iterator 			begin() const { return (const_iterator(getLeftExtremNode(_tree))); }
 			
 			iterator 				end() {
+										return (iterator(this->_endNode));
 										t_node* last = getRightExtremNode(_tree);
-										if (last->right)
+										if (last && last->right)
 											return (iterator(last->right));
 										return (iterator(last)); }
 
-			const_iterator			end() const { 
+			const_iterator			end() const {
+										return (const_iterator(this->_endNode));
+
+
 										t_node* last = getRightExtremNode(_tree);
-										if (last->right)
+										if (last && last->right)
 											return (iterator(last->right));
 										return (iterator(last)); }
 
@@ -301,30 +313,50 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
-				t_node *nodeCreated = NULL;
+				ft::pair<t_node *, bool> nodeCreated(NULL, true);
 				if (!_tree)									// for the first insertion we add a end_node that is empty 
 				{									// and that we will use later for our iterators
 					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
 					_tree->right = setUpNode(NULL, _tree);
-					nodeCreated = _tree;
+					nodeCreated.first = _tree;
 				}
-				else if (!_tree->data)
+				else if (isEndNode(_tree)) 
 				{
-					nodeCreated = setUpNode(&value, NULL);
-					nodeCreated->right = _tree;
-					_tree->parent = nodeCreated;
-					_tree = nodeCreated;
+					nodeCreated.first = setUpNode(&value, NULL);
+					nodeCreated.first->right = _endNode;
+					_endNode->parent = nodeCreated.first;
+					_tree = nodeCreated.first;
 				}												
 				else
 				{
 					nodeCreated = findValuePlace(value, _tree);
-					if (nodeCreated)
+					if (nodeCreated.second)
 						computeBalanceFactorNRebalance(_tree);
 				}
-				if (nodeCreated)
+				if (nodeCreated.second)
 					_size++;
-				return ft::pair<iterator, bool>(iterator(nodeCreated), nodeCreated != NULL);
+				return nodeCreated;
+			}
 
+			template< class inputIt >
+			void insert( inputIt first, inputIt last) {
+				for(; first != last; first++)
+					this->insert(*first);
+			}
+
+			iterator insert( iterator hint, const value_type& value ) {
+				return (iterator(insert(value).first));
+				if (hint == iterator(_endNode))
+					return (iterator(insert(value).first));
+				value_type hintValue(hint->first, hint->second);
+				t_node *hintNode = getNode<value_type, key_compare>(_tree, hintValue, this->_comp);
+				ft::pair<t_node *, bool> nodeCreated = findValuePlace(value, hintNode);
+				if (nodeCreated.second)
+				{
+					_size++;
+					return (iterator(nodeCreated.first));
+				}
+				return (iterator(_endNode));
 			}
 
 		private:
@@ -360,8 +392,6 @@ namespace ft {
 				std::cout << "Node " << current->data->first << " height is " << current->height << "and BF is " << current->balanceFactor << std::endl;
 				return (current->height);
 			}
-
-
 
 			void	rebalanceTree(t_node *current)
 			{
@@ -441,17 +471,17 @@ namespace ft {
 				return (node);
 			}
 		
-			t_node	*findValuePlace(const value_type& value, t_node *current) {
+			ft::pair<t_node *, bool>	findValuePlace(const value_type& value, t_node *current) {
 				t_node *ret = NULL;
-				
+
 				if (!_comp(value.first, current->data->first) && !_comp(current->data->first, value.first))
-					return NULL;
+					return ft::pair<t_node *, bool>(current, false);
 				else if (this->_comp(value.first, current->data->first))
 				{
 					if (!current->left)
 						ret = current->left = setUpNode(&value, current);
 					else
-						ret = findValuePlace(value, current->left);
+						ret = findValuePlace(value, current->left).first;
 				}
 				else
 				{
@@ -459,29 +489,16 @@ namespace ft {
 						ret = current->right = setUpNode(&value, current);
 					else if (isEndNode(current->right))
 					{
-						current->right->right = setUpNode(&value, current);
-						std::swap(current->right->data, current->right->right->data);
+						current->right = setUpNode(&value, current);
+						current->right->right = this->_endNode;
 						ret = current->right->right->parent = current->right;
 					}
 					else
-						ret = findValuePlace(value, current->right);
+						ret = findValuePlace(value, current->right).first;
 				}
 				if (ret)
 					current->height += 1;
-				return (ret);
-			}
-
-			void findNodePlace(t_node* toPlace, t_node *current) {
-				if (!toPlace || !current)
-					return ;
-				if (current->left)
-					findNodePlace(toPlace, current->left);
-				else
-				{
-
-					current->left = toPlace;
-					toPlace->parent = current;
-				}
+				return ft::pair<t_node *, bool>(ret, true);
 			}
 
 			void	deleteSubTree(t_node *node) {
@@ -509,13 +526,7 @@ namespace ft {
 
 		public:
 
-			template< class inputIt >
-			void insert( inputIt first, inputIt last) {
-				
-				for(; first != last; first++)
-					this->insert(*first);
-				
-			}
+			
 		
 			void erase(iterator pos) {
 				key_compare comp;
@@ -667,11 +678,17 @@ namespace ft {
 			if (targetNode)
 				return (targetNode);
 			else
-				return (this->end());	
+				return (this->end());
 		}
 
 		const_iterator find( const Key& key ) const {
-			return (find(key));
+			value_type		target(key, mapped_type());
+			t_node	*targetNode = getNode(_tree, target, _comp);
+
+			if (targetNode)
+				return (targetNode);
+			else
+				return (this->end());
 		}
 
 		ft::pair<iterator,iterator> equal_range( const Key& key ) {
@@ -762,10 +779,10 @@ namespace ft {
 				 
 		friend	bool operator<( const ft::map<Key,T,compare,alloc>& lhs,
                 const ft::map<Key,T,compare,alloc>& rhs ) {
-			iterator first1 = lhs.begin();
-			iterator first2 = rhs.begin();
-			iterator last1 = lhs.end();
-			iterator last2 = rhs.end();
+			const_iterator first1 = lhs.begin();
+			const_iterator first2 = rhs.begin();
+			const_iterator last1 = lhs.end();
+			const_iterator last2 = rhs.end();
 
 			for (; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 ) {
 				if (*first1 < *first2) return true;
@@ -780,7 +797,7 @@ namespace ft {
 				 
 		friend bool operator>( const ft::map<Key,T,compare,alloc>& lhs,
                 const ft::map<Key,T,compare,alloc>& rhs ) {
-					return (!(lhs < rhs)); }
+					return (! (lhs <= rhs)); }
 
 		friend bool operator>=( const ft::map<Key,T,compare,alloc>& lhs,
                  const ft::map<Key,T,compare,alloc>& rhs ) {
@@ -793,6 +810,7 @@ namespace ft {
 
 			t_node 							*_tree;
 			t_node							*_smallest;
+			t_node							*_endNode;
 			size_type						_size;
 			compare							_comp;
 			//value_compare					_vComp(compare c);

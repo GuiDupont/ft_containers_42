@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE std
+
 #include "common.hpp"
 
 #define T1 char

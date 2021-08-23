@@ -1,3 +1,6 @@
+#define TESTED_NAMESPACE ft
+
+
 #include "common.hpp"
 
 #define T1 int
@@ -9,6 +12,6 @@ int		main(void)
 	mp[1] = 2;
 
 	TESTED_NAMESPACE::map<T1, T2>::const_iterator ite = mp.begin();
-	*ite = 42; // < -- error
+	//*ite = 42; // < -- error
 	return (0);
 }

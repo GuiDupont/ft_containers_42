@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE ft
+
 #include "common.hpp"
 
 #define T1 char
@@ -11,8 +13,8 @@ void	cmp(const MAP &lhs, const MAP &rhs)
 
 	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
 	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
-	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
-	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+	std::cout << "lt: " << (lhs < rhs) << " | le: " << (lhs <= rhs) << std::endl;
+	std::cout << "gt: " << (lhs > rhs) << " | ge: " << (lhs >= rhs) << std::endl;
 }
 
 int		main(void)
