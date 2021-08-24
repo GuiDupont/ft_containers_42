@@ -16,34 +16,34 @@ int		main(void)
 
 	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
 	TESTED_NAMESPACE::map<T1, T2>::reverse_iterator it(mp.rbegin());
-	TESTED_NAMESPACE::map<T1, T2>::const_reverse_iterator ite(mp.rbegin());
+	//TESTED_NAMESPACE::map<T1, T2>::const_reverse_iterator ite(mp.rbegin());
 	printSize(mp);
 
-	printPair(++ite);
-	printPair(ite++);
-	printPair(ite++);
-	printPair(++ite);
+	//printPair(++ite);
+	//printPair(ite++);
+	//printPair(ite++);
+	//printPair(++ite);
 
-	it->second.m();
-	ite->second.m();
+	//it->second.m();
+	//ite->second.m();
 
 	printPair(++it);
 	printPair(it++);
 	printPair(it++);
 	printPair(++it);
 
-	printPair(--ite);
-	printPair(ite--);
-	printPair(--ite);
-	printPair(ite--);
+	// printPair(--ite);
+	// printPair(ite--);
+	// printPair(--ite);
+	// printPair(ite--);
 
-	(*it).second.m();
-	(*ite).second.m();
+	//(*it).second.m();
+	//(*ite).second.m();
 
-	printPair(--it);
-	printPair(it--);
-	printPair(it--);
-	printPair(--it);
+	// printPair(--it);
+	// printPair(it--);
+	// printPair(it--);
+	// printPair(--it);
 
 	return (0);
 }
