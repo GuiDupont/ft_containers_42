@@ -22,6 +22,7 @@
 #include <string.h>
 #include <iostream>
 
+#include <limits>
 
 namespace ft {
 
@@ -43,8 +44,8 @@ namespace ft {
 			typedef	alloc									allocator_type;
 			typedef	value_type&								reference;
 			typedef	const value_type&						const_reference;
-			typedef	typename alloc::pointer					pointer;
-			typedef	typename alloc::const_pointer			const_pointer;
+			typedef value_type*								pointer;
+			typedef	const value_type*						const_pointer;
 			typedef struct s_node<value_type>				t_node;
         
 		
@@ -133,7 +134,7 @@ namespace ft {
 					typedef const value_type&		reference;
 					typedef const value_type*		pointer;
 
-					const_iterator()  {}
+					const_iterator() { }
 					const_iterator(const iterator & rhs) : _node(rhs._node) { }
 					const_iterator(t_node * node) : _node(node) { }
 
@@ -161,7 +162,8 @@ namespace ft {
 					const_iterator& operator++() {  //pre inc
 						compare comp;
 
-						this->_node = getUpperNode(this->_node, comp);	
+						this->_node = getUpperNode(this->_node, comp);
+						//std::cout << "operator ++ afte uper\n";
 						return (*this);
 					}
 
@@ -226,6 +228,11 @@ namespace ft {
 			*dst = setUpNode(src->data, parent);
 			copyNode(&((*dst)->left), src->left, *dst);
 			copyNode(&((*dst)->right), src->right, *dst);
+
+		}
+
+		void	printTree() {
+			this->printTree(NULL, 0);
 		}
 
 		void	printTree(t_node *current, int depth) {
@@ -240,6 +247,7 @@ namespace ft {
 			printTree(current->right, depth + 1);
 			if (depth == 0)
 				std::cout << std::endl;
+
 		}
 
 		allocator_type get_allocator() const { return (_alloc); }
@@ -301,8 +309,36 @@ namespace ft {
 
 			bool 					empty() const { return (!_size); }
 
-			size_type 				max_size() const { return (_alloc.max_size());}
-			
+
+
+
+
+
+
+
+
+
+			size_type 				max_size() const { 
+return std::min<size_type>(std::allocator_traits<nodeAlloc>::max_size(nodeAlloc()), std::numeric_limits<difference_type>::max()); }
+	// alloc							_alloc;
+	// 		nodeAlloc						_nodeAlloc;
+
+
+		// 	size_type max_size() const
+        // {	return std::min<size_type>(
+        //         __node_traits::max_size(_node_alloc()),
+        //         numeric_limits<difference_type >::max());}
+
+
+
+
+
+
+
+
+
+
+
 			void clear(void) {
 				t_node *end_node = getRightExtremNode(_tree)->right;
 				end_node->parent->right = NULL;
@@ -313,24 +349,30 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
-				ft::pair<t_node *, bool> nodeCreated(NULL, true);
-				if (!_tree)									// for the first insertion we add a end_node that is empty 
-				{									// and that we will use later for our iterators
-					_tree = setUpNode(&value, NULL);		// this node is always the right child of the right most element
-					_tree->right = setUpNode(NULL, _tree);
-					nodeCreated.first = _tree;
-				}
-				else if (isEndNode(_tree)) 
+				ft::pair<t_node *, int> nodeCreated;
+				// if (!_tree)								
+				// {									
+				// 	_tree = setUpNode(&value, NULL);		
+				// 	_tree->right = setUpNode(NULL, _tree);
+				// 	nodeCreated.first = _tree;
+				// 	nodeCreated.second = 0;
+				// }
+				// else 
+					// for the first insertion we add a end_node that is empty 
+					// and that we will use later for our iterators
+					// this node is always the right child of the right most element
+				if (isEndNode(_tree)) 
 				{
 					nodeCreated.first = setUpNode(&value, NULL);
 					nodeCreated.first->right = _endNode;
 					_endNode->parent = nodeCreated.first;
 					_tree = nodeCreated.first;
+					nodeCreated.second = 1;
 				}												
 				else
 				{
 					nodeCreated = findValuePlace(value, _tree);
-					if (nodeCreated.second)
+					if (nodeCreated.second == 1)
 						computeBalanceFactorNRebalance(_tree);
 				}
 				if (nodeCreated.second)
@@ -353,8 +395,13 @@ namespace ft {
 				ft::pair<t_node *, bool> nodeCreated = findValuePlace(value, hintNode);
 				if (nodeCreated.second)
 				{
+
 					_size++;
 					return (iterator(nodeCreated.first));
+				}
+				else
+				{
+					std::cout << "Could not find fuckk\n";
 				}
 				return (iterator(_endNode));
 			}
@@ -472,33 +519,34 @@ namespace ft {
 			}
 		
 			ft::pair<t_node *, bool>	findValuePlace(const value_type& value, t_node *current) {
-				t_node *ret = NULL;
+				ft::pair<t_node *, bool> ret(NULL, true); 
 
 				if (!_comp(value.first, current->data->first) && !_comp(current->data->first, value.first))
-					return ft::pair<t_node *, bool>(current, false);
+					return ft::pair<t_node *, int>(current, false);
 				else if (this->_comp(value.first, current->data->first))
 				{
 					if (!current->left)
-						ret = current->left = setUpNode(&value, current);
+						ret.first = current->left = setUpNode(&value, current);
 					else
-						ret = findValuePlace(value, current->left).first;
+						ret = findValuePlace(value, current->left);
 				}
 				else
 				{
 					if (!current->right)
-						ret = current->right = setUpNode(&value, current);
+						ret.first = current->right = setUpNode(&value, current);
 					else if (isEndNode(current->right))
 					{
 						current->right = setUpNode(&value, current);
 						current->right->right = this->_endNode;
-						ret = current->right->right->parent = current->right;
+						ret.first = current->right->right->parent = current->right;
 					}
 					else
-						ret = findValuePlace(value, current->right).first;
+						ret = findValuePlace(value, current->right);
 				}
-				if (ret)
+				if (ret.second)
 					current->height += 1;
-				return ft::pair<t_node *, bool>(ret, true);
+				return ret;
+
 			}
 
 			void	deleteSubTree(t_node *node) {
@@ -526,8 +574,6 @@ namespace ft {
 
 		public:
 
-			
-		
 			void erase(iterator pos) {
 				key_compare comp;
 				if (pos == end())
@@ -592,7 +638,7 @@ namespace ft {
 
 				if (!parent)
 				{
-					findNodePlace(left, right);
+					findLeftNodePlace(left, right);
 					_tree = right;
 					right->parent = NULL;
 				}
@@ -603,7 +649,7 @@ namespace ft {
 					else
 						parent->left = right;
 					right->parent = parent;
-					findNodePlace(left, right);
+					findLeftNodePlace(left, right);
 				}
 				target->right = NULL;
 				target->left = NULL;
@@ -617,6 +663,16 @@ namespace ft {
 					target->parent->right = NULL;
 				deleteSubTree(target);
 				
+			}
+
+			void findLeftNodePlace(t_node* toPlace, t_node *current) {
+				if (current->left)
+					findLeftNodePlace(toPlace, current->left);
+				else
+				{
+					current->left = toPlace;
+					toPlace->parent = current;
+				}
 			}
 
 			void eraseOnlyOneChildNode(t_node *target) {
@@ -658,10 +714,18 @@ namespace ft {
 				return (sizeBefore - _size);
 			}
 			
-		void swap( map& other ) { 
-			t_node *temp = other._tree;
+		void swap( map& other ) {
+			t_node *tempTree = other._tree;
+			t_node *tempEndNode = other._endNode;
+			int		tempSize = other._size;
+
 			other._tree = _tree;
-			_tree = temp;
+			other._endNode = _endNode;
+			other._size = _size;
+			
+			_tree = tempTree;
+			_endNode = tempEndNode;
+			_size = tempSize;
 			}
 
 		size_type count( const Key& key ) const {
@@ -806,14 +870,11 @@ namespace ft {
 			typedef std::allocator<t_node> nodeAlloc;
 
 		private:
-
-
 			t_node 							*_tree;
-			t_node							*_smallest;
+			// t_node							*_smallest;
 			t_node							*_endNode;
 			size_type						_size;
 			compare							_comp;
-			//value_compare					_vComp(compare c);
 			alloc							_alloc;
 			nodeAlloc						_nodeAlloc;
 

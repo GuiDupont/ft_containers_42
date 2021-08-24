@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/20 16:01:33 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/24 11:22:01 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ namespace ft {
 
 	template <class T, class comp>
 	struct s_node<T> *getUpperNode(struct s_node<T> *node, comp compare) {
-		
 		if (node->right)
 			node = getLeftExtremNode(node->right);
 		else

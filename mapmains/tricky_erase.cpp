@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE std
+
 #include "common.hpp"
 
 #define T1 int
@@ -210,6 +212,7 @@ int		main(void)
 	 *                                            43    45    47    49
 	 *
 	 * */
+
 
 	return (0);
 }

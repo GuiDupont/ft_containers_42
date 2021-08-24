@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 11:56:01 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/08/24 09:29:57 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ namespace ft {
 		reference operator*() const {	iterator temp = _current; 
 										return (*(--temp)); }
 		
-		pointer operator->() const	{	_current.operator->(); }
+		pointer operator->() const	{	iterator temp = _current;
+										return (&(operator*())); }
 
 		reference operator[](difference_type n) const {
 			iterator it = _current;

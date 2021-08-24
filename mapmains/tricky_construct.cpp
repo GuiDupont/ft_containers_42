@@ -1,3 +1,5 @@
+#define TESTED_NAMESPACE std
+
 #include "common.hpp"
 #include <list>
 
@@ -19,6 +21,7 @@ int		main(void)
 	lst.push_back(T3(55, "fuzzy"));
 	lst.push_back(T3(38, "buzz"));
 	lst.push_back(T3(55, "inside too"));
+
 
 	std::cout << "List contains: " << lst.size() << " elements." << std::endl;
 	for (itlst = lst.begin(); itlst != lst.end(); ++itlst)
