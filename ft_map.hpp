@@ -48,19 +48,6 @@ namespace ft {
 			typedef	const value_type*						const_pointer;
 			typedef struct s_node<value_type>				t_node;
         
-		
-			class value_compare {
-				public:
-					typedef bool		result_type;
-					typedef value_type	first_argument_type;
-					typedef value_type	second_argument_type;
-				
-					bool operator()( const value_type& lhs, const value_type& rhs ) const { return (comp(lhs.first, rhs.first));}
-				
-					compare comp;
-					value_compare(compare c) : comp(c) { }
-			};
-		
 		public:
 		
 			class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
@@ -194,7 +181,7 @@ namespace ft {
         
         typedef	ft::reverse_iterator<iterator>				reverse_iterator;
         typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
-
+/*
         map() : _tree(setUpNode(NULL, NULL)), _size(0) { _endNode = _tree; }
 		
         explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(setUpNode(NULL, NULL)), _alloc(a), _comp(comp), _size(0) 
@@ -868,6 +855,8 @@ return std::min<size_type>(std::allocator_traits<nodeAlloc>::max_size(nodeAlloc(
 					 return (lhs == rhs || lhs > rhs); }
 			
 			typedef std::allocator<t_node> nodeAlloc;
+
+*/
 
 		private:
 			t_node 							*_tree;
