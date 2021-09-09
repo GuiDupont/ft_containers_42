@@ -11,7 +11,6 @@
 /* ************************************************************************** */
     
 #include <functional>
-
 #include "ft_pair.hpp"
 #include "ft_reverse_iterator.hpp"
 #include <memory>
@@ -21,7 +20,6 @@
 #include "ft_lexicographical_compare.hpp"
 #include <string.h>
 #include <iostream>
-
 #include <limits>
 
 namespace ft {
@@ -179,6 +177,18 @@ namespace ft {
 
 			}; // const_iterator class
         
+		class value_compare {
+				public:
+					typedef bool		result_type;
+					typedef value_type	first_argument_type;
+					typedef value_type	second_argument_type;
+				
+					bool operator()( const value_type& lhs, const value_type& rhs ) const { return (comp(lhs.first, rhs.first));}
+				
+					compare comp;
+					value_compare(compare c) : comp(c) { }
+			};
+		
         typedef	ft::reverse_iterator<iterator>				reverse_iterator;
         typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
@@ -284,13 +294,13 @@ namespace ft {
 											return (iterator(last->right));
 										return (iterator(last)); }
 
-			reverse_iterator 		rbegin() { return (reverse_iterator(begin())); }
+			reverse_iterator 		rbegin() { return (reverse_iterator(end())); }
 
-			const_reverse_iterator 	rbegin() const {	return (reverse_iterator(begin())); }
+			const_reverse_iterator 	rbegin() const {	return (reverse_iterator(end())); }
 
-			reverse_iterator 		rend() { return (reverse_iterator(end())); }
+			reverse_iterator 		rend() { return (reverse_iterator(begin())); }
 			
-			const_reverse_iterator	rend() const { return (reverse_iterator(end())); }
+			const_reverse_iterator	rend() const { return (reverse_iterator(begin())); }
 
 			size_type 				size() const { return _size; }
 

@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/24 09:29:57 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/09 11:45:52 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define FT_REVERSE_ITERATOR
 
 #include "ft_iterators_traits.hpp"
+#include <iostream>
 
 namespace ft {
 	
@@ -51,7 +52,7 @@ namespace ft {
 										return (*(--temp)); }
 		
 		pointer operator->() const	{	iterator temp = _current;
-										return (&(operator*())); }
+										return (&((--temp).operator*())); }
 
 		reference operator[](difference_type n) const {
 			iterator it = _current;
@@ -60,17 +61,16 @@ namespace ft {
 			return (*it);
 		}
 
+			
 		reverse_iterator& operator++() { --_current; return(*this); }
 
-		reverse_iterator& operator--() {  ++_current; return(*this); }
+		reverse_iterator& operator--() {  ++_current;	return(*this); }
 
-		reverse_iterator operator++(int) { reverse_iterator temp = *this;
-											_current--;
-											return (temp); }
+		reverse_iterator operator++(int) { reverse_iterator temp = *this;	_current--;
+																			return (temp); }
 
-		reverse_iterator operator--(int) { reverse_iterator temp = *this;
-											_current++;
-											return (temp); }
+		reverse_iterator operator--(int) { reverse_iterator temp = *this;	_current++;
+																			return (temp); }
 
 		reverse_iterator operator+( difference_type n ) const { return reverse_iterator(_current - n); }						
 		
