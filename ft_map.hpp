@@ -50,7 +50,7 @@ namespace ft {
         
 		public:
 		
-			class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
+			class iterator : public std::iterator<std::bidirectional_iterator_tag, value_type> {
 				
 				public:
 
@@ -114,7 +114,7 @@ namespace ft {
 			}; // iterator class
 
 
-			class const_iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
+			class const_iterator : public std::iterator<std::bidirectional_iterator_tag, value_type> {
 				
 				public:
 
@@ -181,7 +181,7 @@ namespace ft {
         
         typedef	ft::reverse_iterator<iterator>				reverse_iterator;
         typedef	ft::reverse_iterator<const_iterator>		const_reverse_iterator;
-/*
+
         map() : _tree(setUpNode(NULL, NULL)), _size(0) { _endNode = _tree; }
 		
         explicit map( const compare& comp, const allocator_type& a = alloc() ) : _tree(setUpNode(NULL, NULL)), _alloc(a), _comp(comp), _size(0) 
@@ -856,7 +856,7 @@ return std::min<size_type>(std::allocator_traits<nodeAlloc>::max_size(nodeAlloc(
 			
 			typedef std::allocator<t_node> nodeAlloc;
 
-*/
+
 
 		private:
 			t_node 							*_tree;
