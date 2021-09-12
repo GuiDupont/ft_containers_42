@@ -215,9 +215,14 @@ namespace ft {
 			_tree = NULL;
 			_size = other._size;
 			copyNode(&_tree, other._tree, NULL);
+			_endNode = getRightExtremNode(_tree);
+			if (_endNode->right)
+				_endNode = _endNode->right;
 			return (*this);
 		};
-//put private
+
+		//put private
+	private:
 
 		void	copyNode(t_node **dst, t_node *src, t_node *parent) {
 			if (!src)
@@ -225,7 +230,6 @@ namespace ft {
 			*dst = setUpNode(src->data, parent);
 			copyNode(&((*dst)->left), src->left, *dst);
 			copyNode(&((*dst)->right), src->right, *dst);
-
 		}
 
 		void	printTree() {
@@ -244,8 +248,9 @@ namespace ft {
 			printTree(current->right, depth + 1);
 			if (depth == 0)
 				std::cout << std::endl;
-
 		}
+
+	public:
 
 		allocator_type get_allocator() const { return (_alloc); }
 
@@ -315,8 +320,7 @@ namespace ft {
 
 
 
-			size_type 				max_size() const { 
-return std::min<size_type>(std::allocator_traits<nodeAlloc>::max_size(nodeAlloc()), std::numeric_limits<difference_type>::max()); }
+			size_type 				max_size() const { return (0); }
 	// alloc							_alloc;
 	// 		nodeAlloc						_nodeAlloc;
 
@@ -327,21 +331,13 @@ return std::min<size_type>(std::allocator_traits<nodeAlloc>::max_size(nodeAlloc(
         //         numeric_limits<difference_type >::max());}
 
 
-
-
-
-
-
-
-
-
-
 			void clear(void) {
 				t_node *end_node = getRightExtremNode(_tree)->right;
 				end_node->parent->right = NULL;
 				end_node->parent = NULL;
 				deleteSubTree(_tree);
 				_tree = end_node;
+				_endNode = _tree;
 				_size = 0;
 			}
 

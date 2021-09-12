@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 13:20:02 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/12 18:23:15 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,11 +110,9 @@ namespace ft {
 
 						reference operator[](int index) { return (*(_ptr + index)); }
 						
-						pointer operator->() { return (this); }
-						const_pointer operator->() const { return (this); }
+						pointer operator->() { return (_ptr); }
 
 						reference operator*() { return (*_ptr); }
-						const_reference operator*() const { return (*_ptr); }
 
 						friend bool operator==(typename vector<T>::iterator const &lhs, typename vector<T>::iterator const &rhs) { return (lhs._ptr == rhs._ptr); }
 	
@@ -210,7 +208,7 @@ namespace ft {
 
 						reference operator[](int index) const { return (*(this->_ptr + index)); }
 						
-						pointer operator->() const { return (this); }
+						pointer operator->() const { return (this->_ptr); }
 
 						reference operator*() const { return (*this->_ptr); }
 
