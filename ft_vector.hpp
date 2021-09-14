@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/12 18:23:15 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 12:38:25 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,22 +135,24 @@ namespace ft {
 						pointer _ptr;
 
 					friend class vector;
+					// friend class
 				}; /* END ITERATOR CLASS */
 
 			/* #########################  CONST ITERATORS  ######################## */ 
-				class const_iterator : public iterator { 
+				class const_iterator : public std::iterator<std::random_access_iterator_tag, T> { 
 					protected:
-						const_iterator(T* ptr) : iterator(ptr) {this->_ptr = ptr; }
-						const_iterator(const vector & rhs) : iterator(rhs) {}
+						const_iterator(T* ptr) {this->_ptr = ptr; }
 					
 					public:
 
 						typedef const value_type&		reference;
 						typedef const value_type*		pointer;
+						typedef typename A::difference_type difference_type;
+
 						
-						const_iterator() : iterator() {}
+						const_iterator() : _ptr(NULL) {}
 						
-						const_iterator(const iterator & rhs) : iterator(rhs) { }
+						const_iterator(const iterator & rhs) { _ptr = rhs._ptr; }
 						
 						const_iterator& operator++() { this->_ptr++; return (*this); }
 
@@ -173,14 +175,14 @@ namespace ft {
 
 						const_iterator operator++(int) 
 						{
-							iterator it = *this;
+							const_iterator it = *this;
 							++(*this);
 							return (it);
 						}
 
 						const_iterator operator+(int n) const
 						{
-							return (iterator(this->_ptr + n));
+							return (const_iterator(this->_ptr + n));
 						}
 
 						const_iterator operator-(int n) const {
@@ -190,16 +192,16 @@ namespace ft {
 							return (it);
 						}
 
-						difference_type operator-(const const_iterator &b) const
+						difference_type operator-(const const_iterator b) const
 						{
-							return (this->_ptr - b._ptr);
+							return (_ptr - b._ptr);
 						}
 
 						const_iterator& operator--() { this->_ptr--; return (*this); }
 						
 						const_iterator operator--(int) 
 						{
-							iterator it = *this;
+							const_iterator it = *this;
 							--(*this);
 							return (it);
 						}
@@ -211,6 +213,26 @@ namespace ft {
 						pointer operator->() const { return (this->_ptr); }
 
 						reference operator*() const { return (*this->_ptr); }
+
+						friend bool operator==(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs) { return (lhs._ptr == rhs._ptr); }
+	
+	
+						friend bool operator!=(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs) { return !(lhs == rhs); }
+	
+			
+						friend bool operator<(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs) { return (lhs._ptr < rhs._ptr); }
+
+						
+						friend bool operator>(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs)  { return (lhs._ptr > rhs._ptr); }
+						
+						
+						friend bool operator<=(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs) { return !(lhs > rhs); }
+
+						
+						friend bool operator>=(typename vector<T>::const_iterator const &lhs, typename vector<T>::const_iterator const &rhs) { return !(lhs < rhs); }
+
+					private:
+						T*	_ptr;
 
 					friend class vector;
 					

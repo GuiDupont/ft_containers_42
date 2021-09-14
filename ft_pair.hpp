@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/19 12:00:32 by gdupont           #+#    #+#             */
-/*   Updated: 2021/08/18 14:51:08 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 10:58:23 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ namespace ft {
 			pair& operator=( const pair& other ) { this->first = other.first; this->second = other.second;
 												return (*this); }								
 		
-		private:
+		public:
 			pair *left;
 			pair *right;
 	}; //STRUCT PAIR

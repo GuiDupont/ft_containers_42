@@ -24,10 +24,10 @@
 
 namespace ft {
 
-	template < class Key,					   // map::key_type
-           class T,					     // map::mapped_type
-           class compare = std::less<Key>,					    // map::key_compare
-           class alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
+	template < class Key,
+           class T,
+           class compare = std::less<Key>,
+           class alloc = std::allocator<ft::pair<const Key,T> >
            >
     class map {
         
@@ -45,6 +45,7 @@ namespace ft {
 			typedef value_type*								pointer;
 			typedef	const value_type*						const_pointer;
 			typedef struct s_node<value_type>				t_node;
+			typedef	typename alloc::template rebind<t_node>::other	new_alloc;				
         
 		public:
 		
@@ -54,7 +55,6 @@ namespace ft {
 
 					iterator() : _node(NULL) {}
 					iterator(const iterator & rhs) : _node(rhs._node) {}
-					iterator(t_node * node)  { _node = node;}
 
 					iterator& operator=(iterator const & rhs)
 								{	this->_node = rhs._node; return (*this); }
@@ -107,6 +107,9 @@ namespace ft {
 				protected:
 					t_node*		_node;
 
+				private:
+					iterator(t_node * node) : _node(node) { }
+
 				friend class const_iterator;
 				friend class map;
 			}; // iterator class
@@ -121,7 +124,6 @@ namespace ft {
 
 					const_iterator() { }
 					const_iterator(const iterator & rhs) : _node(rhs._node) { }
-					const_iterator(t_node * node) : _node(node) { }
 
 					const_iterator& operator=(const_iterator const & rhs)
 								{	this->_node = rhs._node; return (*this); }
@@ -148,7 +150,6 @@ namespace ft {
 						compare comp;
 
 						this->_node = getUpperNode(this->_node, comp);
-						//std::cout << "operator ++ afte uper\n";
 						return (*this);
 					}
 
@@ -174,6 +175,11 @@ namespace ft {
 				
 				protected:
 					t_node*		_node;
+				
+				private:
+					const_iterator(t_node * node) : _node(node) { }
+
+				friend class map;
 
 			}; // const_iterator class
         
@@ -221,7 +227,6 @@ namespace ft {
 			return (*this);
 		};
 
-		//put private
 	private:
 
 		void	copyNode(t_node **dst, t_node *src, t_node *parent) {
@@ -285,10 +290,11 @@ namespace ft {
 			
 			iterator 				end() {
 										return (iterator(this->_endNode));
-										t_node* last = getRightExtremNode(_tree);
-										if (last && last->right)
-											return (iterator(last->right));
-										return (iterator(last)); }
+										// t_node* last = getRightExtremNode(_tree);
+										// if (last && last->right)
+										// 	return (iterator(last->right));
+										// return (iterator(last));
+										 }
 
 			const_iterator			end() const {
 										return (const_iterator(this->_endNode));
@@ -311,27 +317,12 @@ namespace ft {
 
 			bool 					empty() const { return (!_size); }
 
-
-
-
-
-
-
-
-
-
-			size_type 				max_size() const { return (0); }
-	// alloc							_alloc;
-	// 		nodeAlloc						_nodeAlloc;
-
-
-		// 	size_type max_size() const
-        // {	return std::min<size_type>(
-        //         __node_traits::max_size(_node_alloc()),
-        //         numeric_limits<difference_type >::max());}
-
+			size_type 				max_size() const { //return (std::numeric_limits<difference_type>::max() / (sizeof(t_node) / 2 ?: 1));
+				new_alloc a; return a.max_size(); }
 
 			void clear(void) {
+				if (_size == 0)
+					return ;
 				t_node *end_node = getRightExtremNode(_tree)->right;
 				end_node->parent->right = NULL;
 				end_node->parent = NULL;
@@ -343,17 +334,6 @@ namespace ft {
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
 				ft::pair<t_node *, int> nodeCreated;
-				// if (!_tree)								
-				// {									
-				// 	_tree = setUpNode(&value, NULL);		
-				// 	_tree->right = setUpNode(NULL, _tree);
-				// 	nodeCreated.first = _tree;
-				// 	nodeCreated.second = 0;
-				// }
-				// else 
-					// for the first insertion we add a end_node that is empty 
-					// and that we will use later for our iterators
-					// this node is always the right child of the right most element
 				if (isEndNode(_tree)) 
 				{
 					nodeCreated.first = setUpNode(&value, NULL);
@@ -370,7 +350,8 @@ namespace ft {
 				}
 				if (nodeCreated.second)
 					_size++;
-				return nodeCreated;
+				iterator it = iterator(nodeCreated.first);
+				return ft::pair<iterator, int>(it, nodeCreated.second);
 			}
 
 			template< class inputIt >
@@ -763,6 +744,12 @@ namespace ft {
 			iterator	save = this->end();
 
 			while (1) {
+				// if (current != this->end())
+				// 	std::cout << "we aree at:" << current->first << std::endl;
+				// else
+				// 	std::cout << "We are at the end\n";
+				if (current == end())
+					return (current);
 				if ((!_comp(key, current->first) && !_comp(current->first, key)))
 					return (current);
 				else if (_comp(current->first, key) && save != this->end())
@@ -883,4 +870,4 @@ namespace ft {
 	
 	
 	
-} /* NAMESPACE FT */ 
+} /* NAMESPACE FT */

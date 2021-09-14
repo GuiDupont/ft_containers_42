@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/21 09:19:58 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/09 11:45:52 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 14:56:19 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ namespace ft {
 			return (*it);
 		}
 
-			
 		reverse_iterator& operator++() { --_current; return(*this); }
 
 		reverse_iterator& operator--() {  ++_current;	return(*this); }
@@ -96,7 +95,7 @@ namespace ft {
 	template< class IterL, class IterR >
 	typename reverse_iterator<IterL>::difference_type
     operator-( const reverse_iterator<IterL>& lhs, const reverse_iterator<IterR>& rhs ) {
-		return (rhs.base() - lhs.base());
+		return (IterL(rhs.base()) - lhs.base());
 	}
 
 	template< class Iterator1, class Iterator2 >

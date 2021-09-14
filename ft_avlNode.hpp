@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/12 17:40:00 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 11:16:06 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "iostream"
 
 namespace ft {
-
 	
 	template <class T>
 	struct	s_node {
@@ -65,7 +64,6 @@ namespace ft {
 				return (node->parent);
 			node = node->parent;
 		}
-		// return (node);
 		return (node);
 	}
 

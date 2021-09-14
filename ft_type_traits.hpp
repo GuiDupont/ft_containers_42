@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/26 08:29:18 by gdupont           #+#    #+#             */
-/*   Updated: 2021/07/26 08:52:09 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 11:11:31 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,27 +66,6 @@ template <class T>
 
 	template <class T>
 	struct is_input_iterator : public _value<_is_input_iterator<_has_iterator_category<T>::value, T>::value || is_pointer<T>::value> {};
-
-
-// template <typename T>
-// struct has_iterator_category {
-//   // Types "yes" and "no" are guaranteed to have different sizes,
-//   // specifically sizeof(yes) == 1 and sizeof(no) == 2.
-//   typedef char yes[1];
-//   typedef char no[2];
-
-//   template <typename C>
-//   static yes& test(typename C::iterator_category category *);
-
-//   template <typename>
-//   static no& test(...);
-
-//   // If the "sizeof" of the result of calling test<T>(nullptr) is equal to
-//   // sizeof(yes), the first overload worked and T has a nested type named
-//   // foobar.
-//   static const bool value = sizeof(test<T>(nullptr)) == sizeof(yes);
-// };
-
 
 }
 
