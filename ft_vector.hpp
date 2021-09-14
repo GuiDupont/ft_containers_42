@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/14 12:38:25 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/14 16:56:45 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,7 +481,7 @@ namespace ft {
 				
 				template<class inputIter>
 				void assign(typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
-					size_type length = distance(first, last);
+					size_type length = _distance(first, last);
 					if (length > _capacity)
 						this->reallocate(length);
 					else
