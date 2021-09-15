@@ -89,7 +89,7 @@ namespace ft {
 					{
 						compare comp;
 
-						if (isEndNode(node))                                  /* special case for end_node */ 				
+						if (isEndNode(_node))                                  /* special case for end_node */ 				
 							_node = _node->parent;
 						else
 							_node = getLowerNode(_node, comp);
@@ -553,7 +553,7 @@ namespace ft {
 			int computeBalanceFactorNRebalance(t_node *current) {
 				if (!current || isEndNode(current))
 					return (0);
-				if (!current->left && (!current->right || isEndNode(current->right))  // if leaf
+				if (!current->left && (!current->right || isEndNode(current->right)))  // if leaf
 					return (1);
 				int leftHeight = computeBalanceFactorNRebalance(current->left);
 				int rightHeight = computeBalanceFactorNRebalance(current->right);
