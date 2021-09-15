@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_vector.hpp                                      :+:      :+:    :+:   */
+/*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/14 17:09:56 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/15 10:52:22 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -409,9 +409,7 @@ namespace ft {
 						int startCopy = targetIndex + n;
 						for (size_type i = 0; i < _size - n - 1; i++)
 						{
-							std::cout << startCopy << std::endl;
 							_buffer[startCopy + i] = save[i];
-
 							_alloc.destroy(_buffer + startCopy + i);
 						}
 						_alloc.deallocate(save, _size - n);
@@ -497,18 +495,15 @@ namespace ft {
 					if (n > _capacity)
 					{
 						substitute = _alloc.allocate(n);
-
 						for (size_type i = 0; i < n; i++)
 						{
-							_alloc.construct(substitute + i, value);
-							if (i < _size)
-								_alloc.destroy(_buffer + i);
+							substitute[i] = value;
+							_alloc.destroy(_buffer + i);
 						}
 						_alloc.deallocate(_buffer, _capacity);
 						_capacity = n;
 						_buffer = substitute;
 						_size = n;
-						
 					}
 					else if (n > _size)
 					{

@@ -14,7 +14,7 @@
 #include "ft_pair.hpp"
 #include "ft_reverse_iterator.hpp"
 #include <memory>
-#include "ft_avlNode.hpp"
+#include "ft_avl_tree.hpp"
 #include <algorithm>
 #include <stdexcept>
 #include "ft_lexicographical_compare.hpp"
@@ -48,6 +48,7 @@ namespace ft {
 			typedef	typename alloc::template rebind<t_node>::other	new_alloc;				
         
 		public:
+			/* #########################  ITERATORS  ######################## */ 
 		
 			class iterator : public std::iterator<std::bidirectional_iterator_tag, value_type> {
 				
@@ -88,7 +89,7 @@ namespace ft {
 					{
 						compare comp;
 
-						if (!_node->data )                                  /* special case for end_node */ 				
+						if (isEndNode(node))                                  /* special case for end_node */ 				
 							_node = _node->parent;
 						else
 							_node = getLowerNode(_node, comp);
@@ -112,8 +113,11 @@ namespace ft {
 
 				friend class const_iterator;
 				friend class map;
-			}; // iterator class
+			}; 
 
+			/* #########################  END ITERATORS  ######################## */ 
+
+			/* ######################### CONST ITERATORS ######################## */ 
 
 			class const_iterator : public std::iterator<std::bidirectional_iterator_tag, value_type> {
 				
@@ -157,7 +161,7 @@ namespace ft {
 					{
 						compare comp;
 
-						if (!this->_node->data)                                    /* special case for end_node */ 				
+						if (isEndNode(_node))                                   /* special case for end_node */ 				
 							this->_node = this->_node->parent;
 						else
 							this->_node = getLowerNode(this->_node, comp);
@@ -181,7 +185,9 @@ namespace ft {
 
 				friend class map;
 
-			}; // const_iterator class
+			}; 			
+		/* #########################  END CONST ITERATORS  ###################### */ 
+
         
 		class value_compare {
 				public:
@@ -237,6 +243,7 @@ namespace ft {
 			copyNode(&((*dst)->right), src->right, *dst);
 		}
 
+	public: // only for display purpose, can be set private without affecting map functionnalities;
 		void	printTree() {
 			this->printTree(NULL, 0);
 		}
@@ -269,12 +276,6 @@ namespace ft {
 		const T& at( const Key& key ) const { return (at(key)); }
 
 		T& operator[]( const Key& key ) {
-			// iterator it = this->begin();
-			// for (; it != this->end(); it++)
-			// {
-			// 	if (key == it->first)
-			// 		return (*(it));
-			// }
 			value_type val(key, T());
 			t_node *target = getNode(_tree, val, _comp);
 			if (isEndNode(target) || !target)
@@ -282,32 +283,19 @@ namespace ft {
 			return (target->data->second);
 		}
 		
-		public: // fix to get constant perf with variable stored in class
+		public:
 
 			iterator 				begin() {	return(iterator(getLeftExtremNode(_tree))); }
 
 			const_iterator 			begin() const { return (const_iterator(getLeftExtremNode(_tree))); }
 			
-			iterator 				end() {
-										return (iterator(this->_endNode));
-										// t_node* last = getRightExtremNode(_tree);
-										// if (last && last->right)
-										// 	return (iterator(last->right));
-										// return (iterator(last));
-										 }
+			iterator 				end() { return (iterator(this->_endNode)); }
 
-			const_iterator			end() const {
-										return (const_iterator(this->_endNode));
-
-
-										t_node* last = getRightExtremNode(_tree);
-										if (last && last->right)
-											return (iterator(last->right));
-										return (iterator(last)); }
+			const_iterator			end() const { return (const_iterator(this->_endNode)); }
 
 			reverse_iterator 		rbegin() { return (reverse_iterator(end())); }
 
-			const_reverse_iterator 	rbegin() const {	return (reverse_iterator(end())); }
+			const_reverse_iterator 	rbegin() const { return (reverse_iterator(end())); }
 
 			reverse_iterator 		rend() { return (reverse_iterator(begin())); }
 			
@@ -317,8 +305,7 @@ namespace ft {
 
 			bool 					empty() const { return (!_size); }
 
-			size_type 				max_size() const { //return (std::numeric_limits<difference_type>::max() / (sizeof(t_node) / 2 ?: 1));
-				new_alloc a; return a.max_size(); }
+			size_type 				max_size() const { new_alloc a; return a.max_size(); }
 
 			void clear(void) {
 				if (_size == 0)
@@ -361,30 +348,212 @@ namespace ft {
 			}
 
 			iterator insert( iterator hint, const value_type& value ) {
+				(void)hint;
 				return (iterator(insert(value).first));
-				if (hint == iterator(_endNode))
-					return (iterator(insert(value).first));
-				value_type hintValue(hint->first, hint->second);
-				t_node *hintNode = getNode<value_type, key_compare>(_tree, hintValue, this->_comp);
-				ft::pair<t_node *, bool> nodeCreated = findValuePlace(value, hintNode);
-				if (nodeCreated.second)
-				{
-
-					_size++;
-					return (iterator(nodeCreated.first));
-				}
-				else
-				{
-					std::cout << "Could not find fuckk\n";
-				}
-				return (iterator(_endNode));
 			}
+
+			void erase(iterator pos) {
+				key_compare comp;
+				if (pos == end())
+					return ;
+				value_type value(pos->first, pos->second);
+				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
+				if (!target)
+					return ;
+				if (isEndNode(target->right))
+					eraseMaxNode(target);
+				else if (target->left && target->right)
+					eraseFullNode(target);
+				else if (!target->left && !target->right)
+					eraseLeaf(target);
+				else
+					eraseOnlyOneChildNode(target);
+				computeBalanceFactorNRebalance(_tree);
+				_size--;
+			}
+
+			void erase( iterator first, iterator last ) {
+				for(iterator it = first; it != last; )
+				{
+					it++;
+					this->erase(first);
+					first = it;
+				}
+			}
+
+			size_type erase( const key_type& key ) {
+				size_type sizeBefore = _size;
+				value_type value(key, T());
+				t_node *target = getNode(_tree, value,_comp);
+				if (!target)
+					return (0);
+				erase(iterator(target));
+				return (sizeBefore - _size);
+			}
+			
+			void swap( map& other ) {
+				t_node *tempTree = other._tree;
+				t_node *tempEndNode = other._endNode;
+				int		tempSize = other._size;
+
+				other._tree = _tree;
+				other._endNode = _endNode;
+				other._size = _size;
+				
+				_tree = tempTree;
+				_endNode = tempEndNode;
+				_size = tempSize;
+				}
+
+			size_type count( const Key& key ) const {
+				value_type		target(key, mapped_type());
+				if (getNode(_tree, target, _comp))
+					return (1);
+				return (0);
+			}
+
+			iterator find( const Key& key ) {
+				value_type		target(key, mapped_type());
+				t_node	*targetNode = getNode(_tree, target, _comp);
+
+				if (targetNode)
+					return (targetNode);
+				else
+					return (this->end());
+			}
+
+			const_iterator find( const Key& key ) const {
+				value_type		target(key, mapped_type());
+				t_node	*targetNode = getNode(_tree, target, _comp);
+
+				if (targetNode)
+					return (targetNode);
+				else
+					return (this->end());
+			}
+
+			ft::pair<iterator,iterator> equal_range( const Key& key ) {
+				ft::pair<iterator,iterator> range(lower_bound(key), upper_bound(key));
+				return (range);
+			}
+
+			ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const {
+				ft::pair<const_iterator, const_iterator> range(lower_bound(key), upper_bound(key));
+				return (range);
+			}
+			
+			iterator lower_bound( const Key& key ) {
+				iterator	current = iterator(_tree);
+				iterator	save = this->end();
+
+				while (1) {
+					if (current == end())
+						return (current);
+					if ((!_comp(key, current->first) && !_comp(current->first, key)))
+						return (current);
+					else if (_comp(current->first, key) && save != this->end())
+						return (save);
+					else if (_comp(current->first, key))
+						current++;
+					else
+					{
+						save = current;
+						if (current == begin())
+							return (save);
+						current--;
+					}
+				}
+				return (end());
+			}
+
+			const_iterator lower_bound( const Key& key ) const {
+				const_iterator	current = iterator(_tree);
+				const_iterator	save = this->end();
+
+				while (1) {
+					if (current == this->end())
+						return (current);
+					if ((!_comp(key, current->first) && !_comp(current->first, key)))
+						return (current);
+					else if (_comp(current->first, key) && save != this->end())
+						return (save);
+					else if (_comp(current->first, key))
+						current++;
+					else
+					{
+						save = current;
+						if (current == begin())
+							return (save);
+						current--;
+					}
+				}
+				return (end());
+			}
+
+			iterator upper_bound( const Key& key ) {
+				iterator	low_bound = lower_bound(key);
+				if (low_bound == end())
+					return (low_bound);
+				if (!_comp(low_bound->first, key) && !_comp(key, low_bound->first))
+					return (++low_bound);
+				return (low_bound);
+			}
+
+			const_iterator upper_bound( const Key& key ) const {
+				const_iterator	low_bound = lower_bound(key);
+				if (low_bound == end())
+					return (low_bound);
+				if (!_comp(low_bound->first, key) && !_comp(key, low_bound->first))
+					return (++low_bound);
+				return (low_bound);
+			}
+
+			key_compare key_comp() const { return (_comp); }
+			value_compare value_comp() const { return (value_compare(_comp)); }
+
+			friend	bool operator==( const ft::map<Key,T,compare,alloc>& lhs, const ft::map<Key,T,compare,alloc>& rhs ) {
+				if (lhs._size != rhs._size)
+					return (0);
+				return (compare2NodesNchilds(lhs._tree, rhs._tree, compare())); }
+			
+			
+			friend	bool operator!=( const ft::map<Key,T,compare,alloc>& lhs,
+			const ft::map<Key,T,compare,alloc>& rhs ) { return !(lhs == rhs); }
+					
+			friend	bool operator<( const ft::map<Key,T,compare,alloc>& lhs,
+					const ft::map<Key,T,compare,alloc>& rhs ) {
+				const_iterator first1 = lhs.begin();
+				const_iterator first2 = rhs.begin();
+				const_iterator last1 = lhs.end();
+				const_iterator last2 = rhs.end();
+
+				for (; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 ) {
+					if (*first1 < *first2) return true;
+					if (*first2 < *first1) return false;
+				}
+				return ((first1 == last1) && (first2 != last2));
+			}
+		
+			friend bool operator<=( const ft::map<Key,T,compare,alloc>& lhs,
+						const ft::map<Key,T,compare,alloc>& rhs ) {
+							return (lhs == rhs || lhs < rhs); }
+					
+			friend bool operator>( const ft::map<Key,T,compare,alloc>& lhs,
+					const ft::map<Key,T,compare,alloc>& rhs ) {
+						return (! (lhs <= rhs)); }
+
+			friend bool operator>=( const ft::map<Key,T,compare,alloc>& lhs,
+					const ft::map<Key,T,compare,alloc>& rhs ) {
+						return (lhs == rhs || lhs > rhs); }
+				
+				typedef std::allocator<t_node> nodeAlloc;
+
 
 		private:
 			int computeBalanceFactorNRebalance(t_node *current) {
-				if (!current || isEndNode(current))  // if null or end node
+				if (!current || isEndNode(current))
 					return (0);
-				if (!current->left && (!current->right || !current->right->data))  // if leaf
+				if (!current->left && (!current->right || isEndNode(current->right))  // if leaf
 					return (1);
 				int leftHeight = computeBalanceFactorNRebalance(current->left);
 				int rightHeight = computeBalanceFactorNRebalance(current->right);
@@ -401,7 +570,7 @@ namespace ft {
 			}
 
 			int getNodeHeight(t_node *current) {
-				if (!current || isEndNode(current))  // if null or end node
+				if (!current || isEndNode(current))
 					return (0);
 				else
 				{
@@ -410,7 +579,6 @@ namespace ft {
 					current->height = std::max(leftHeight, rightHeight) + 1;
 					current->balanceFactor = leftHeight - rightHeight;
 				}
-				std::cout << "Node " << current->data->first << " height is " << current->height << "and BF is " << current->balanceFactor << std::endl;
 				return (current->height);
 			}
 
@@ -546,29 +714,6 @@ namespace ft {
 				_nodeAlloc.deallocate(node, 1);
 			}
 
-		public:
-
-			void erase(iterator pos) {
-				key_compare comp;
-				if (pos == end())
-					return ;
-				value_type value(pos->first, pos->second);
-				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
-				if (!target)
-					return ;
-				if (isEndNode(target->right))
-					eraseMaxNode(target);
-				else if (target->left && target->right)
-					eraseFullNode(target);
-				else if (!target->left && !target->right)
-					eraseLeaf(target);
-				else
-					eraseOnlyOneChildNode(target);
-				computeBalanceFactorNRebalance(_tree);
-				_size--;
-			}
-
-		private:
 			void eraseMaxNode(t_node *target) {
 				t_node *left = target->left;
 				t_node *right = target->right;
@@ -668,192 +813,8 @@ namespace ft {
 				deleteSubTree(target);
 			}
 
-		public:
-			void erase( iterator first, iterator last ) {
-				for(iterator it = first; it != last; )
-				{
-					it++;
-					this->erase(first);
-					first = it;
-				}
-			}
-
-			size_type erase( const key_type& key ) {
-				size_type sizeBefore = _size;
-				value_type value(key, T());
-				t_node *target = getNode(_tree, value,_comp);
-				if (!target)
-					return (0);
-				erase(iterator(target));
-				return (sizeBefore - _size);
-			}
-			
-		void swap( map& other ) {
-			t_node *tempTree = other._tree;
-			t_node *tempEndNode = other._endNode;
-			int		tempSize = other._size;
-
-			other._tree = _tree;
-			other._endNode = _endNode;
-			other._size = _size;
-			
-			_tree = tempTree;
-			_endNode = tempEndNode;
-			_size = tempSize;
-			}
-
-		size_type count( const Key& key ) const {
-			value_type		target(key, mapped_type());
-			if (getNode(_tree, target, _comp))
-				return (1);
-			return (0);
-		}
-
-		iterator find( const Key& key ) {
-			value_type		target(key, mapped_type());
-			t_node	*targetNode = getNode(_tree, target, _comp);
-
-			if (targetNode)
-				return (targetNode);
-			else
-				return (this->end());
-		}
-
-		const_iterator find( const Key& key ) const {
-			value_type		target(key, mapped_type());
-			t_node	*targetNode = getNode(_tree, target, _comp);
-
-			if (targetNode)
-				return (targetNode);
-			else
-				return (this->end());
-		}
-
-		ft::pair<iterator,iterator> equal_range( const Key& key ) {
-			ft::pair<iterator,iterator> range(lower_bound(key), upper_bound(key));
-			return (range);
-		}
-
-		ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const {
-			ft::pair<const_iterator, const_iterator> range(lower_bound(key), upper_bound(key));
-			return (range);
-		}
-		
-		iterator lower_bound( const Key& key ) {
-			iterator	current = iterator(_tree);
-			iterator	save = this->end();
-
-			while (1) {
-				// if (current != this->end())
-				// 	std::cout << "we aree at:" << current->first << std::endl;
-				// else
-				// 	std::cout << "We are at the end\n";
-				if (current == end())
-					return (current);
-				if ((!_comp(key, current->first) && !_comp(current->first, key)))
-					return (current);
-				else if (_comp(current->first, key) && save != this->end())
-					return (save);
-				else if (_comp(current->first, key))
-					current++;
-				else
-				{
-					save = current;
-					if (current == begin())
-						return (save);
-					current--;
-				}
-			}
-			return (end());
-		}
-
-		const_iterator lower_bound( const Key& key ) const {
-			const_iterator	current = iterator(_tree);
-			const_iterator	save = this->end();
-
-			while (1) {
-				if (current == this->end())
-					return (current);
-				if ((!_comp(key, current->first) && !_comp(current->first, key))) // if ==
-					return (current);
-				else if (_comp(current->first, key) && save != this->end())  // if first > key
-					return (save);
-				else if (_comp(current->first, key))
-					current++;
-				else
-				{
-					save = current;
-					if (current == begin())
-						return (save);
-					current--;
-				}
-			}
-			return (end());
-		}
-
-		iterator upper_bound( const Key& key ) {
-			iterator	low_bound = lower_bound(key);
-			if (low_bound == end())
-				return (low_bound);
-			if (!_comp(low_bound->first, key) && !_comp(key, low_bound->first))
-				return (++low_bound);
-			return (low_bound);
-		}
-
-		const_iterator upper_bound( const Key& key ) const {
-			const_iterator	low_bound = lower_bound(key);
-			if (low_bound == end())
-				return (low_bound);
-			if (!_comp(low_bound->first, key) && !_comp(key, low_bound->first))
-				return (++low_bound);
-			return (low_bound);
-		}
-
-		key_compare key_comp() const { return (_comp); }
-		value_compare value_comp() const { return (value_compare(_comp)); }
-
-		friend	bool operator==( const ft::map<Key,T,compare,alloc>& lhs, const ft::map<Key,T,compare,alloc>& rhs ) {
-			if (lhs._size != rhs._size)
-				return (0);
-			return (compare2NodesNchilds(lhs._tree, rhs._tree, compare())); }
-		
-		
-		friend	bool operator!=( const ft::map<Key,T,compare,alloc>& lhs,
-        const ft::map<Key,T,compare,alloc>& rhs ) { return !(lhs == rhs); }
-				 
-		friend	bool operator<( const ft::map<Key,T,compare,alloc>& lhs,
-                const ft::map<Key,T,compare,alloc>& rhs ) {
-			const_iterator first1 = lhs.begin();
-			const_iterator first2 = rhs.begin();
-			const_iterator last1 = lhs.end();
-			const_iterator last2 = rhs.end();
-
-			for (; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 ) {
-				if (*first1 < *first2) return true;
-				if (*first2 < *first1) return false;
-			}
-    		return ((first1 == last1) && (first2 != last2));
-		}
-	
-		friend bool operator<=( const ft::map<Key,T,compare,alloc>& lhs,
-					const ft::map<Key,T,compare,alloc>& rhs ) {
-						return (lhs == rhs || lhs < rhs); }
-				 
-		friend bool operator>( const ft::map<Key,T,compare,alloc>& lhs,
-                const ft::map<Key,T,compare,alloc>& rhs ) {
-					return (! (lhs <= rhs)); }
-
-		friend bool operator>=( const ft::map<Key,T,compare,alloc>& lhs,
-                 const ft::map<Key,T,compare,alloc>& rhs ) {
-					 return (lhs == rhs || lhs > rhs); }
-			
-			typedef std::allocator<t_node> nodeAlloc;
-
-
-
 		private:
 			t_node 							*_tree;
-			// t_node							*_smallest;
 			t_node							*_endNode;
 			size_type						_size;
 			compare							_comp;
