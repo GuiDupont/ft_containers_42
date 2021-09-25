@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_avlNode.hpp                                     :+:      :+:    :+:   */
+/*   ft_avl_tree.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/30 12:49:25 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/14 11:16:06 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/25 12:38:49 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,38 @@ namespace ft {
 	}
 
 	template <class T>
+	bool isNodeValid(struct s_node<T> *node) {
+		if (!node  || isEndNode(node))
+			return (false);
+		return (true);
+	}
+
+	template <class T>
 	struct s_node<T> *getRightExtremNode(struct s_node<T> *node) {
 		if (!node)
 			return (NULL);
 		while (node->right && !isEndNode(node->right))
 			node = node->right;
 		return (node);
+	}
+
+
+	template <class T>
+	int			getHeight(struct s_node<T> *node) {
+		if (!isNodeValid(node))
+			return (0);		
+		return (node->height);
+	}
+
+	template <class T>
+	bool			nodeHasBrother(struct s_node<T> *node) {
+		if (!node->parent)
+			return (false);
+		if (node->parent->left == node && isNodeValid(node->parent->right))
+			return (true);
+		if (node->parent->right == node && isNodeValid(node->parent->left))
+			return (true);
+		return (false);
 	}
 
 	template <class T>

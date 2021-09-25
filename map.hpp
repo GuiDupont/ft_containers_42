@@ -22,6 +22,13 @@
 #include <iostream>
 #include <limits>
 
+#define LR  1
+#define RR  2
+#define RLR 3
+#define LRR 4
+
+
+
 namespace ft {
 
 	template < class Key,
@@ -79,7 +86,7 @@ namespace ft {
 						return (it);
 					}
 
-					iterator& operator++() {  //pre inc
+					iterator& operator++() {
 						compare comp;
 						_node = getUpperNode(_node, comp);
 						return (*this);
@@ -242,8 +249,8 @@ namespace ft {
 			copyNode(&((*dst)->left), src->left, *dst);
 			copyNode(&((*dst)->right), src->right, *dst);
 		}
-
-	public: // only for display purpose, can be set private without affecting map functionnalities;
+		public:
+		// only for display purpose, can be set private without affecting map functionnalities;
 		void	printTree() {
 			this->printTree(NULL, 0);
 		}
@@ -254,7 +261,7 @@ namespace ft {
 			if (!current || !current->data)
 				return ;
 			//std::cout << depth << " | Key: " << current->data->first << " Height : " << current->height << " Balance factor " << current->balanceFactor << std::endl;
-			std::cout << "Depth: " << depth << " |  Key: " << current->data->first << " | Value: " << current->data->second << std::endl;
+			std::cout << "Height: " << current->height << " |  Key: " << current->data->first << " | Value: " << current->data->second << std::endl;
 			
 			printTree(current->left, depth + 1);
 			printTree(current->right, depth + 1);
@@ -333,7 +340,7 @@ namespace ft {
 				{
 					nodeCreated = findValuePlace(value, _tree);
 					if (nodeCreated.second == 1)
-						computeBalanceFactorNRebalance(_tree);
+						doBalancing(nodeCreated.first);
 				}
 				if (nodeCreated.second)
 					_size++;
@@ -341,6 +348,50 @@ namespace ft {
 				return ft::pair<iterator, int>(it, nodeCreated.second);
 			}
 
+
+			void	doBalancing(t_node *node) {
+				if (!node || !node->parent)
+					return ;
+				
+				t_node* save = node;
+				while (node) {
+					computeBalanceFactorandHeight(node->parent);
+					node = node->parent;				
+				}
+				reBalance(save->parent);
+			}
+
+			void	computeBalanceFactorandHeight(t_node *node) {
+				if (!node)
+					return;
+				int leftHeight = getHeight(node->left);
+				int rightHeight = getHeight(node->right);
+
+
+				node->height = std::max(leftHeight, rightHeight);
+				node->height += 1;
+				node->balanceFactor = leftHeight - rightHeight;
+			}
+
+			void	reBalance(t_node *node) {
+				int rotation;
+
+				while (node) {
+					rotation = rebalanceNode(node);
+					computeBalanceFactorandHeight(node);
+					if (rotation == LRR)
+						computeBalanceFactorandHeight(node->parent->left);
+					else if (rotation == RLR)
+						computeBalanceFactorandHeight(node->parent->right);
+					computeBalanceFactorandHeight(node->parent);
+					
+					node = node->parent;
+					// if (rotation)
+					// 	node = node->parent;
+				}
+			}
+
+			
 			template< class inputIt >
 			void insert( inputIt first, inputIt last) {
 				for(; first != last; first++)
@@ -360,6 +411,7 @@ namespace ft {
 				t_node *target = getNode<value_type, key_compare>(_tree, value, comp);
 				if (!target)
 					return ;
+				t_node *target_parent = target->parent;
 				if (isEndNode(target->right))
 					eraseMaxNode(target);
 				else if (target->left && target->right)
@@ -368,7 +420,7 @@ namespace ft {
 					eraseLeaf(target);
 				else
 					eraseOnlyOneChildNode(target);
-				computeBalanceFactorNRebalance(_tree);
+				doBalancing(target_parent);
 				_size--;
 			}
 
@@ -550,51 +602,24 @@ namespace ft {
 
 
 		private:
-			int computeBalanceFactorNRebalance(t_node *current) {
-				if (!current || isEndNode(current))
-					return (0);
-				if (!current->left && (!current->right || isEndNode(current->right)))  // if leaf
-					return (1);
-				int leftHeight = computeBalanceFactorNRebalance(current->left);
-				int rightHeight = computeBalanceFactorNRebalance(current->right);
-				current->balanceFactor = leftHeight - rightHeight;
-				if (current->balanceFactor > 1 || current->balanceFactor < -1)
-				{
-					rebalanceTree(current);
-					leftHeight = computeBalanceFactorNRebalance(current->left);
-					rightHeight = computeBalanceFactorNRebalance(current->right);
-					current->balanceFactor = leftHeight - rightHeight;
-				}
-				current->height = std::max(leftHeight, rightHeight) + 1;
-				return (current->height);
-			}
+			
 
-			int getNodeHeight(t_node *current) {
-				if (!current || isEndNode(current))
-					return (0);
-				else
-				{
-					int leftHeight = getNodeHeight(current->left);
-					int rightHeight = getNodeHeight(current->right);
-					current->height = std::max(leftHeight, rightHeight) + 1;
-					current->balanceFactor = leftHeight - rightHeight;
-				}
-				return (current->height);
-			}
-
-			void	rebalanceTree(t_node *current)
+			int		rebalanceNode(t_node *current)
 			{
-				if (current->balanceFactor < 0 && current->right && current->right->balanceFactor <= 0)
-					doLeftRotation(current);
-				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor > 0)
-					doRightRotation(current);
-				else if (current->balanceFactor < 0 && current->right && current->right->balanceFactor > 0)
-					doRightLeftRotation(current);
-				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor <= 0)
-					doLeftRightRotation(current);
+				if (!current)
+					return (0);
+				if (current->balanceFactor < -1 && current->right && current->right->balanceFactor <= 0)
+					return doLeftRotation(current);
+				else if (current->balanceFactor > 1 && current->left && current->left->balanceFactor >= 0)
+					return doRightRotation(current);
+				else if (current->balanceFactor < -1 && current->right && current->right->balanceFactor > 0)
+					return doRightLeftRotation(current);
+				else if (current->balanceFactor > 0 && current->left && current->left->balanceFactor < 0)
+					return doLeftRightRotation(current);				
+				return (0);
 			}
 
-			void	doRightRotation(t_node *c)
+				int	doRightRotation(t_node *c)
 			{
 				t_node *b = c->left;
 				
@@ -610,13 +635,16 @@ namespace ft {
 				 	b->parent->right = b;
 				else
 					_tree = b;
+				return (RR);
 			}
 
-			void	doLeftRotation(t_node *c)
+			int	doLeftRotation(t_node *c)
 			{
 				t_node *b = c->right;
 
-				c->right = b->left;
+				if (b)
+					c->right = b->left;
+
 				if (c->right)
 					c->right->parent = c;
 				b->left = c;
@@ -628,18 +656,21 @@ namespace ft {
 				 	b->parent->right = b;
 				else
 					_tree = b;
+				return (LR);
 			}
 
-			void	doLeftRightRotation(t_node *c)
+			int	doLeftRightRotation(t_node *c)
 			{
 				doLeftRotation(c->left);
 				doRightRotation(c);
+				return (LRR);
 			}
 
-			void	doRightLeftRotation(t_node *c)
+			int	doRightLeftRotation(t_node *c)
 			{
 				doRightRotation(c->right);
 				doLeftRotation(c);
+				return (RLR);
 			}
 		
 			t_node *setUpNode(const value_type* value, t_node *parent) {
@@ -685,8 +716,6 @@ namespace ft {
 					else
 						ret = findValuePlace(value, current->right);
 				}
-				if (ret.second)
-					current->height += 1;
 				return ret;
 
 			}
@@ -751,6 +780,7 @@ namespace ft {
 			}
 
 			void eraseFullNode(t_node *target) {
+
 				t_node *left = target->left;
 				t_node *right = target->right;
 				t_node *parent = target->parent;
@@ -776,6 +806,7 @@ namespace ft {
 			}
 
 			void eraseLeaf(t_node *target) {
+
 				if (target == target->parent->left)
 					target->parent->left = NULL;
 				else
@@ -795,7 +826,7 @@ namespace ft {
 			}
 
 			void eraseOnlyOneChildNode(t_node *target) {
-
+				
 				t_node *child = (target->left ? target->left : target->right);
 				t_node *parent = target->parent;
 				if (!parent)
