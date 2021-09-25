@@ -673,12 +673,10 @@ namespace ft {
 			}
 
 			int	doLeftRotation(t_node *c) {
-				if (!c)
-					std::cout << "something impossible happened\n";
-				else if (!c->right)
-					return (LR);//std::cout << "something impossible happened2\n";
 				t_node *b = c->right;
-
+				
+				if (!b)
+					return (LR);
 				if (!c->parent)
 					_tree = b;
 				else if (c->parent->right == c)
@@ -706,16 +704,12 @@ namespace ft {
 			}
 
 			int	doLeftRightRotation(t_node *c) {
-				if (g_erase)
-					std::cout << "lrr\n";
 				doLeftRotation(c->left);
 				doRightRotation(c);
 				return (LRR);
 			}
 
 			int	doRightLeftRotation(t_node *c){
-				if (g_erase)
-					std::cout << "rlr\n";
 				doRightRotation(c->right);
 				doLeftRotation(c);
 				return (RLR);
