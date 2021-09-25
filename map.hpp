@@ -27,6 +27,7 @@
 #define RLR 3
 #define LRR 4
 
+extern int g_erase;
 
 
 namespace ft {
@@ -117,6 +118,7 @@ namespace ft {
 
 				private:
 					iterator(t_node * node) : _node(node) { }
+					t_node *getNode() { return _node; }
 
 				friend class const_iterator;
 				friend class map;
@@ -327,32 +329,34 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
-				ft::pair<t_node *, int> nodeCreated;
-				if (isEndNode(_tree)) 
-				{
+				ft::pair<t_node *, bool> nodeCreated;
+				if (isEndNode(_tree)) {
 					nodeCreated.first = setUpNode(&value, NULL);
 					nodeCreated.first->right = _endNode;
 					_endNode->parent = nodeCreated.first;
 					_tree = nodeCreated.first;
-					nodeCreated.second = 1;
-				}												
-				else
-				{
-					nodeCreated = findValuePlace(value, _tree);
-					if (nodeCreated.second == 1)
-						doBalancing(nodeCreated.first);
+					nodeCreated.second = true;
 				}
-				if (nodeCreated.second)
+				else if (!_comp(value.first, (--end()).getNode()->data->first))
+					nodeCreated = findValuePlace(value, (--end()).getNode());										
+				else if (_comp(value.first, begin().getNode()->data->first))
+				 	nodeCreated = findValuePlace(value, begin().getNode());
+				else
+					nodeCreated = findValuePlace(value, _tree);
+				if (nodeCreated.second == true) {
 					_size++;
+					doBalancing(nodeCreated.first);
+				}
 				iterator it = iterator(nodeCreated.first);
-				return ft::pair<iterator, int>(it, nodeCreated.second);
+				return ft::pair<iterator, bool>(it, nodeCreated.second);
 			}
 
 
 			void	doBalancing(t_node *node) {
+				if (g_erase)
+					std::cout << "do\n";
 				if (!node || !node->parent)
 					return ;
-				
 				t_node* save = node;
 				while (node) {
 					computeBalanceFactorandHeight(node->parent);
@@ -375,7 +379,8 @@ namespace ft {
 
 			void	reBalance(t_node *node) {
 				int rotation;
-
+				if (g_erase)
+					std::cout << "re\n";
 				while (node) {
 					rotation = rebalanceNode(node);
 					computeBalanceFactorandHeight(node);
@@ -384,10 +389,7 @@ namespace ft {
 					else if (rotation == RLR)
 						computeBalanceFactorandHeight(node->parent->right);
 					computeBalanceFactorandHeight(node->parent);
-					
 					node = node->parent;
-					// if (rotation)
-					// 	node = node->parent;
 				}
 			}
 
@@ -420,7 +422,8 @@ namespace ft {
 					eraseLeaf(target);
 				else
 					eraseOnlyOneChildNode(target);
-				doBalancing(target_parent);
+				// if (g_erase)
+					doBalancing(target_parent);
 				_size--;
 			}
 
@@ -603,6 +606,9 @@ namespace ft {
 
 		private:
 			
+			// void	insert_max(const ft::pair<const Key, T> &value) {
+			// 	findValuePlace(value, &(*(--end())))
+			// }
 
 			int		rebalanceNode(t_node *current)
 			{
@@ -622,52 +628,94 @@ namespace ft {
 				int	doRightRotation(t_node *c)
 			{
 				t_node *b = c->left;
+				if (!b)
+					return (RR);
+
+				// if (!c->parent)
+				// 	_tree = b;
+				// else if (c->parent->left == c)
+				// 	c->parent->right = b;
+				// else
+				// 	c->parent->right = b;
+				// b = c->parent;
+				// c->parent = b;
+				// c->left = b->right;
+				// if (c->left)
+				// 	c->left->parent = c;
+				// b->right = c;
+
+
+
+
+
+
+
+
+
 				
-				c->left = b->right;
-				if (c->left)
+				if (c && b)
+					c->left = b->right;
+				if (c && c->left)
 					c->left->parent = c;
-				b->right = c;
-				b->parent = c->parent;
-				c->parent = b;
-				if (b->parent && b->parent->left == c)
+				if (b)
+					b->right = c;
+				if (b && c)
+					b->parent = c->parent;
+				if (c)
+					c->parent = b;
+				if (b && b->parent && b->parent->left == c)
 					b->parent->left = b;
-				else if (b->parent)
+				else if (b && b->parent)
 				 	b->parent->right = b;
 				else
 					_tree = b;
 				return (RR);
 			}
 
-			int	doLeftRotation(t_node *c)
-			{
+			int	doLeftRotation(t_node *c) {
+				if (!c)
+					std::cout << "something impossible happened\n";
+				else if (!c->right)
+					return (LR);//std::cout << "something impossible happened2\n";
 				t_node *b = c->right;
 
-				if (b)
-					c->right = b->left;
+				if (!c->parent)
+					_tree = b;
+				else if (c->parent->right == c)
+					c->parent->right = b;
+				else
+					c->parent->left = b;
+				// b = c->parent;
+				// c->parent = b;
+				// c->right = b->left;
+				// if (c->right)
+				// 	c->right->parent = c;
+				// b->left = c;
 
+				if (b && c)
+					c->right = b->left;
 				if (c->right)
 					c->right->parent = c;
-				b->left = c;
-				b->parent = c->parent;
-				c->parent = b;
-				if (b->parent && b->parent->left == c)
-					b->parent->left = b;
-				else if (b->parent)
-				 	b->parent->right = b;
-				else
-					_tree = b;
+				if (b)
+					b->left = c;
+				if (b && c)
+					b->parent = c->parent;
+				if (c)
+					c->parent = b;
 				return (LR);
 			}
 
-			int	doLeftRightRotation(t_node *c)
-			{
+			int	doLeftRightRotation(t_node *c) {
+				if (g_erase)
+					std::cout << "lrr\n";
 				doLeftRotation(c->left);
 				doRightRotation(c);
 				return (LRR);
 			}
 
-			int	doRightLeftRotation(t_node *c)
-			{
+			int	doRightLeftRotation(t_node *c){
+				if (g_erase)
+					std::cout << "rlr\n";
 				doRightRotation(c->right);
 				doLeftRotation(c);
 				return (RLR);
@@ -696,7 +744,7 @@ namespace ft {
 
 				if (!_comp(value.first, current->data->first) && !_comp(current->data->first, value.first))
 					return ft::pair<t_node *, int>(current, false);
-				else if (this->_comp(value.first, current->data->first))
+				else if (_comp(value.first, current->data->first))
 				{
 					if (!current->left)
 						ret.first = current->left = setUpNode(&value, current);
