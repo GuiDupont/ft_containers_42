@@ -353,8 +353,6 @@ namespace ft {
 
 
 			void	doBalancing(t_node *node) {
-				if (g_erase)
-					std::cout << "do\n";
 				if (!node || !node->parent)
 					return ;
 				t_node* save = node;
@@ -379,8 +377,6 @@ namespace ft {
 
 			void	reBalance(t_node *node) {
 				int rotation;
-				if (g_erase)
-					std::cout << "re\n";
 				while (node) {
 					rotation = rebalanceNode(node);
 					computeBalanceFactorandHeight(node);
@@ -631,38 +627,12 @@ namespace ft {
 				if (!b)
 					return (RR);
 
-				// if (!c->parent)
-				// 	_tree = b;
-				// else if (c->parent->left == c)
-				// 	c->parent->right = b;
-				// else
-				// 	c->parent->right = b;
-				// b = c->parent;
-				// c->parent = b;
-				// c->left = b->right;
-				// if (c->left)
-				// 	c->left->parent = c;
-				// b->right = c;
-
-
-
-
-
-
-
-
-
-				
-				if (c && b)
-					c->left = b->right;
-				if (c && c->left)
+				c->left = b->right;
+				if (c->left)
 					c->left->parent = c;
-				if (b)
-					b->right = c;
-				if (b && c)
-					b->parent = c->parent;
-				if (c)
-					c->parent = b;
+				b->right = c;
+				b->parent = c->parent;
+				c->parent = b;
 				if (b && b->parent && b->parent->left == c)
 					b->parent->left = b;
 				else if (b && b->parent)
@@ -683,23 +653,12 @@ namespace ft {
 					c->parent->right = b;
 				else
 					c->parent->left = b;
-				// b = c->parent;
-				// c->parent = b;
-				// c->right = b->left;
-				// if (c->right)
-				// 	c->right->parent = c;
-				// b->left = c;
-
-				if (b && c)
-					c->right = b->left;
+				c->right = b->left;
 				if (c->right)
 					c->right->parent = c;
-				if (b)
-					b->left = c;
-				if (b && c)
-					b->parent = c->parent;
-				if (c)
-					c->parent = b;
+				b->left = c;
+				b->parent = c->parent;
+				c->parent = b;
 				return (LR);
 			}
 
