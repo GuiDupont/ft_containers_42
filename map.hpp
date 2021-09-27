@@ -418,8 +418,7 @@ namespace ft {
 					eraseLeaf(target);
 				else
 					eraseOnlyOneChildNode(target);
-				// if (g_erase)
-					doBalancing(target_parent);
+				doBalancing(target_parent);
 				_size--;
 			}
 

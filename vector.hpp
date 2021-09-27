@@ -6,7 +6,7 @@
 /*   By: gdupont <gdupont@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 08:41:22 by gdupont           #+#    #+#             */
-/*   Updated: 2021/09/15 10:52:22 by gdupont          ###   ########.fr       */
+/*   Updated: 2021/09/27 23:29:20 by gdupont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ namespace ft {
 					this->_buffer = this->_alloc.allocate(_size);
 					int i = 0;
 					for (inputIter it = first; it != last; it++, i++) {
-						this->_alloc.construct(this->_buffer + i , *it );
+						this->_alloc.construct(this->_buffer + i , *it);
 					}
 					_capacity = _size;
 				}
@@ -265,7 +265,7 @@ namespace ft {
 					}
 				}
 
-				vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity) {
+				vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._size) {
 					this->_buffer = this->_alloc.allocate(_capacity);
 					for (size_type i = 0; i < _size; i++) {
 							_alloc.construct(this->_buffer + i, x._buffer[i]);
@@ -274,9 +274,8 @@ namespace ft {
 
 				~vector() {
 					for (size_type i = 0; i < _size; i++) {
-							this->_alloc.destroy(this->_buffer + i);
+							this->_alloc.destroy(_buffer + i);
 						}
-					
 					this->_alloc.deallocate(this->_buffer, _capacity);
 				}
 
@@ -401,18 +400,17 @@ namespace ft {
 							_size += n;
 							return (target);	
 						}
-						T* save = _alloc.allocate(_size - n);
-						for (size_type i = 0; i < _size - n; i++)
+						T* save = _alloc.allocate(_size - targetIndex);
+						for (size_type i = 0; targetIndex + i < _size; i++)	
 							_alloc.construct(save + i, *(target + i));
-						for (size_type i = 0; i < n; i++)
-							_buffer[targetIndex + i] = value;
+						for (size_type i = 0; i <= n; i++)
+							_alloc.construct(_buffer + targetIndex + i, value); //_buffer[targetIndex + i] =  
 						int startCopy = targetIndex + n;
-						for (size_type i = 0; i < _size - n - 1; i++)
-						{
+						for (size_type i = 0; i <  _size - targetIndex; i++) {
 							_buffer[startCopy + i] = save[i];
-							_alloc.destroy(_buffer + startCopy + i);
+							_alloc.destroy(save + i);
 						}
-						_alloc.deallocate(save, _size - n);
+						_alloc.deallocate(save, _size - targetIndex);
 						_size += n;
 						return (target);
 					}
@@ -421,13 +419,11 @@ namespace ft {
 				template<class inputIter>
 				iterator insert(const iterator target, typename ft::enable_if<ft::is_input_iterator<inputIter>::value, inputIter>::type first, inputIter last) {
 					size_type n = _distance(first, last);
-					
+					difference_type targetIndex = _distance(this->begin(), target);
 					if (n + _size > _capacity)
 					{ 
 						size_type newCapacity = std::max(_size * 2, n + _size);
-						T* substitute = _alloc.allocate(newCapacity);
-						int targetIndex = _distance(this->begin(), target);
-						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
+						T* substitute = _alloc.allocate(newCapacity);						_copyArrayConstructNDestroy(this->_buffer, substitute, targetIndex);
 						for (size_t i = 0; i < n; i++)
 							_alloc.construct(substitute + i + targetIndex, *(first++));
 						_copyArrayConstructNDestroy(this->_buffer + targetIndex, &substitute[targetIndex + n], _size - targetIndex);
@@ -439,15 +435,15 @@ namespace ft {
 					}
 					else
 					{
-						for (size_type i = 0; i != n; i++)
-							_alloc.construct(&_buffer[_size + n - i], _buffer[_size - i]);
-						for (size_type i = 0; _size - n - i > 0 ; i++)
-							_buffer[_size - i] = _buffer[_size - n - i];
-						ptrdiff_t distance = _distance(first, last);
-						for (ptrdiff_t i = 0 ; i != distance; i++, first++)
+						for (size_t i = 0; i < n; i++)
+							_alloc.construct(&_buffer[_size + i], _buffer[_size - n + i]);
+						int copy_pos = _size - n;
+						int index_end_insert = targetIndex;
+						for (int i = 0; copy_pos - i >= index_end_insert; i++)
+							_alloc.construct(&_buffer[_size - i], _buffer[copy_pos - i]);
+						for (size_t i = 0; i < n; i++, first++)
 							*(target + i) = *(first); 
 						_size += n;
-						
 						return (target);
 					}
 				}
@@ -464,8 +460,9 @@ namespace ft {
 				iterator erase(iterator first, iterator last) {
 					for (size_type i = 0; last + i != this->end(); i++)
 						*(first + i) = *(last + i);
-					for (int i = 0; i < _distance(first, last); i++)
-						_alloc.destroy(&_buffer[_size - i]);
+					for (int i = 0; i < _distance(first, last); i++) {
+						_alloc.destroy(&_buffer[_size - 1 - i]);
+					}
 					_size -= _distance(first, last);
 					return (first);
 				}
@@ -490,15 +487,19 @@ namespace ft {
 				}
 				
 				void assign(size_type n, const T& value) {
+
 					T* substitute;
 					
 					if (n > _capacity)
 					{
+						
 						substitute = _alloc.allocate(n);
 						for (size_type i = 0; i < n; i++)
 						{
-							substitute[i] = value;
-							_alloc.destroy(_buffer + i);
+							_alloc.construct(substitute + i, value);
+							if (n < _capacity)
+								_alloc.destroy(_buffer + i);
+							
 						}
 						_alloc.deallocate(_buffer, _capacity);
 						_capacity = n;
@@ -565,7 +566,7 @@ namespace ft {
 				
 				void reserve (size_type n) {
 					if (n > max_size())
-						throw std::length_error("Size asked is greater than max_size in function reserve");
+						throw std::length_error("vector::reserve");
 					else if (n > _capacity)
 						reallocateNCopy(n);
 				}
