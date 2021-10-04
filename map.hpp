@@ -97,7 +97,8 @@ namespace ft {
 					{
 						compare comp;
 
-						if (isEndNode(_node))                                  /* special case for end_node */ 				
+
+						if (isEndNode(_node) )                    /* special case for end_node */ 		
 							_node = _node->parent;
 						else
 							_node = getLowerNode(_node, comp);
@@ -287,11 +288,11 @@ namespace ft {
 		T& operator[]( const Key& key ) {
 			value_type val(key, T());
 			t_node *target = getNode(_tree, val, _comp);
+
 			if (isEndNode(target) || !target)
-				return ((insert(ft::make_pair(key, T()))).first->second);
+					return ((insert(ft::make_pair(key, T()))).first->second);
 			return (target->data->second);
 		}
-		
 		public:
 
 			iterator 				begin() {	return(iterator(getLeftExtremNode(_tree))); }
@@ -329,6 +330,7 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool> insert( const value_type& value ) {
+
 				ft::pair<t_node *, bool> nodeCreated;
 				if (isEndNode(_tree)) {
 					nodeCreated.first = setUpNode(&value, NULL);
@@ -338,9 +340,9 @@ namespace ft {
 					nodeCreated.second = true;
 				}
 				else if (!_comp(value.first, (--end()).getNode()->data->first))
-					nodeCreated = findValuePlace(value, (--end()).getNode());										
+					nodeCreated = findValuePlace(value, (--end()).getNode());									
 				else if (_comp(value.first, begin().getNode()->data->first))
-				 	nodeCreated = findValuePlace(value, begin().getNode());
+					nodeCreated = findValuePlace(value, begin().getNode());
 				else
 					nodeCreated = findValuePlace(value, _tree);
 				if (nodeCreated.second == true) {
@@ -755,6 +757,7 @@ namespace ft {
 						_tree = left;
 						getRightExtremNode(left)->right = right;
 						left->parent = NULL;
+						right->parent = left;
 					}
 					else
 					{
